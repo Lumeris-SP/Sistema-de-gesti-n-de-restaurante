@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Cocina - Walok</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Inicio</a>
+            <div class="logo-container">
+                <i class="fas fa-kitchen-set"></i>
+                <h1>Control de Cocina</h1>
+            </div>
+            <p class="subtitle">Estado de preparación de pedidos</p>
+        </header>
+
+        <div class="module-content">
+            <div class="cocina-stats">
+                <div class="stat-card-mini">
+                    <i class="fas fa-hourglass-start"></i>
+                    <span>Pendientes: <strong id="pendientesCount">0</strong></span>
+                </div>
+                <div class="stat-card-mini">
+                    <i class="fas fa-fire"></i>
+                    <span>En preparación: <strong id="preparacionCount">0</strong></span>
+                </div>
+                <div class="stat-card-mini">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Listos: <strong id="listosCount">0</strong></span>
+                </div>
+            </div>
+
+            <div id="cocinaPedidos" class="cocina-pedidos"></div>
+        </div>
+
+        <footer class="footer">
+            <p>&copy; 2024 Walok Restaurante Oriental - Control de Cocina</p>
+        </footer>
+    </div>
+
+    <script src="cocina.js"></script>
+</body>
+</html>
