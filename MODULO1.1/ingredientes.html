@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Maffia SAC - Ingredientes Modificables</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <img class="logo" src="https://cdn-icons-png.flaticon.com/512/1046/1046857.png" alt="Maffia SAC">
+  <h1>Maffia SAC <span>RESTAURANTE ORIENTAL</span></h1>
+</header>
+<nav>
+  <a href="index.html">1. Código</a>
+  <a href="nombre.html">2. Nombre</a>
+  <a href="descripcion.html">3. Descripción</a>
+  <a href="categoria.html">4. Categoría</a>
+  <a href="precio.html">5. Precio</a>
+  <a href="tiempo.html">6. Tiempo</a>
+  <a href="estado.html">7. Estado</a>
+  <a href="alergenos.html">8. Alérgenos</a>
+  <a class="active" href="ingredientes.html">9. Ingredientes</a>
+</nav>
+<main>
+  <img class="hero-img" src="https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=1200" alt="Ingredientes">
+  <h2>⑨ Ingredientes Modificables</h2>
+  <label>Código</label><select id="sel"></select>
+  <label>¿Permite modificaciones? Describe (máx 200)</label>
+  <textarea id="mod" maxlength="200" placeholder="Ej: sin cebolla, sin ají, cambiar arroz por ensalada"></textarea>
+  <div id="msg"></div>
+  <button class="btn" onclick="guardarMod()">Guardar</button>
+
+  <h2 style="margin-top:2rem">Resumen de platos registrados</h2>
+  <table id="tabla">
+    <thead><tr><th>Cód</th><th>Nombre</th><th>Categoría</th><th>S/</th><th>Min</th><th>Estado</th></tr></thead>
+    <tbody></tbody>
+  </table>
+</main>
+<footer>© Maffia SAC — 樂 Sabor del Lejano Oriente</footer>
+<script src="js/ingredientes.js"></script>
+</body>
+</html>

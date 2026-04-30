@@ -1,0 +1,252 @@
+/* ============================================
+   MAFFIA SAC - Restaurante Oriental
+   styles.css - Estilo rojo / negro / dorado
+   ============================================ */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --rojo: #b8000f;
+  --rojo-oscuro: #7a0009;
+  --dorado: #d4af37;
+  --dorado-claro: #f1c84b;
+  --negro: #0d0d0d;
+  --negro-suave: #1a1a1a;
+  --crema: #fdf6e3;
+  --gris: #2a2a2a;
+}
+
+body {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  background:
+    linear-gradient(rgba(13,13,13,0.85), rgba(13,13,13,0.92)),
+    url('https://images.unsplash.com/photo-1552566626-52f8b828add9?w=1600') center/cover fixed;
+  color: var(--crema);
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* ===== HEADER ===== */
+header {
+  background: linear-gradient(135deg, var(--negro) 0%, var(--rojo-oscuro) 100%);
+  border-bottom: 3px solid var(--dorado);
+  padding: 15px 30px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+}
+
+header img,
+.logo {
+  width: 70px !important;
+  height: 70px !important;
+  object-fit: contain;
+  border: 2px solid var(--dorado);
+  border-radius: 50%;
+  background: var(--negro);
+  padding: 4px;
+}
+
+header h1 {
+  color: var(--dorado);
+  font-size: 1.8rem;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+  font-family: 'Georgia', serif;
+}
+
+/* ===== NAVEGACIÓN ===== */
+nav {
+  background: var(--negro-suave);
+  padding: 12px 20px;
+  border-bottom: 2px solid var(--dorado);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+nav a {
+  color: var(--crema);
+  text-decoration: none;
+  padding: 8px 14px;
+  border: 1px solid var(--dorado);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  background: rgba(184,0,15,0.2);
+}
+
+nav a:hover {
+  background: var(--rojo);
+  color: var(--dorado-claro);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(212,175,55,0.4);
+}
+
+/* ===== CONTENEDOR PRINCIPAL ===== */
+main, .container {
+  max-width: 1100px;
+  margin: 30px auto;
+  padding: 30px;
+  background: rgba(26,26,26,0.92);
+  border: 2px solid var(--dorado);
+  border-radius: 10px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+}
+
+h2, h3 {
+  color: var(--dorado);
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--rojo);
+  padding-bottom: 8px;
+  letter-spacing: 1px;
+}
+
+p { margin-bottom: 12px; }
+
+/* ===== FORMULARIOS ===== */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+label {
+  color: var(--dorado-claro);
+  font-weight: bold;
+  font-size: 0.95rem;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--negro);
+  border: 1px solid var(--dorado);
+  border-radius: 5px;
+  color: var(--crema);
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.3s;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--rojo);
+  box-shadow: 0 0 8px rgba(184,0,15,0.6);
+}
+
+textarea { min-height: 90px; resize: vertical; }
+
+/* ===== BOTONES ===== */
+button, .btn {
+  background: linear-gradient(135deg, var(--rojo) 0%, var(--rojo-oscuro) 100%);
+  color: var(--dorado-claro);
+  border: 1px solid var(--dorado);
+  padding: 11px 22px;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: bold;
+  letter-spacing: 1px;
+  transition: all 0.3s;
+  font-family: inherit;
+}
+
+button:hover {
+  background: linear-gradient(135deg, var(--dorado) 0%, var(--rojo) 100%);
+  color: var(--negro);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(212,175,55,0.5);
+}
+
+/* ===== TABLAS ===== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background: var(--negro-suave);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+th {
+  background: linear-gradient(135deg, var(--rojo-oscuro), var(--rojo));
+  color: var(--dorado-claro);
+  padding: 12px;
+  text-align: left;
+  letter-spacing: 1px;
+}
+
+td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--gris);
+  color: var(--crema);
+}
+
+tr:hover td { background: rgba(184,0,15,0.15); }
+
+/* ===== BADGES ESTADO ===== */
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.badge.activo {
+  background: #1a5d1a;
+  color: #b8f5b8;
+  border: 1px solid #2d8f2d;
+}
+
+.badge.inactivo {
+  background: #5d1a1a;
+  color: #f5b8b8;
+  border: 1px solid #8f2d2d;
+}
+
+/* ===== ALERTAS / MENSAJES ===== */
+.msg {
+  padding: 12px;
+  border-radius: 5px;
+  margin: 10px 0;
+  border-left: 4px solid var(--dorado);
+  background: rgba(212,175,55,0.1);
+  color: var(--dorado-claro);
+}
+
+/* ===== IMÁGENES DECORATIVAS ===== */
+.hero-img {
+  width: 100%;
+  max-height: 350px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid var(--dorado);
+  margin: 20px 0;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+}
+
+/* ===== FOOTER ===== */
+footer {
+  text-align: center;
+  padding: 20px;
+  background: var(--negro);
+  color: var(--dorado);
+  border-top: 2px solid var(--rojo);
+  margin-top: 40px;
+  letter-spacing: 2px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  header { flex-direction: column; text-align: center; }
+  header h1 { font-size: 1.3rem; }
+  nav { flex-direction: column; }
+  nav a { text-align: center; }
+  main, .container { margin: 15px; padding: 20px; }
+  table { font-size: 0.85rem; }
+}

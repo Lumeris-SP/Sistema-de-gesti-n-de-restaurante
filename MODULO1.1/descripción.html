@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Maffia SAC - Descripción del Plato</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <img class="logo" src="https://cdn-icons-png.flaticon.com/512/1046/1046857.png" alt="Maffia SAC">
+  <h1>Maffia SAC <span>RESTAURANTE ORIENTAL</span></h1>
+</header>
+<nav>
+  <a href="index.html">1. Código</a>
+  <a href="nombre.html">2. Nombre</a>
+  <a class="active" href="descripcion.html">3. Descripción</a>
+  <a href="categoria.html">4. Categoría</a>
+  <a href="precio.html">5. Precio</a>
+  <a href="tiempo.html">6. Tiempo</a>
+  <a href="estado.html">7. Estado</a>
+  <a href="alergenos.html">8. Alérgenos</a>
+  <a href="ingredientes.html">9. Ingredientes</a>
+</nav>
+<main>
+  <img class="hero-img" src="https://images.unsplash.com/photo-1582450871972-ab5ca641643d?w=1200" alt="Descripción">
+  <h2>③ Descripción del Plato</h2>
+  <label>Código</label><select id="sel"></select>
+  <label>Descripción (10-250 caracteres)</label>
+  <textarea id="desc" maxlength="250" placeholder="Plato tradicional preparado con..."></textarea>
+  <div id="msg"></div>
+  <button class="btn" onclick="guardarDesc()">Guardar</button>
+  <a class="btn alt" href="categoria.html">Siguiente ➜</a>
+</main>
+<footer>© Maffia SAC</footer>
+<script src="js/descripcion.js"></script>
+</body>
+</html>

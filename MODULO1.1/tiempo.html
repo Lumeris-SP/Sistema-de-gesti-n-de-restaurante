@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Maffia SAC - Tiempo de Preparación</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <img class="logo" src="https://cdn-icons-png.flaticon.com/512/1046/1046857.png" alt="Maffia SAC">
+  <h1>Maffia SAC <span>RESTAURANTE ORIENTAL</span></h1>
+</header>
+<nav>
+  <a href="index.html">1. Código</a>
+  <a href="nombre.html">2. Nombre</a>
+  <a href="descripcion.html">3. Descripción</a>
+  <a href="categoria.html">4. Categoría</a>
+  <a href="precio.html">5. Precio</a>
+  <a class="active" href="tiempo.html">6. Tiempo</a>
+  <a href="estado.html">7. Estado</a>
+  <a href="alergenos.html">8. Alérgenos</a>
+  <a href="ingredientes.html">9. Ingredientes</a>
+</nav>
+<main>
+  <img class="hero-img" src="https://images.unsplash.com/photo-1606787366850-de6330128bfc?w=1200" alt="Tiempo">
+  <h2>⑥ Tiempo de Preparación (min)</h2>
+  <label>Código</label><select id="sel"></select>
+  <label>Minutos (1 - 120)</label>
+  <input type="number" id="tiempo" min="1" max="120">
+  <div id="msg"></div>
+  <button class="btn" onclick="guardarTiempo()">Guardar</button>
+  <a class="btn alt" href="estado.html">Siguiente ➜</a>
+</main>
+<footer>© Maffia SAC</footer>
+<script src="js/tiempo.js"></script>
+</body>
+</html>
