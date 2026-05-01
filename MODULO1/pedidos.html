@@ -4,65 +4,136 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pedidos - Walok</title>
-    <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="pedidos.css">
 </head>
 <body>
-    <div class="container">
-        <header class="header">
+<div class="container">
+
+    <header class="header">
+        <div class="header-left">
             <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Inicio</a>
             <div class="logo-container">
                 <i class="fas fa-clipboard-list"></i>
-                <h1>Pedidos por Mesa</h1>
-            </div>
-            <p class="subtitle">Gestión de pedidos del restaurante</p>
-        </header>
-
-        <div class="module-content">
-            <!-- Crear nuevo pedido -->
-            <div class="form-container">
-                <h2><i class="fas fa-cart-plus"></i> Nuevo Pedido</h2>
-                <form id="pedidoForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label><i class="fas fa-chair"></i> Número de Mesa *</label>
-                            <input type="number" id="mesa" placeholder="Ej: 1" min="1" max="50">
-                            <small class="error-message" id="mesaError"></small>
-                        </div>
-                        <div class="form-group">
-                            <label><i class="fas fa-user"></i> Cliente</label>
-                            <input type="text" id="cliente" placeholder="Nombre del cliente (opcional)">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label><i class="fas fa-hamburger"></i> Seleccionar Platos *</label>
-                        <div id="platosDisponibles" class="platos-selector"></div>
-                        <small class="error-message" id="platosError"></small>
-                    </div>
-
-                    <div class="form-group">
-                        <label><i class="fas fa-comment"></i> Observaciones especiales</label>
-                        <textarea id="observaciones" rows="2" placeholder="Ej: Sin cebolla, extra picante..."></textarea>
-                    </div>
-
-                    <button type="submit" class="btn-primary"><i class="fas fa-check-circle"></i> Crear Pedido</button>
-                </form>
-            </div>
-
-            <!-- Listado de pedidos activos -->
-            <div class="list-container">
-                <h3><i class="fas fa-list"></i> Pedidos Activos</h3>
-                <div id="pedidosList" class="pedidos-list"></div>
+                <div>
+                    <h1>Pedidos por Mesa</h1>
+                    <p class="subtitle">Gestión de pedidos del restaurante</p>
+                </div>
             </div>
         </div>
+    </header>
 
-        <footer class="footer">
-            <p>&copy; 2024 Walok Restaurante Oriental - Módulo de Pedidos</p>
-        </footer>
+    <div class="module-content">
+
+        <!-- ====== FORMULARIO ====== -->
+        <div class="form-container">
+            <h2><i class="fas fa-cart-plus"></i> Nuevo Pedido</h2>
+            <form id="pedidoForm" novalidate>
+
+                <!-- Código del pedido -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-barcode"></i> Código del Pedido</label>
+                        <div class="codigo-display" id="codigoPedido">PED001</div>
+                        <small class="field-info">Generado automáticamente</small>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-clock"></i> Fecha y Hora</label>
+                        <div class="codigo-display" id="fechaHora" style="font-family:'Poppins',sans-serif;font-size:12px;color:var(--text);">—</div>
+                        <small class="field-info">Automática al crear</small>
+                    </div>
+                </div>
+
+                <!-- Mesa y Mozo -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label><i class="fas fa-chair"></i> Número de Mesa *</label>
+                        <input type="number" id="mesa" min="1" max="50" placeholder="1 – 50">
+                        <small class="error-message" id="mesaError"></small>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-user-tie"></i> Mozo *</label>
+                        <input type="text" id="mozo" placeholder="Ej: Carlos o MZ001">
+                        <small class="error-message" id="mozoError"></small>
+                    </div>
+                </div>
+
+                <!-- Cliente -->
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Cliente</label>
+                    <input type="text" id="cliente" placeholder="Nombre del cliente">
+                </div>
+
+                <!-- Platos -->
+                <div class="form-group">
+                    <label><i class="fas fa-hamburger"></i> Seleccionar Platos * <small style="color:var(--green);margin-left:6px;">(solo activos)</small></label>
+                    <div id="platosDisponibles" class="platos-selector"></div>
+                    <small class="error-message" id="platosError"></small>
+                </div>
+
+                <!-- Total -->
+                <div class="total-bar">
+                    <span class="label"><i class="fas fa-receipt"></i> Total estimado</span>
+                    <span class="amount" id="totalDisplay">S/ 0.00</span>
+                </div>
+
+                <!-- Prioridad -->
+                <div class="form-group">
+                    <label><i class="fas fa-fire"></i> Prioridad del Pedido *</label>
+                    <div class="prioridad-options">
+                        <button type="button" class="prio-btn active-normal" data-prio="normal" onclick="setPrioridad(this)">
+                            <i class="fas fa-circle" style="font-size:8px;margin-right:4px;"></i> Normal
+                        </button>
+                        <button type="button" class="prio-btn" data-prio="alta" onclick="setPrioridad(this)">
+                            <i class="fas fa-angle-double-up" style="margin-right:4px;"></i> Alta
+                        </button>
+                        <button type="button" class="prio-btn" data-prio="urgente" onclick="setPrioridad(this)">
+                            <i class="fas fa-exclamation-triangle" style="margin-right:4px;"></i> Urgente
+                        </button>
+                    </div>
+                    <small class="field-info">Normal: pedido regular · Alta: atención rápida · Urgente: requiere justificación</small>
+                    <small class="error-message" id="prioError"></small>
+
+                    <div class="justificacion-urgente" id="justificacionBlock">
+                        <label style="margin-top:8px;display:flex;align-items:center;gap:5px;"><i class="fas fa-exclamation-circle" style="color:var(--red);"></i> Justificación urgente *</label>
+                        <select id="justificacionSelect" style="margin-bottom:6px;">
+                            <option value="">-- Seleccione motivo --</option>
+                            <option value="Demora previa en el servicio">Demora previa en el servicio</option>
+                            <option value="Cliente VIP o solicitud especial">Cliente VIP o solicitud especial</option>
+                            <option value="Reclamo o queja del cliente">Reclamo o queja del cliente</option>
+                            <option value="Alergia o restricción médica">Alergia o restricción médica</option>
+                            <option value="Evento o celebración especial">Evento o celebración especial</option>
+                            <option value="Otro">Otro (detallar abajo)</option>
+                        </select>
+                        <textarea id="justificacionTexto" rows="2" placeholder="Describa la situación (mín. 10 caracteres)..." style="resize:vertical;"></textarea>
+                        <small class="error-message" id="justError"></small>
+                    </div>
+                </div>
+
+                <!-- Observación general -->
+                <div class="form-group">
+                    <label><i class="fas fa-comment"></i> Observación general del pedido</label>
+                    <textarea id="observaciones" rows="2" placeholder="Ej: Llevar todo junto, mesa cumpleaños..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-primary"><i class="fas fa-check-circle"></i> Crear Pedido</button>
+            </form>
+        </div>
+
+        <!-- ====== LISTA PEDIDOS ====== -->
+        <div class="list-container">
+            <h3><i class="fas fa-list"></i> Pedidos Activos</h3>
+            <div id="pedidosList"></div>
+        </div>
     </div>
 
-    <script src="pedidos.js"></script>
+    <footer class="footer">
+        <p>&copy; 2024 Walok Restaurante Oriental — Módulo de Pedidos</p>
+    </footer>
+</div>
+
+<script src="pedidos.js"></script>
 </body>
 </html>
