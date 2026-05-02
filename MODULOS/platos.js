@@ -254,9 +254,10 @@ class GestionPlatos {
     eliminarPlato(id) {
         // Verificar si el plato está en algún pedido
         const pedidos = JSON.parse(localStorage.getItem('pedidos')) || [];
-        const enUso = pedidos.some(p => 
-            p.items.some(item => item.platoId === id)
-        );
+       // DESPUÉS — compara ambos como string, siempre funciona
+const enUso = pedidos.some(p => 
+    p.items.some(item => String(item.platoId) === String(id))
+);
         
         if (enUso) {
             alert('No se puede eliminar el plato porque tiene pedidos asociados');
