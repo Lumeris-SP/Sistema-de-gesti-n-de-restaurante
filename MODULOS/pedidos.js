@@ -1,16 +1,19 @@
 // ============================================================
-// DATOS BASE (catálogo local, sin cambios)
+// DATOS BASE — se carga desde localStorage (platos.js)
 // ============================================================
-const PLATOS_DB = [
-    { id: 1, nombre: 'Arroz Chaufa Especial',        precio: 22.00, activo: true  },
-    { id: 2, nombre: 'Tallarín Saltado de Res',       precio: 26.00, activo: true  },
-    { id: 3, nombre: 'Sopa Wantán',                   precio: 18.00, activo: true  },
-    { id: 4, nombre: 'Pollo al Vapor con Jengibre',   precio: 28.00, activo: true  },
-    { id: 5, nombre: 'Rollitos Primavera (6 u.)',      precio: 14.00, activo: true  },
-    { id: 6, nombre: 'Kion Crocante',                 precio: 12.00, activo: false }, // INACTIVO
-    { id: 7, nombre: 'Pato Pekinés',                  precio: 38.00, activo: true  },
-    { id: 8, nombre: 'Dim Sum Variado',               precio: 20.00, activo: true  },
-];
+let PLATOS_DB = [];
+
+function cargarPlatosDB() {
+    const stored = JSON.parse(localStorage.getItem('platos')) || [];
+    PLATOS_DB = stored
+        .filter(p => p.estado === 'Activo')
+        .map(p => ({
+            id:     p.id,
+            nombre: p.nombre,
+            precio: p.precio,
+            activo: true,
+        }));
+}
 
 const ADICIONALES_DB = [
     { nombre: 'Porción extra de arroz',   precio: 3.00 },
@@ -23,7 +26,6 @@ const ADICIONALES_DB = [
     { nombre: 'Sin ajo',                  precio: 0    },
     { nombre: 'Porción extra de carne',   precio: 6.00 },
 ];
-
 // ============================================================
 // ESTADO EN MEMORIA (se sincroniza con localStorage)
 // ============================================================
@@ -158,6 +160,7 @@ function calcularContador() {
 // INIT
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
+    cargarPlatosDB(); 
     // Cargar pedidos previos desde localStorage
     pedidos = cargarPedidosStorage().map(p => ({
         ...p,
