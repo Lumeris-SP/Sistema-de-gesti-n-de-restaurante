@@ -85,7 +85,7 @@ document.getElementById('rapidPlatoForm').addEventListener('submit', (e) => {
         creadoEn:     new Date().toISOString(),   // útil para Módulo 4
     };
 
-    const guardado = Storage.add(STORAGE_KEYS.PLATOS, nuevoPlato);
+    const guardado = Storage.add('platos', nuevoPlato);  // ← usar 'platos' directamente
 
     if (guardado) {
         alert('Plato registrado exitosamente');

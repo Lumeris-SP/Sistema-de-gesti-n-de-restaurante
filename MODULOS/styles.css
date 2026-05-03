@@ -1106,3 +1106,472 @@ h1, h2, h3 {
     background: #111;
     color: white;
 }
+/* ============================================================
+   TOAST NOTIFICATIONS - COCINA
+   ============================================================ */
+
+.toast-cocina {
+    position: fixed;
+    bottom: -150px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2000;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    pointer-events: none;
+}
+
+.toast-cocina.show {
+    bottom: 30px;
+    pointer-events: auto;
+}
+
+.toast-inner {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.95), rgba(56, 142, 60, 0.95));
+    backdrop-filter: blur(15px);
+    padding: 16px 28px;
+    border-radius: 12px;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 8px 32px rgba(76, 175, 80, 0.4),
+                0 0 20px rgba(76, 175, 80, 0.2);
+    border: 1px solid rgba(139, 235, 139, 0.3);
+    animation: slideInUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.toast-cocina.show .toast-inner {
+    animation: toastPulse 0.3s ease-out;
+}
+
+.toast-cocina i {
+    font-size: 20px;
+    color: #fff;
+    text-shadow: 0 0 8px rgba(76, 175, 80, 0.6);
+}
+
+/* TOAST SUCCESS */
+.toast-cocina.toast-success .toast-inner {
+    background: linear-gradient(135deg, 
+        rgba(76, 175, 80, 0.95) 0%,
+        rgba(56, 142, 60, 0.95) 100%);
+    border: 1px solid rgba(139, 235, 139, 0.3);
+    box-shadow: 0 8px 32px rgba(76, 175, 80, 0.4),
+                0 0 20px rgba(76, 175, 80, 0.2);
+}
+
+/* TOAST ERROR */
+.toast-cocina.toast-error .toast-inner {
+    background: linear-gradient(135deg, 
+        rgba(244, 67, 54, 0.95) 0%,
+        rgba(229, 57, 53, 0.95) 100%);
+    border: 1px solid rgba(255, 138, 128, 0.3);
+    box-shadow: 0 8px 32px rgba(244, 67, 54, 0.4),
+                0 0 20px rgba(244, 67, 54, 0.2);
+}
+
+.toast-cocina.toast-error .toast-inner i {
+    text-shadow: 0 0 8px rgba(244, 67, 54, 0.6);
+}
+
+/* ANIMACIONES */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+@keyframes toastPulse {
+    0% {
+        transform: scale(0.95);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* ICONO ANIMADO */
+.toast-cocina i {
+    animation: iconRotate 0.5s ease-out;
+}
+
+@keyframes iconRotate {
+    from {
+        opacity: 0;
+        transform: rotate(-180deg) scale(0);
+    }
+    to {
+        opacity: 1;
+        transform: rotate(0deg) scale(1);
+    }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .toast-cocina {
+        bottom: -150px;
+        left: 20px;
+        right: 20px;
+        transform: none;
+    }
+    
+    .toast-cocina.show {
+        bottom: 20px;
+    }
+    
+    .toast-inner {
+        padding: 14px 20px;
+        font-size: 13px;
+        gap: 12px;
+    }
+}
+
+/* DARK MODE (ya lo tienes) */
+@media (prefers-color-scheme: dark) {
+    .toast-cocina.toast-success .toast-inner {
+        background: linear-gradient(135deg, 
+            rgba(102, 187, 106, 0.9) 0%,
+            rgba(76, 175, 80, 0.9) 100%);
+    }
+    
+    .toast-cocina.toast-error .toast-inner {
+        background: linear-gradient(135deg, 
+            rgba(255, 87, 75, 0.9) 0%,
+            rgba(244, 67, 54, 0.9) 100%);
+    }
+}
+/* ============================================================
+   ESTADO PLATOS - BOTONES MEJORADOS
+   ============================================================ */
+
+.plato-estado-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 10px;
+}
+
+.btn-estado-plato {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(212, 175, 55, 0.2);
+    border-radius: 8px;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-estado-plato::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: left 0.5s;
+}
+
+.btn-estado-plato:hover::before {
+    left: 100%;
+}
+
+.btn-estado-plato i {
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.btn-estado-plato:hover {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: rgba(212, 175, 55, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
+}
+
+/* ACTIVE - PENDIENTE (GRIS OSCURO) */
+.btn-estado-plato.active[data-estado="Pendiente"] {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.25), rgba(255, 152, 0, 0.2));
+    border-color: rgba(255, 193, 7, 0.6);
+    color: #ffc107;
+    box-shadow: 0 0 15px rgba(255, 193, 7, 0.3);
+}
+
+.btn-estado-plato.active[data-estado="Pendiente"] i {
+    animation: pulse-yellow 1.5s ease-in-out infinite;
+}
+
+/* ACTIVE - EN PREPARACIÓN (AZUL FUEGO) */
+.btn-estado-plato.active[data-estado="En preparación"] {
+    background: linear-gradient(135deg, rgba(33, 150, 243, 0.25), rgba(3, 169, 244, 0.2));
+    border-color: rgba(33, 150, 243, 0.6);
+    color: #2196f3;
+    box-shadow: 0 0 15px rgba(33, 150, 243, 0.3);
+}
+
+.btn-estado-plato.active[data-estado="En preparación"] i {
+    animation: pulse-blue 1.5s ease-in-out infinite;
+}
+
+/* ACTIVE - LISTO (VERDE BRILLANTE) */
+.btn-estado-plato.active[data-estado="Listo"] {
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.3), rgba(56, 142, 60, 0.25));
+    border-color: rgba(76, 175, 80, 0.7);
+    color: #4caf50;
+    box-shadow: 0 0 18px rgba(76, 175, 80, 0.4),
+                inset 0 0 10px rgba(76, 175, 80, 0.2);
+}
+
+.btn-estado-plato.active[data-estado="Listo"] i {
+    animation: pulse-green 1.5s ease-in-out infinite;
+    transform: scale(1.1);
+}
+
+/* ANIMACIONES */
+@keyframes pulse-yellow {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+}
+
+@keyframes pulse-blue {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+}
+
+@keyframes pulse-green {
+    0%, 100% { 
+        transform: scale(1);
+        filter: drop-shadow(0 0 3px rgba(76, 175, 80, 0.5));
+    }
+    50% { 
+        transform: scale(1.15);
+        filter: drop-shadow(0 0 10px rgba(76, 175, 80, 0.8));
+    }
+}
+
+/* SPAN DENTRO DE BOTÓN */
+.btn-estado-plato span {
+    display: block;
+    text-align: center;
+}
+
+/* ============================================================
+   BOTÓN MARCAR TODOS COMO LISTOS
+   ============================================================ */
+
+.btn-accion {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 13px;
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+    font-family: 'Poppins', sans-serif;
+    min-width: 200px;
+}
+
+.btn-accion::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-accion:hover::before {
+    left: 100%;
+}
+
+/* BTN PREPARACIÓN (NARANJA) */
+.btn-preparacion {
+    background: linear-gradient(135deg, rgba(255, 152, 0, 0.85), rgba(255, 111, 0, 0.85));
+    color: white;
+    box-shadow: 0 5px 20px rgba(255, 152, 0, 0.3);
+}
+
+.btn-preparacion:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 30px rgba(255, 152, 0, 0.5);
+    background: linear-gradient(135deg, rgba(255, 167, 38, 0.95), rgba(255, 111, 0, 0.95));
+}
+
+.btn-preparacion:active {
+    transform: translateY(-1px);
+}
+
+/* BTN LISTO PEDIDO (VERDE BRILLANTE) */
+.btn-listo-pedido {
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.9), rgba(56, 142, 60, 0.9));
+    color: white;
+    box-shadow: 0 5px 25px rgba(76, 175, 80, 0.4),
+                inset 0 -2px 10px rgba(0, 0, 0, 0.2);
+    animation: pulse-btn-green 2s ease-in-out infinite;
+}
+
+.btn-listo-pedido:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 35px rgba(76, 175, 80, 0.6),
+                inset 0 -2px 10px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, rgba(102, 187, 106, 1), rgba(76, 175, 80, 1));
+    animation: none;
+}
+
+.btn-listo-pedido:active {
+    transform: translateY(-1px);
+}
+
+.btn-listo-pedido i {
+    font-size: 18px;
+    animation: spin-check 0.6s ease-out;
+}
+
+.btn-listo-pedido .btn-text {
+    font-weight: 700;
+    font-size: 13px;
+}
+
+.btn-listo-pedido .btn-subtext {
+    font-size: 10px;
+    opacity: 0.9;
+    font-weight: 500;
+}
+
+/* BTN COMPLETADO (DESHABILITADO) */
+.btn-completado {
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.6), rgba(56, 142, 60, 0.6));
+    color: rgba(255, 255, 255, 0.9);
+    cursor: not-allowed;
+    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.2);
+}
+
+.btn-completado i {
+    color: #ffd700;
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+    animation: star-glow 1.5s ease-in-out infinite;
+    font-size: 18px;
+}
+
+.btn-completado .btn-text {
+    font-weight: 700;
+    color: #ffd700;
+}
+
+.btn-completado .btn-subtext {
+    font-size: 10px;
+    opacity: 0.8;
+}
+
+/* ANIMACIONES BOTONES */
+@keyframes pulse-btn-green {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.02);
+    }
+}
+
+@keyframes spin-check {
+    from {
+        transform: rotate(-180deg) scale(0);
+        opacity: 0;
+    }
+    to {
+        transform: rotate(0deg) scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes star-glow {
+    0%, 100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
+    }
+    50% {
+        transform: scale(1.1);
+        filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.8));
+    }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .btn-accion {
+        min-width: 160px;
+        padding: 12px 18px;
+        font-size: 12px;
+        gap: 4px;
+    }
+    
+    .btn-accion i {
+        font-size: 16px;
+    }
+    
+    .btn-text {
+        font-size: 12px !important;
+    }
+    
+    .btn-subtext {
+        font-size: 9px !important;
+    }
+    
+    .plato-estado-buttons {
+        gap: 6px;
+        padding: 8px;
+    }
+    
+    .btn-estado-plato {
+        padding: 8px 10px;
+        font-size: 10px;
+    }
+    
+    .btn-estado-plato i {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .btn-accion {
+        min-width: 100%;
+        padding: 10px 12px;
+    }
+    
+    .plato-estado-buttons {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 4px;
+    }
+}

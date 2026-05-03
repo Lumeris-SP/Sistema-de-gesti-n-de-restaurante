@@ -123,7 +123,7 @@ function buscarMesa() {
     //    y también 'Listo' por si cocina.js lo marca directamente
     const pedidosMesa = pedidos.filter(p =>
         parseInt(p.mesa) === mesa &&
-        (p.estado === 'Entregado' || p.estadoCocina === 'Listo')
+        (p.estado || '').toLowerCase() === 'entregado'
     );
 
     // Verificar que no hayan sido ya facturados
@@ -190,9 +190,11 @@ function renderPedidosMesa(pedidos) {
                 <td class="td-cant">${p.cantidad}</td>
                 <td class="td-precio">${formatMoney(p.precioUnitario)}</td>
                 <td class="td-subtotal">${formatMoney(p.subtotal)}</td>
-                <td style="font-size:0.75rem;color:var(--text-muted);font-style:italic">
-                    ${p.observacion || ''}
-                </td>
+                ${p.observaciones && p.observaciones.length > 0 
+                    ? `<td style="font-size:0.75rem;color:var(--text-muted);font-style:italic">
+                        ${p.observaciones.map(o => o.texto).join(', ')}
+                    </td>` 
+                    : '<td></td>'}
             </tr>
         `).join('');
 
