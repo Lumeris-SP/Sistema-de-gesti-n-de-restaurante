@@ -20,28 +20,65 @@
         </header>
 
         <div class="module-content">
+
+            <!-- ESTADÍSTICAS -->
             <div class="cocina-stats">
-                <div class="stat-card-mini">
+                <div class="stat-card-mini pendiente">
                     <i class="fas fa-hourglass-start"></i>
                     <span>Pendientes: <strong id="pendientesCount">0</strong></span>
                 </div>
-                <div class="stat-card-mini">
+                <div class="stat-card-mini preparacion">
                     <i class="fas fa-fire"></i>
                     <span>En preparación: <strong id="preparacionCount">0</strong></span>
                 </div>
-                <div class="stat-card-mini">
+                <div class="stat-card-mini listo">
                     <i class="fas fa-check-circle"></i>
                     <span>Listos: <strong id="listosCount">0</strong></span>
                 </div>
             </div>
 
+            <!-- FILTROS Y ORDENAMIENTO -->
+            <div class="cocina-toolbar">
+                <div class="filtros-group">
+                    <button class="filter-btn active" data-filter="todos">
+                        <i class="fas fa-list"></i> Todos
+                    </button>
+                    <button class="filter-btn" data-filter="Pendiente">
+                        <i class="fas fa-hourglass-start"></i> Pendientes
+                    </button>
+                    <button class="filter-btn" data-filter="En preparación">
+                        <i class="fas fa-fire"></i> En preparación
+                    </button>
+                    <button class="filter-btn" data-filter="Listo">
+                        <i class="fas fa-check-circle"></i> Listos
+                    </button>
+                    <button class="filter-btn urgente-filter" data-filter="urgente">
+                        <i class="fas fa-exclamation-triangle"></i> Solo urgentes
+                    </button>
+                </div>
+                <div class="orden-group">
+                    <label for="sortSelect"><i class="fas fa-sort"></i> Ordenar:</label>
+                    <select id="sortSelect">
+                        <option value="hora">Más antiguo primero</option>
+                        <option value="horaDesc">Más reciente primero</option>
+                        <option value="tiempo">Mayor tiempo estimado</option>
+                        <option value="urgente">Urgentes primero</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- TABLERO DE PEDIDOS (llenado por JS) -->
             <div id="cocinaPedidos" class="cocina-pedidos"></div>
+
         </div>
 
         <footer class="footer">
             <p>&copy; 2024 Walok Restaurante Oriental - Control de Cocina</p>
         </footer>
     </div>
+
+    <!-- TOAST DE NOTIFICACIÓN -->
+    <div id="toastCocina" class="toast-cocina"></div>
 
     <script src="cocina.js"></script>
 </body>
