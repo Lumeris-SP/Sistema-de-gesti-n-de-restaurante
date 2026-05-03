@@ -111,6 +111,32 @@ function calcularContador() {
 }
 
 // ============================================================
+// LIMPIAR PEDIDOS ACTIVOS
+// ============================================================
+function limpiarPedidosActivos() {
+    const activos = pedidos.filter(p =>
+        p.estado !== 'cancelado' && p.estado !== 'entregado'
+    ).length;
+
+    if (activos === 0) {
+        alert('No hay pedidos activos para eliminar.');
+        return;
+    }
+
+    if (!confirm(`¿Eliminar los ${activos} pedido(s) activo(s)? Esta acción no se puede deshacer.`)) return;
+
+    // Conservar solo cancelados y entregados
+    pedidos = pedidos.filter(p =>
+        p.estado === 'cancelado' || p.estado === 'entregado'
+    );
+
+    contadorPedido = calcularContador();
+    actualizarCodigo();
+    guardarPedidosStorage();
+    renderizarPedidos();
+}
+
+// ============================================================
 // INIT
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
@@ -133,18 +159,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('pedidoForm').addEventListener('submit', crearPedido);
 
-    // Escuchar cambios de pedidos desde otras pestañas (cocina.js)
+    // ✅ Un solo listener para pedidos y platos
     window.addEventListener('storage', (e) => {
         if (e.key === 'pedidos') {
             sincronizarDesdeStorage();
-        }
-    });
-
-    // ✅ CAMBIO 2: Escuchar cambios de platos (misma pestaña u otra)
-    // Cuando platos.js agrega, edita, elimina o cambia estado de un plato,
-    // pedidos.js recarga automáticamente la lista sin afectar nada más.
-    window.addEventListener('storage', (e) => {
-        if (e.key === 'platos') {
+        } else if (e.key === 'platos') {
             cargarPlatosDB();
             renderizarPlatos();
         }
@@ -274,7 +293,6 @@ function validarQty(platoId) {
 }
 
 function calcularSubtotal(platoId) {
-    // ✅ Comparar como string para evitar errores string vs number
     const plato = PLATOS_DB.find(p => String(p.id) === String(platoId));
     if (!plato) return;
     const qty    = parseInt(document.getElementById(`qty-${platoId}`)?.value) || 1;

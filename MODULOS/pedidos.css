@@ -1,10 +1,238 @@
 /*
  * pedidos.css — Estilos exclusivos del módulo de Pedidos
  * Requiere: styles.css (CSS global) cargado antes
- * NO redefine: body, container, header, back-btn, logo-container,
- *              form-container, form-row, form-group, btn-primary,
- *              btn-secondary, btn-danger, btn-success, footer, scrollbar
  */
+
+/* ============================================================
+   HEADER DE NAVEGACIÓN
+   ============================================================ */
+.main-header {
+    background: var(--dark-surface);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    margin-bottom: 24px;
+    border: 1px solid rgba(201,160,61,0.3);
+    box-shadow: 0 0 20px rgba(180,30,50,0.2);
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.logo-icon {
+    width: 48px;
+    height: 48px;
+    background: rgba(201,160,61,0.15);
+    border: 1px solid rgba(201,160,61,0.4);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo-icon i {
+    font-size: 22px;
+    color: var(--primary-gold);
+}
+
+.logo-text h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    background: linear-gradient(135deg, #d4af37, #c41e3a);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    line-height: 1;
+}
+
+.logo-text span {
+    font-size: 11px;
+    color: #aaa;
+    letter-spacing: 0.5px;
+}
+
+:root {
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --gold-dark: #7a5c1e;
+    --gold-glow: rgba(201,168,76,0.35);
+    --dark-border: rgba(201,168,76,0.18);
+    --text-muted-nav: #888;
+}
+
+.main-header {
+    position: relative;
+    z-index: 10;
+    background: linear-gradient(180deg, rgba(20,10,10,0.98) 0%, rgba(10,5,5,0.95) 100%);
+    border-bottom: 1px solid var(--dark-border);
+    box-shadow: 0 2px 20px rgba(0,0,0,0.6), 0 1px 0 var(--gold-dark);
+    padding: 0.8rem 2rem;
+    border-radius: 15px;
+    margin-bottom: 24px;
+}
+.header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+.logo-icon {
+    width: 42px;
+    height: 42px;
+    background: radial-gradient(circle, var(--gold-dark), #3a1a00);
+    border-radius: 50%;
+    border: 1.5px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold-light);
+    font-size: 1.2rem;
+    box-shadow: 0 0 12px var(--gold-glow);
+}
+.logo-icon i {
+    color: var(--gold-light);
+    font-size: 1.2rem;
+}
+.logo-text h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 4px;
+    margin: 0;
+    line-height: 1;
+    text-shadow: 0 0 15px var(--gold-glow);
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    -webkit-text-fill-color: unset;
+}
+.logo-text span {
+    font-size: 0.68rem;
+    color: var(--text-muted-nav);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+.main-nav {
+    display: flex;
+    gap: 0.3rem;
+    flex-wrap: wrap;
+}
+.main-nav a {
+    text-decoration: none;
+    color: var(--text-muted-nav);
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    padding: 0.45rem 0.9rem;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    transition: all 0.25s;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    text-transform: uppercase;
+    font-family: 'Poppins', sans-serif;
+    background: none;
+    box-shadow: none;
+}
+.main-nav a:hover {
+    color: var(--gold-light);
+    border-color: var(--gold-dark);
+    background: rgba(201,168,76,0.07);
+    transform: none;
+    box-shadow: none;
+}
+.main-nav a.active {
+    color: var(--gold);
+    border-color: var(--gold-dark);
+    background: rgba(201,168,76,0.12);
+    box-shadow: inset 0 0 8px rgba(201,168,76,0.1);
+}
+.main-nav a i {
+    font-size: 12px;
+    color: inherit;
+    margin: 0;
+}
+@media (max-width: 700px) {
+    .main-header { padding: 14px 16px; }
+    .header-content { flex-direction: column; align-items: flex-start; }
+    .main-nav { width: 100%; }
+    .main-nav a { flex: 1; justify-content: center; font-size: 11px; padding: 7px 8px; }
+}
+
+.main-header .main-nav a:hover {
+    transform: none !important;
+    box-shadow: none !important;
+    color: var(--text-light) !important;
+    background: rgba(255,255,255,0.05) !important;
+    border-color: #555 !important;
+    color: var(--text-light);
+    background: rgba(255,255,255,0.05);
+    border-color: #555;
+}
+
+.main-header .main-nav a.active {
+    color: var(--primary-gold);
+    background: rgba(201,160,61,0.1);
+    border-color: rgba(201,160,61,0.4);
+}
+
+.main-header .main-nav a i {
+    color: inherit !important;
+    margin: 0 !important;
+    font-size: 13px;
+}
+
+@media (max-width: 700px) {
+    .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 14px 16px;
+    }
+    .main-header .main-nav {
+    display: flex !important;
+    gap: 6px !important;
+    flex-wrap: wrap !important;
+    margin: 0 !important;
+    grid-template-columns: unset !important;
+        width: 100%;
+    }
+    .main-header .main-nav a {
+    background: none !important;
+    transform: none !important;
+    box-shadow: none !important;
+    min-width: unset !important;
+    text-align: left !important;
+    padding: 8px 14px !important;
+    font-size: 13px !important;
+    color: #aaa !important;
+    border: 1px solid transparent !important;
+        flex: 1;
+        justify-content: center;
+        font-size: 11px;
+        padding: 7px 8px;
+    }
+}
 
 /* ============================================================
    LAYOUT DEL MÓDULO
