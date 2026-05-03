@@ -26,18 +26,15 @@ const ADICIONALES_DB = [
     { nombre: 'Sin ajo',                  precio: 0    },
     { nombre: 'Porción extra de carne',   precio: 6.00 },
 ];
+
 // ============================================================
 // ESTADO EN MEMORIA (se sincroniza con localStorage)
 // ============================================================
-let pedidos = [];           // array de trabajo
+let pedidos = [];
 let contadorPedido = 1;
 let prioridadSeleccionada = 'normal';
 
 // ─── helpers localStorage ────────────────────────────────────
-/**
- * Lee todos los pedidos de localStorage.
- * Convierte la fecha (string ISO) de vuelta a objeto Date.
- */
 function cargarPedidosStorage() {
     const raw = localStorage.getItem('pedidos');
     if (!raw) return [];
@@ -47,75 +44,40 @@ function cargarPedidosStorage() {
     } catch { return []; }
 }
 
-/**
- * Guarda el array pedidos en localStorage con el formato
- * que esperan cocina.js, cuenta.js y app.js.
- *
- * Formato unificado por pedido:
- *   id, mesa, mozo, cliente, fecha (ISO string),
- *   items [{ platoId, nombre, precio, modificaciones }],
- *   total, observaciones,
- *   prioridad, justificacion,
- *   estado        ('Activo' | 'Pagado')          ← usado por cuenta.js / app.js
- *   estadoCocina  ('Pendiente' | 'En preparación' | 'Listo')  ← usado por cocina.js
- *   tiempoTotal   (minutos estimados, fijo 20)
- */
 function guardarPedidosStorage() {
     const toSave = pedidos.map(p => ({
-        // ── identificadores / metadata ──────────────────────
-        id:            p.codigo,          // cocina.js usa p.id
+        id:            p.codigo,
         codigo:        p.codigo,
         mesa:          p.mesa,
         mozo:          p.mozo,
         cliente:       p.cliente || '',
         fecha:         p.fecha instanceof Date ? p.fecha.toISOString() : p.fecha,
-
-        // ── platos en formato unificado ─────────────────────
-        // pedidos.js guarda p.platos; los otros módulos esperan p.items
         items: p.platos.map(pl => ({
             platoId:        pl.id,
             nombre:         pl.nombre,
-            precio:         pl.subtotal,               // subtotal del ítem (qty * precio + extras)
+            precio:         pl.subtotal,
             modificaciones: pl.observaciones.map(o => o.texto).join(', '),
         })),
-        platos: p.platos,                              // mantener también formato original
-
-        // ── totales / notas ─────────────────────────────────
+        platos: p.platos,
         total:          p.total,
         observaciones:  p.observacionGeneral || '',
-
-        // ── prioridad (específico de pedidos.js) ────────────
         prioridad:      p.prioridad,
         justificacion:  p.justificacion || '',
-
-        // ── estados usados por los otros módulos ────────────
-        // Mapear estado interno → estado que esperan los demás módulos
         estado:        mapearEstadoExterno(p.estado),
         estadoCocina:  mapearEstadoCocina(p.estado),
-
-        tiempoTotal:   20,  // minutos estimados por defecto
+        tiempoTotal:   20,
     }));
 
     localStorage.setItem('pedidos', JSON.stringify(toSave));
-
-    // Notificar a otras pestañas (dashboard, cocina, cuenta)
     window.dispatchEvent(new StorageEvent('storage', { key: 'pedidos' }));
 }
 
-/**
- * Convierte el estado interno (pedidos.js) al campo `estado`
- * que usan cuenta.js y app.js  ('Activo' | 'Pagado').
- */
 function mapearEstadoExterno(estadoInterno) {
     if (estadoInterno === 'entregado') return 'Pagado';
     if (estadoInterno === 'cancelado') return 'Cancelado';
     return 'Activo';
 }
 
-/**
- * Convierte el estado interno al campo `estadoCocina`
- * que usa cocina.js  ('Pendiente' | 'En preparación' | 'Listo').
- */
 function mapearEstadoCocina(estadoInterno) {
     const mapa = {
         registrado:  'Pendiente',
@@ -128,11 +90,6 @@ function mapearEstadoCocina(estadoInterno) {
     return mapa[estadoInterno] || 'Pendiente';
 }
 
-/**
- * Convierte el estado externo (leído de localStorage por otros módulos)
- * de vuelta al estado interno que usa pedidos.js.
- * Se usa al cargar pedidos que fueron modificados en cocina.js.
- */
 function mapearEstadoInterno(estadoCocina, estadoExterno) {
     if (estadoExterno === 'Pagado')    return 'entregado';
     if (estadoExterno === 'Cancelado') return 'cancelado';
@@ -144,9 +101,6 @@ function mapearEstadoInterno(estadoCocina, estadoExterno) {
     return mapa[estadoCocina] || 'registrado';
 }
 
-/**
- * Calcula el siguiente número de pedido mirando lo que ya existe en storage.
- */
 function calcularContador() {
     if (pedidos.length === 0) return 1;
     const nums = pedidos.map(p => {
@@ -160,11 +114,10 @@ function calcularContador() {
 // INIT
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
-    cargarPlatosDB(); 
-    // Cargar pedidos previos desde localStorage
+    cargarPlatosDB();
+
     pedidos = cargarPedidosStorage().map(p => ({
         ...p,
-        // normalizar al formato interno si vienen de otro módulo
         platos:            p.platos || [],
         observacionGeneral: p.observaciones || '',
         estado: p.estado === 'Pagado'    ? 'entregado'
@@ -180,10 +133,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('pedidoForm').addEventListener('submit', crearPedido);
 
-    // Escuchar cambios de otras pestañas (cocina.js actualiza estadoCocina)
+    // Escuchar cambios de pedidos desde otras pestañas (cocina.js)
     window.addEventListener('storage', (e) => {
         if (e.key === 'pedidos') {
             sincronizarDesdeStorage();
+        }
+    });
+
+    // ✅ CAMBIO 2: Escuchar cambios de platos (misma pestaña u otra)
+    // Cuando platos.js agrega, edita, elimina o cambia estado de un plato,
+    // pedidos.js recarga automáticamente la lista sin afectar nada más.
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'platos') {
+            cargarPlatosDB();
+            renderizarPlatos();
         }
     });
 
@@ -214,10 +177,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-/**
- * Cuando cocina.js u otro módulo modifica el localStorage,
- * sincronizar el estado de los pedidos ya registrados (sin pisar los nuevos).
- */
 function sincronizarDesdeStorage() {
     const externos = cargarPedidosStorage();
     pedidos = pedidos.map(p => {
@@ -315,11 +274,13 @@ function validarQty(platoId) {
 }
 
 function calcularSubtotal(platoId) {
-    const plato   = PLATOS_DB.find(p => p.id === platoId);
-    const qty     = parseInt(document.getElementById(`qty-${platoId}`)?.value) || 1;
-    const extras  = calcularExtrasObs(platoId);
-    const sub     = (plato.precio + extras) * qty;
-    const el      = document.getElementById(`sub-${platoId}`);
+    // ✅ Comparar como string para evitar errores string vs number
+    const plato = PLATOS_DB.find(p => String(p.id) === String(platoId));
+    if (!plato) return;
+    const qty    = parseInt(document.getElementById(`qty-${platoId}`)?.value) || 1;
+    const extras = calcularExtrasObs(platoId);
+    const sub    = (plato.precio + extras) * qty;
+    const el     = document.getElementById(`sub-${platoId}`);
     if (el) el.textContent = `S/ ${sub.toFixed(2)}`;
 }
 
@@ -344,7 +305,8 @@ function calcularTotal() {
             total += (plato.precio + extras) * qty;
         }
     });
-    document.getElementById('totalDisplay').textContent = `S/ ${total.toFixed(2)}`;
+    const el = document.getElementById('totalDisplay');
+    if (el) el.textContent = `S/ ${total.toFixed(2)}`;
 }
 
 // ============================================================
@@ -482,23 +444,22 @@ function validarJustificacion() {
 }
 
 // ============================================================
-// CREAR PEDIDO  ← AHORA GUARDA EN localStorage
+// CREAR PEDIDO
 // ============================================================
 function crearPedido(e) {
     e.preventDefault();
-    const okMesa  = validarMesa();
-    const okMozo  = validarMozo(true);
+    const okMesa   = validarMesa();
+    const okMozo   = validarMozo(true);
     const okPlatos = validarPlatos();
-    const okJust  = validarJustificacion();
+    const okJust   = validarJustificacion();
     if (!okMesa || !okMozo || !okPlatos || !okJust) return;
 
-    const mesa         = parseInt(document.getElementById('mesa').value);
-    const mozo         = document.getElementById('mozo').value.trim();
-    const cliente      = document.getElementById('cliente').value.trim();
+    const mesa          = parseInt(document.getElementById('mesa').value);
+    const mozo          = document.getElementById('mozo').value.trim();
+    const cliente       = document.getElementById('cliente').value.trim();
     const observaciones = document.getElementById('observaciones').value.trim();
-    const ahora        = new Date();
+    const ahora         = new Date();
 
-    // Recopilar platos seleccionados
     const platosSeleccionados = [];
     PLATOS_DB.filter(p => p.activo).forEach(plato => {
         const chk = document.getElementById(`chk-${plato.id}`);
@@ -522,19 +483,19 @@ function crearPedido(e) {
             });
             const extras = obsData.reduce((s, o) => s + o.extra, 0);
             platosSeleccionados.push({
-                id:            plato.id,
-                nombre:        plato.nombre,
+                id:             plato.id,
+                nombre:         plato.nombre,
                 precioUnitario: plato.precio,
-                cantidad:      qty,
-                subtotal:      (plato.precio + extras) * qty,
-                observaciones: obsData,
+                cantidad:       qty,
+                subtotal:       (plato.precio + extras) * qty,
+                observaciones:  obsData,
             });
         }
     });
 
-    const total    = platosSeleccionados.reduce((s, p) => s + p.subtotal, 0);
-    const justSel  = document.getElementById('justificacionSelect').value;
-    const justTxt  = document.getElementById('justificacionTexto').value.trim();
+    const total       = platosSeleccionados.reduce((s, p) => s + p.subtotal, 0);
+    const justSel     = document.getElementById('justificacionSelect').value;
+    const justTxt     = document.getElementById('justificacionTexto').value.trim();
     const justificacion = prioridadSeleccionada === 'urgente'
         ? (justSel === 'Otro' ? justTxt : justSel)
         : '';
@@ -549,7 +510,7 @@ function crearPedido(e) {
         observacionGeneral: observaciones,
         prioridad:          prioridadSeleccionada,
         justificacion,
-        estado:             'registrado',   // estado interno
+        estado:             'registrado',
         total,
     };
 
@@ -557,18 +518,16 @@ function crearPedido(e) {
     contadorPedido++;
     actualizarCodigo();
 
-    // ✅ GUARDAR EN localStorage (conecta con cocina.js, cuenta.js, app.js)
     guardarPedidosStorage();
-
     renderizarPedidos();
     resetForm();
 }
 
 function resetForm() {
-    document.getElementById('mesa').value              = '';
-    document.getElementById('mozo').value              = '';
-    document.getElementById('cliente').value           = '';
-    document.getElementById('observaciones').value     = '';
+    document.getElementById('mesa').value               = '';
+    document.getElementById('mozo').value               = '';
+    document.getElementById('cliente').value            = '';
+    document.getElementById('observaciones').value      = '';
     document.getElementById('justificacionSelect').value = '';
     document.getElementById('justificacionTexto').value  = '';
     document.getElementById('justificacionBlock').classList.remove('visible');
@@ -583,12 +542,12 @@ function resetForm() {
 // RENDER PEDIDOS
 // ============================================================
 const ESTADOS_FLUJO = {
-    registrado:  { label: 'Registrado',       class: 'estado-registrado',  siguiente: 'cocina'       },
-    cocina:      { label: 'Enviado a Cocina',  class: 'estado-cocina',      siguiente: 'preparacion'  },
-    preparacion: { label: 'En Preparación',    class: 'estado-preparacion', siguiente: 'listo'        },
-    listo:       { label: 'Listo para Servir', class: 'estado-listo',       siguiente: 'entregado'    },
-    entregado:   { label: 'Entregado',         class: 'estado-entregado',   siguiente: null           },
-    cancelado:   { label: 'Cancelado',         class: 'estado-cancelado',   siguiente: null           },
+    registrado:  { label: 'Registrado',       class: 'estado-registrado',  siguiente: 'cocina'  },
+    cocina:      { label: 'Enviado a Cocina',  class: 'estado-cocina',      siguiente: null      },
+    preparacion: { label: 'En Preparación',    class: 'estado-preparacion', siguiente: null      },
+    listo:       { label: 'Listo para Servir', class: 'estado-listo',       siguiente: null      },
+    entregado:   { label: 'Entregado',         class: 'estado-entregado',   siguiente: null      },
+    cancelado:   { label: 'Cancelado',         class: 'estado-cancelado',   siguiente: null      },
 };
 
 function renderizarPedidos() {
@@ -684,12 +643,9 @@ function renderizarPedidos() {
 
 function nextLabel(estado) {
     const labels = {
-        cocina:      '<i class="fas fa-paper-plane"></i> Enviar a Cocina',
-        preparacion: '<i class="fas fa-fire"></i> En Preparación',
-        listo:       '<i class="fas fa-bell"></i> Listo para Servir',
-        entregado:   '<i class="fas fa-check"></i> Marcar Entregado',
+        cocina: '<i class="fas fa-paper-plane"></i> Enviar a Cocina',
     };
-    return labels[estado] || estado;
+    return labels[estado] || '';
 }
 
 function avanzarEstado(i) {
@@ -697,7 +653,7 @@ function avanzarEstado(i) {
     const flujo = ESTADOS_FLUJO[p.estado];
     if (flujo.siguiente) {
         p.estado = flujo.siguiente;
-        guardarPedidosStorage();   // ✅ sincronizar con los otros módulos
+        guardarPedidosStorage();
         renderizarPedidos();
     }
 }
@@ -705,7 +661,7 @@ function avanzarEstado(i) {
 function cancelarPedido(i) {
     if (confirm('¿Cancelar este pedido?')) {
         pedidos[i].estado = 'cancelado';
-        guardarPedidosStorage();   // ✅ sincronizar con los otros módulos
+        guardarPedidosStorage();
         renderizarPedidos();
     }
 }
