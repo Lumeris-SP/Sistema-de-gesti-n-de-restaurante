@@ -37,6 +37,19 @@ function getFechaHora() {
     });
 }
 
+// ── NUEVO: formatea un campo fecha (ISO string o Date) al formato peruano ──
+function formatFecha(fecha) {
+    if (!fecha) return '—';
+    try {
+        return new Date(fecha).toLocaleString('es-PE', {
+            day: '2-digit', month: '2-digit', year: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        });
+    } catch {
+        return '—';
+    }
+}
+
 function showToast(msg, tipo = 'success') {
     const toast = document.getElementById('toast');
     const toastMsg = document.getElementById('toast-msg');
@@ -64,7 +77,7 @@ function showError(id, msg) {
 
 let mesaActual = null;
 let pedidosSeleccionados = [];
-let facturaEnEdicion = null; // id de factura a anular
+let facturaEnEdicion = null;
 
 // ============================================================
 // TABS
@@ -104,11 +117,13 @@ function buscarMesa() {
         return;
     }
 
-    // Obtener pedidos con estado "Entregado" de esa mesa
     const pedidos = getLS('pedidos');
+
+    // ── CORRECCIÓN: aceptar 'Entregado' (viene de pedidos.js estado 'listo')
+    //    y también 'Listo' por si cocina.js lo marca directamente
     const pedidosMesa = pedidos.filter(p =>
         parseInt(p.mesa) === mesa &&
-        p.estado === 'Entregado'
+        (p.estado === 'Entregado' || p.estadoCocina === 'Listo')
     );
 
     // Verificar que no hayan sido ya facturados
@@ -120,7 +135,10 @@ function buscarMesa() {
         }
     });
 
-    const pedidosDisponibles = pedidosMesa.filter(p => !pedidosYaFacturados.has(p.id));
+    // Usar p.id o p.codigo (pedidos.js guarda ambos)
+    const pedidosDisponibles = pedidosMesa.filter(p =>
+        !pedidosYaFacturados.has(p.id) && !pedidosYaFacturados.has(p.codigo)
+    );
 
     if (pedidosDisponibles.length === 0) {
         showError('error-mesa',
@@ -161,22 +179,34 @@ function renderPedidosMesa(pedidos) {
         const card = document.createElement('div');
         card.className = 'pedido-item-card';
 
-        const platos = (pedido.platos || []).map(p => `
+        // ── CORRECCIÓN: normalizar platos desde cualquier formato ──────────
+        // pedidos.js guarda p.platos con {nombre, cantidad, precioUnitario, subtotal}
+        // pero también puede venir en p.items con {nombre, precio, modificaciones}
+        const platosNormalizados = normalizarPlatos(pedido);
+
+        const platos = platosNormalizados.map(p => `
             <tr>
                 <td>${p.nombre}</td>
                 <td class="td-cant">${p.cantidad}</td>
                 <td class="td-precio">${formatMoney(p.precioUnitario)}</td>
                 <td class="td-subtotal">${formatMoney(p.subtotal)}</td>
-                ${p.observacion ? `<td style="font-size:0.75rem;color:var(--text-muted);font-style:italic">${p.observacion}</td>` : '<td></td>'}
+                <td style="font-size:0.75rem;color:var(--text-muted);font-style:italic">
+                    ${p.observacion || ''}
+                </td>
             </tr>
         `).join('');
 
+        // ── CORRECCIÓN: usar fecha si fechaHora no existe ──────────────────
+        const fechaMostrar = pedido.fechaHora || formatFecha(pedido.fecha);
+
         card.innerHTML = `
             <div class="pedido-item-header">
-                <span class="pedido-code"><i class="fas fa-hashtag"></i> ${pedido.id}</span>
+                <span class="pedido-code">
+                    <i class="fas fa-hashtag"></i> ${pedido.id || pedido.codigo}
+                </span>
                 <span class="pedido-meta">
                     <i class="fas fa-user"></i> ${pedido.mozo} &nbsp;|&nbsp;
-                    <i class="fas fa-clock"></i> ${pedido.fechaHora || '—'}
+                    <i class="fas fa-clock"></i> ${fechaMostrar}
                 </span>
                 <span class="prioridad-${(pedido.prioridad || 'normal').toLowerCase()}">
                     <i class="fas fa-flag"></i> ${pedido.prioridad || 'Normal'}
@@ -199,10 +229,45 @@ function renderPedidosMesa(pedidos) {
         container.appendChild(card);
     });
 
-    // Guardar referencia y armar paso 3
-    pedidosSeleccionados = pedidos;
+    // Guardar referencia con platos normalizados y armar paso 3
+    pedidosSeleccionados = pedidos.map(p => ({
+        ...p,
+        platos: normalizarPlatos(p),
+        // Asegurar que id siempre exista
+        id: p.id || p.codigo,
+    }));
+
     armarResumen();
     document.getElementById('paso-pago').classList.remove('hidden');
+}
+
+// ── NUEVO: normaliza el array de platos sin importar el formato de origen ──
+function normalizarPlatos(pedido) {
+    // Preferir p.platos (formato completo de pedidos.js)
+    if (Array.isArray(pedido.platos) && pedido.platos.length > 0) {
+        return pedido.platos.map(p => ({
+            nombre:         p.nombre,
+            cantidad:       parseInt(p.cantidad) || 1,
+            precioUnitario: parseFloat(p.precioUnitario) || parseFloat(p.precio) || 0,
+            subtotal:       parseFloat(p.subtotal) || parseFloat(p.precio) || 0,
+            observacion:    p.observaciones
+                                ? p.observaciones.map(o => o.texto || o).join(', ')
+                                : (p.observacion || p.modificaciones || ''),
+        }));
+    }
+
+    // Fallback: p.items (formato reducido)
+    if (Array.isArray(pedido.items) && pedido.items.length > 0) {
+        return pedido.items.map(item => ({
+            nombre:         item.nombre,
+            cantidad:       parseInt(item.cantidad) || 1,
+            precioUnitario: parseFloat(item.precioUnitario) || parseFloat(item.precio) || 0,
+            subtotal:       parseFloat(item.subtotal) || parseFloat(item.precio) || 0,
+            observacion:    item.modificaciones || '',
+        }));
+    }
+
+    return [];
 }
 
 // ============================================================
@@ -222,13 +287,13 @@ function armarResumen() {
             const key = p.nombre;
             if (itemsAgrupados[key]) {
                 itemsAgrupados[key].cantidad += parseInt(p.cantidad);
-                itemsAgrupados[key].subtotal += parseFloat(p.subtotal);
+                itemsAgrupados[key].subtotal  += parseFloat(p.subtotal);
             } else {
                 itemsAgrupados[key] = {
-                    nombre: p.nombre,
-                    cantidad: parseInt(p.cantidad),
+                    nombre:         p.nombre,
+                    cantidad:       parseInt(p.cantidad),
                     precioUnitario: parseFloat(p.precioUnitario),
-                    subtotal: parseFloat(p.subtotal)
+                    subtotal:       parseFloat(p.subtotal)
                 };
             }
         });
@@ -237,7 +302,6 @@ function armarResumen() {
     const wrapper = document.createElement('div');
     wrapper.className = 'tabla-resumen-wrap';
 
-    // Encabezado
     wrapper.innerHTML = `
         <div class="resumen-item-row resumen-header-row">
             <span class="ri-nombre">Plato</span>
@@ -274,7 +338,7 @@ function recalcular() {
     // Descuento
     let descuento = 0;
     if (document.getElementById('chk-descuento').checked) {
-        const tipo = document.getElementById('tipo-descuento').value;
+        const tipo  = document.getElementById('tipo-descuento').value;
         const valor = parseFloat(document.getElementById('input-descuento').value) || 0;
         if (tipo === 'porcentaje') {
             descuento = (subtotal * valor) / 100;
@@ -282,23 +346,22 @@ function recalcular() {
             descuento = valor;
         }
         if (descuento > subtotal) descuento = subtotal;
-        if (descuento < 0) descuento = 0;
+        if (descuento < 0)        descuento = 0;
     }
 
     // IGV
     let igv = 0;
-    const conIgv = document.getElementById('chk-igv').checked;
+    const conIgv      = document.getElementById('chk-igv').checked;
     const baseCalculo = subtotal - descuento;
     if (conIgv) igv = baseCalculo * 0.18;
 
     const total = baseCalculo + igv;
 
-    document.getElementById('val-subtotal').textContent = formatMoney(subtotal);
+    document.getElementById('val-subtotal').textContent  = formatMoney(subtotal);
     document.getElementById('val-descuento').textContent = '- ' + formatMoney(descuento);
-    document.getElementById('val-igv').textContent = formatMoney(igv);
-    document.getElementById('val-total').textContent = formatMoney(total);
+    document.getElementById('val-igv').textContent       = formatMoney(igv);
+    document.getElementById('val-total').textContent     = formatMoney(total);
 
-    // Vuelto si efectivo
     calcularVuelto();
 }
 
@@ -310,7 +373,7 @@ document.getElementById('chk-descuento').addEventListener('change', function () 
     const form = document.getElementById('descuento-form');
     form.classList.toggle('hidden', !this.checked);
     if (!this.checked) {
-        document.getElementById('input-descuento').value = '';
+        document.getElementById('input-descuento').value          = '';
         document.getElementById('input-justificacion-desc').value = '';
     }
     recalcular();
@@ -330,7 +393,7 @@ document.querySelectorAll('input[name="metodo-pago"]').forEach(radio => {
         efectivoFields.classList.toggle('hidden', this.value !== 'Efectivo');
         if (this.value !== 'Efectivo') {
             document.getElementById('input-monto-recibido').value = '';
-            document.getElementById('display-vuelto').value = '';
+            document.getElementById('display-vuelto').value       = '';
         }
     });
 });
@@ -338,14 +401,14 @@ document.querySelectorAll('input[name="metodo-pago"]').forEach(radio => {
 document.getElementById('input-monto-recibido').addEventListener('input', calcularVuelto);
 
 function calcularVuelto() {
-    const total = parseMoney(document.getElementById('val-total').textContent);
-    const monto = parseFloat(document.getElementById('input-monto-recibido').value) || 0;
+    const total   = parseMoney(document.getElementById('val-total').textContent);
+    const monto   = parseFloat(document.getElementById('input-monto-recibido').value) || 0;
     const vueltoEl = document.getElementById('display-vuelto');
-    if (monto >= total) {
-        vueltoEl.value = formatMoney(monto - total);
+    if (monto >= total && total > 0) {
+        vueltoEl.value       = formatMoney(monto - total);
         vueltoEl.style.color = 'var(--success)';
     } else if (monto > 0) {
-        vueltoEl.value = '⚠ Insuficiente';
+        vueltoEl.value       = '⚠ Insuficiente';
         vueltoEl.style.color = 'var(--danger)';
     } else {
         vueltoEl.value = '';
@@ -368,10 +431,10 @@ function confirmarPago() {
 
     // Validar descuento
     if (document.getElementById('chk-descuento').checked) {
-        const tipo = document.getElementById('tipo-descuento').value;
+        const tipo      = document.getElementById('tipo-descuento').value;
         const valorDesc = parseFloat(document.getElementById('input-descuento').value);
-        const justDesc = document.getElementById('input-justificacion-desc').value.trim();
-        const subtotal = parseMoney(document.getElementById('val-subtotal').textContent);
+        const justDesc  = document.getElementById('input-justificacion-desc').value.trim();
+        const subtotal  = parseMoney(document.getElementById('val-subtotal').textContent);
 
         if (isNaN(valorDesc) || valorDesc < 0) {
             showError('error-descuento', 'El descuento no puede ser negativo.');
@@ -413,33 +476,34 @@ function confirmarPago() {
     if (!valido) return;
 
     // Construir objeto factura
-    const subtotal = parseMoney(document.getElementById('val-subtotal').textContent);
+    const subtotal    = parseMoney(document.getElementById('val-subtotal').textContent);
     const descuentoStr = document.getElementById('val-descuento').textContent;
-    const descuento = parseMoney(descuentoStr.replace('- ', ''));
-    const igv = parseMoney(document.getElementById('val-igv').textContent);
-    const total = parseMoney(document.getElementById('val-total').textContent);
+    const descuento   = parseMoney(descuentoStr.replace('- ', ''));
+    const igv         = parseMoney(document.getElementById('val-igv').textContent);
+    const total       = parseMoney(document.getElementById('val-total').textContent);
 
     const factura = {
-        id: generarCodigoFactura(),
-        mesa: mesaActual,
-        pedidosIds: pedidosSeleccionados.map(p => p.id),
-        pedidos: pedidosSeleccionados,
+        id:          generarCodigoFactura(),
+        mesa:        mesaActual,
+        // ── CORRECCIÓN: usar id o codigo según lo que exista ──
+        pedidosIds:  pedidosSeleccionados.map(p => p.id || p.codigo),
+        pedidos:     pedidosSeleccionados,
         subtotal,
         descuento,
         justificacionDescuento: document.getElementById('chk-descuento').checked
             ? document.getElementById('input-justificacion-desc').value.trim()
             : '',
-        conIgv: document.getElementById('chk-igv').checked,
+        conIgv:      document.getElementById('chk-igv').checked,
         igv,
         total,
-        metodoPago: metodoPago.value,
+        metodoPago:  metodoPago.value,
         montoRecibido: metodoPago.value === 'Efectivo'
             ? parseFloat(document.getElementById('input-monto-recibido').value) || 0
             : null,
         vuelto: metodoPago.value === 'Efectivo'
             ? Math.max(0, (parseFloat(document.getElementById('input-monto-recibido').value) || 0) - total)
             : null,
-        estado: 'Pagada',
+        estado:    'Pagada',
         fechaHora: getFechaHora()
     };
 
@@ -448,10 +512,11 @@ function confirmarPago() {
     facturas.push(factura);
     setLS('facturas', facturas);
 
-    // Marcar pedidos como facturados
+    // ── CORRECCIÓN: marcar pedidos como Facturado usando id o codigo ──
     const pedidos = getLS('pedidos');
+    const idsFacturados = new Set(pedidosSeleccionados.map(ps => ps.id || ps.codigo));
     pedidos.forEach(p => {
-        if (pedidosSeleccionados.map(ps => ps.id).includes(p.id)) {
+        if (idsFacturados.has(p.id) || idsFacturados.has(p.codigo)) {
             p.estado = 'Facturado';
         }
     });
@@ -467,26 +532,26 @@ function confirmarPago() {
 // ============================================================
 
 function resetFormulario() {
-    mesaActual = null;
+    mesaActual          = null;
     pedidosSeleccionados = [];
-    document.getElementById('input-mesa').value = '';
+    document.getElementById('input-mesa').value               = '';
     document.getElementById('paso-pedidos').classList.add('hidden');
     document.getElementById('paso-pago').classList.add('hidden');
-    document.getElementById('lista-pedidos-mesa').innerHTML = '';
-    document.getElementById('tabla-resumen-items').innerHTML = '';
-    document.getElementById('chk-descuento').checked = false;
+    document.getElementById('lista-pedidos-mesa').innerHTML   = '';
+    document.getElementById('tabla-resumen-items').innerHTML  = '';
+    document.getElementById('chk-descuento').checked          = false;
     document.getElementById('descuento-form').classList.add('hidden');
-    document.getElementById('input-descuento').value = '';
+    document.getElementById('input-descuento').value          = '';
     document.getElementById('input-justificacion-desc').value = '';
-    document.getElementById('chk-igv').checked = true;
+    document.getElementById('chk-igv').checked                = true;
     document.querySelectorAll('input[name="metodo-pago"]').forEach(r => r.checked = false);
     document.getElementById('efectivo-fields').classList.add('hidden');
-    document.getElementById('input-monto-recibido').value = '';
-    document.getElementById('display-vuelto').value = '';
-    document.getElementById('val-subtotal').textContent = 'S/ 0.00';
-    document.getElementById('val-descuento').textContent = '- S/ 0.00';
-    document.getElementById('val-igv').textContent = 'S/ 0.00';
-    document.getElementById('val-total').textContent = 'S/ 0.00';
+    document.getElementById('input-monto-recibido').value     = '';
+    document.getElementById('display-vuelto').value           = '';
+    document.getElementById('val-subtotal').textContent       = 'S/ 0.00';
+    document.getElementById('val-descuento').textContent      = '- S/ 0.00';
+    document.getElementById('val-igv').textContent            = 'S/ 0.00';
+    document.getElementById('val-total').textContent          = 'S/ 0.00';
     clearErrors();
 }
 
@@ -574,9 +639,9 @@ document.getElementById('btn-imprimir-ticket').addEventListener('click', () => {
 // ============================================================
 
 function renderFacturas() {
-    const facturas = getLS('facturas');
-    const container = document.getElementById('lista-facturas');
-    const busqueda = document.getElementById('buscador-facturas').value.toLowerCase();
+    const facturas    = getLS('facturas');
+    const container   = document.getElementById('lista-facturas');
+    const busqueda    = document.getElementById('buscador-facturas').value.toLowerCase();
     const filtroEstado = document.getElementById('filtro-estado-factura').value;
 
     let filtradas = facturas.filter(f => {
@@ -587,7 +652,6 @@ function renderFacturas() {
         return coincideBusqueda && coincideEstado;
     });
 
-    // Mostrar las más recientes primero
     filtradas = filtradas.reverse();
 
     if (filtradas.length === 0) {
@@ -605,12 +669,12 @@ function renderFacturas() {
         card.className = 'factura-card';
 
         const estadoClass =
-            f.estado === 'Pagada' ? 'estado-pagada' :
+            f.estado === 'Pagada'  ? 'estado-pagada'  :
             f.estado === 'Anulada' ? 'estado-anulada' : 'estado-pendiente';
 
         const estadoIcon =
-            f.estado === 'Pagada' ? 'fa-check-circle' :
-            f.estado === 'Anulada' ? 'fa-ban' : 'fa-clock';
+            f.estado === 'Pagada'  ? 'fa-check-circle' :
+            f.estado === 'Anulada' ? 'fa-ban'          : 'fa-clock';
 
         card.innerHTML = `
             <div class="factura-card-header">
@@ -644,7 +708,6 @@ function renderFacturas() {
     });
 }
 
-// Buscador y filtro en tiempo real
 document.getElementById('buscador-facturas').addEventListener('input', renderFacturas);
 document.getElementById('filtro-estado-factura').addEventListener('change', renderFacturas);
 
@@ -659,7 +722,6 @@ function verDetalleFactura(id) {
     mostrarTicket(f);
 }
 
-// Exponer globalmente
 window.verDetalleFactura = verDetalleFactura;
 
 // ============================================================
@@ -668,7 +730,7 @@ window.verDetalleFactura = verDetalleFactura;
 
 function iniciarAnulacion(id) {
     facturaEnEdicion = id;
-    document.getElementById('input-motivo-anulacion').value = '';
+    document.getElementById('input-motivo-anulacion').value  = '';
     document.getElementById('error-motivo-anulacion').textContent = '';
     document.getElementById('modal-anular').classList.remove('hidden');
 }
@@ -692,23 +754,25 @@ document.getElementById('btn-confirmar-anulacion').addEventListener('click', () 
     const idx = facturas.findIndex(f => f.id === facturaEnEdicion);
     if (idx === -1) return;
 
-    // Verificar que no esté ya anulada
     if (facturas[idx].estado === 'Anulada') {
         showToast('Esta factura ya está anulada.', 'error');
         document.getElementById('modal-anular').classList.add('hidden');
         return;
     }
 
-    facturas[idx].estado = 'Anulada';
+    facturas[idx].estado          = 'Anulada';
     facturas[idx].motivoAnulacion = motivo;
-    facturas[idx].fechaAnulacion = getFechaHora();
+    facturas[idx].fechaAnulacion  = getFechaHora();
     setLS('facturas', facturas);
 
-    // Revertir estado de pedidos asociados a "Entregado"
+    // ── CORRECCIÓN: revertir pedidos usando id o codigo ──
     const pedidos = getLS('pedidos');
-    (facturas[idx].pedidosIds || []).forEach(pid => {
-        const p = pedidos.find(pe => pe.id === pid);
-        if (p) p.estado = 'Entregado';
+    const idsAnulados = new Set(facturas[idx].pedidosIds || []);
+    pedidos.forEach(p => {
+        if (idsAnulados.has(p.id) || idsAnulados.has(p.codigo)) {
+            p.estado      = 'Entregado';
+            p.estadoCocina = 'Listo';
+        }
     });
     setLS('pedidos', pedidos);
 
@@ -732,9 +796,7 @@ document.getElementById('modal-anular').addEventListener('click', function (e) {
 // ============================================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Si hay datos de demo en localStorage (para pruebas), no sobreescribir
-    // Solo verificar que las claves existan
-    if (!localStorage.getItem('pedidos')) setLS('pedidos', []);
-    if (!localStorage.getItem('platos')) setLS('platos', []);
+    if (!localStorage.getItem('pedidos'))  setLS('pedidos',  []);
+    if (!localStorage.getItem('platos'))   setLS('platos',   []);
     if (!localStorage.getItem('facturas')) setLS('facturas', []);
 });
