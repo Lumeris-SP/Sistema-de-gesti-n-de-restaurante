@@ -53,6 +53,7 @@ class GestionPlatos {
 
     guardarPlatos() {
         localStorage.setItem('platos', JSON.stringify(this.platos));
+        window.dispatchEvent(new StorageEvent('storage', { key: 'platos' }));
         this.actualizarListado();
     }
 
