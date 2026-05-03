@@ -44,33 +44,35 @@ function cargarPedidosStorage() {
     } catch { return []; }
 }
 
-function guardarPedidosStorage() {
+const guardarPedidosStorage = () => {
     const toSave = pedidos.map(p => ({
-        id:            p.codigo,
-        codigo:        p.codigo,
-        mesa:          p.mesa,
-        mozo:          p.mozo,
-        cliente:       p.cliente || '',
-        fecha:         p.fecha instanceof Date ? p.fecha.toISOString() : p.fecha,
-        items: p.platos.map(pl => ({
-            platoId:        pl.id,
-            nombre:         pl.nombre,
-            precio:         pl.subtotal,
-            modificaciones: pl.observaciones.map(o => o.texto).join(', '),
-        })),
+        id: p.codigo,
+        codigo: p.codigo,
+        mesa: p.mesa,
+        mozo: p.mozo,
+        cliente: p.cliente || '',
+        fecha: p.fecha instanceof Date ? p.fecha.toISOString() : p.fecha,
+
         platos: p.platos,
-        total:          p.total,
-        observaciones:  p.observacionGeneral || '',
-        prioridad:      p.prioridad,
-        justificacion:  p.justificacion || '',
-        estado:        mapearEstadoExterno(p.estado),
-        estadoCocina:  mapearEstadoCocina(p.estado),
-        tiempoTotal:   20,
+
+        total: p.total,
+        observaciones: p.observacionGeneral || '',
+        prioridad: p.prioridad,
+        justificacion: p.justificacion || '',
+
+        estado: mapearEstadoExterno(p.estado),
+        estadoCocina: mapearEstadoCocina(p.estado),
+
+        tiempoTotal: 20,
+
+        // ✅ AQUÍ AGREGAS ESTO (AL FINAL DEL OBJETO)
+        urgente: p.urgente || false,
+        justificacionUrgente: p.justificacionUrgente || '',
     }));
 
     localStorage.setItem('pedidos', JSON.stringify(toSave));
     window.dispatchEvent(new StorageEvent('storage', { key: 'pedidos' }));
-}
+};
 
 function mapearEstadoExterno(estadoInterno) {
     if (estadoInterno === 'entregado') return 'Pagado';
@@ -489,6 +491,11 @@ function crearPedido(e) {
                 cantidad:       qty,
                 subtotal:       (plato.precio + extras) * qty,
                 observaciones:  obsData,
+
+                // 
+                platoId:        plato.id,
+                estadoPlato:    'Pendiente',
+                tiempo:         20,
             });
         }
     });
@@ -512,6 +519,9 @@ function crearPedido(e) {
         justificacion,
         estado:             'registrado',
         total,
+            estadoCocina: 'Pendiente',
+        urgente: prioridadSeleccionada === 'urgente',
+        justificacionUrgente: prioridadSeleccionada === 'urgente' ? justificacion : '',
     };
 
     pedidos.unshift(pedido);

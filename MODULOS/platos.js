@@ -256,7 +256,7 @@ class GestionPlatos {
         const pedidos = JSON.parse(localStorage.getItem('pedidos')) || [];
        // DESPUÉS — compara ambos como string, siempre funciona
 const enUso = pedidos.some(p => 
-    p.items.some(item => String(item.platoId) === String(id))
+    (p.platos || []).some(item => String(item.id) === String(id))
 );
         
         if (enUso) {

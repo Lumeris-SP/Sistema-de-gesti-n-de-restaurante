@@ -1,4 +1,4 @@
-// cocina.js - Módulo 3: Tablero de Cocina - Walok Restaurante Oriental
+// cocina.js - Módulo 3: Tablero de Cocina -MAFFIA Restaurante Oriental
 class ControlCocina {
     constructor() {
         this.pedidos = [];
@@ -70,10 +70,14 @@ class ControlCocina {
     }
 
     estadoGeneral(pedido) {
-        if (!pedido.items || pedido.items.length === 0) {
+        if (!pedido.platos || pedido.platos.length === 0) {
             return pedido.estadoCocina || 'Pendiente';
         }
-        const estados = pedido.items.map(i => i.estadoPlato || pedido.estadoCocina || 'Pendiente');
+
+        const estados = pedido.platos.map(
+            i => i.estadoPlato || pedido.estadoCocina || 'Pendiente'
+        );
+
         if (estados.every(e => e === 'Listo')) return 'Listo';
         if (estados.some(e => e === 'En preparación' || e === 'Listo')) return 'En preparación';
         return 'Pendiente';
@@ -135,21 +139,24 @@ class ControlCocina {
     }
 
     // ── Acciones ─────────────────────────────────────────────────────────────
-
     cambiarEstadoPlato(pedidoId, itemIndex, nuevoEstado) {
-        const pedido = this.pedidos.find(p => p.id === pedidoId);
+        const pedido = this.pedidos.find(p => p.codigo === pedidoId);
         if (!pedido) return;
+
         if (pedido.estado === 'Cancelado') {
             this.mostrarToast('No se puede modificar un pedido cancelado', 'error');
             return;
         }
-        pedido.items[itemIndex].estadoPlato = nuevoEstado;
+
+        // ✅ CAMBIO AQUÍ
+        pedido.platos[itemIndex].estadoPlato = nuevoEstado;
+
         pedido.estadoCocina = this.estadoGeneral(pedido);
         this.guardarPedidos();
     }
 
     cambiarEstadoPedido(pedidoId, nuevoEstado) {
-        const pedido = this.pedidos.find(p => p.id === pedidoId);
+        const pedido = this.pedidos.find(p => p.codigo === pedidoId);
         if (!pedido) return;
 
         if (pedido.estado === 'Cancelado') {
@@ -157,8 +164,9 @@ class ControlCocina {
             return;
         }
 
+
         if (nuevoEstado === 'Listo') {
-            const yaEnCocina = pedido.items && pedido.items.some(
+            const yaEnCocina = pedido.platos && pedido.platos.some(
                 i => i.estadoPlato === 'En preparación' || i.estadoPlato === 'Listo'
             );
             if (!yaEnCocina && pedido.estadoCocina === 'Pendiente') {
@@ -167,8 +175,8 @@ class ControlCocina {
             }
         }
 
-        if (pedido.items) {
-            pedido.items.forEach(item => {
+        if (pedido.platos) {
+            pedido.platos.forEach(item => {
                 if (nuevoEstado === 'Listo') {
                     item.estadoPlato = 'Listo';
                 } else if (nuevoEstado === 'En preparación') {
@@ -179,8 +187,16 @@ class ControlCocina {
             });
         }
 
+        // 
+        if (nuevoEstado === 'Listo') {
+            pedido.estado = 'Entregado';
+        } else {
+            pedido.estado = nuevoEstado;
+        }
+
         pedido.estadoCocina = nuevoEstado;
-        this.guardarPedidos();
+
+        this.guardarPedidos(); // ✔️ guarda cambios
 
         const mensajes = {
             'En preparación': 'Pedido enviado a preparación',
@@ -189,14 +205,36 @@ class ControlCocina {
         this.mostrarToast(mensajes[nuevoEstado] || '', 'ok');
     }
 
-    mostrarToast(mensaje, tipo = 'ok') {
-        const toast = document.getElementById('toastCocina');
-        if (!toast) return;
-        toast.textContent  = mensaje;
-        toast.className    = 'toast-cocina show ' + (tipo === 'error' ? 'toast-error' : 'toast-ok');
-        clearTimeout(this._toastTimer);
-        this._toastTimer   = setTimeout(() => toast.classList.remove('show'), 2800);
-    }
+        mostrarToast(mensaje, tipo = 'ok') {
+            const toast = document.getElementById('toastCocina');
+            if (!toast) return;
+            
+            // Limpiar clases anteriores
+            toast.className = 'toast-cocina';
+            
+            // Agregar clase según tipo
+            if (tipo === 'ok') {
+                toast.classList.add('toast-success');
+            } else if (tipo === 'error') {
+                toast.classList.add('toast-error');
+            }
+            
+            // Crear contenido con icono
+            const icono = tipo === 'ok' ? 'fa-check-circle' : 'fa-exclamation-circle';
+            toast.innerHTML = `
+                <div class="toast-inner">
+                    <i class="fas ${icono}"></i>
+                    <span>${mensaje}</span>
+                </div>
+            `;
+            
+            toast.classList.add('show');
+            
+            clearTimeout(this._toastTimer);
+            this._toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3500);
+        }
 
     // ── Render ───────────────────────────────────────────────────────────────
 
@@ -214,10 +252,29 @@ class ControlCocina {
 
         lista = [...lista];
         switch (this.orden) {
-            case 'horaDesc': lista.sort((a, b) => Number(b.id) - Number(a.id)); break;
-            case 'tiempo':   lista.sort((a, b) => (b.tiempoTotal || 0) - (a.tiempoTotal || 0)); break;
-            case 'urgente':  lista.sort((a, b) => (b.urgente ? 1 : 0) - (a.urgente ? 1 : 0)); break;
-            default:         lista.sort((a, b) => Number(a.id) - Number(b.id)); break;
+            case 'horaDesc':
+                lista.sort((a, b) =>
+                    Number(b.codigo.replace('PED','')) - Number(a.codigo.replace('PED',''))
+                );
+                break;
+
+            case 'tiempo':
+                lista.sort((a, b) =>
+                    (b.tiempoTotal || 0) - (a.tiempoTotal || 0)
+                );
+                break;
+
+            case 'urgente':
+                lista.sort((a, b) =>
+                    (b.urgente ? 1 : 0) - (a.urgente ? 1 : 0)
+                );
+                break;
+
+            default:
+                lista.sort((a, b) =>
+                    Number(a.codigo.replace('PED','')) - Number(b.codigo.replace('PED',''))
+                );
+                break;
         }
 
         const pendientes = pedidosCocina.filter(p => this.estadoGeneral(p) === 'Pendiente').length;
@@ -248,7 +305,7 @@ class ControlCocina {
         const eg        = this.estadoGeneral(pedido);
         const esUrgente = !!pedido.urgente;
         const tiempoMax = pedido.tiempoTotal ||
-            (pedido.items?.length ? Math.max(...pedido.items.map(i => parseInt(i.tiempo) || 0)) : 0);
+            (pedido.platos?.length ? Math.max(...pedido.platos.map(i => parseInt(i.tiempo) || 0)) : 0);
         const mozo      = pedido.mozo || pedido.cliente || '—';
         const progreso  = this.progresoEstado(eg);
         const fecha     = this.formatearFecha(pedido.fecha);
@@ -259,7 +316,7 @@ class ControlCocina {
                           : 'estado-listo';
 
         // ── Platos individuales ──────────────────────────────────────────────
-        const platosHTML = (pedido.items || []).map((item, idx) => {
+        const platosHTML = (pedido.platos || []).map((item, idx) => {
             const epPlato = item.estadoPlato || pedido.estadoCocina || 'Pendiente';
             const epClass = epPlato === 'Pendiente'      ? 'estado-pendiente'
                           : epPlato === 'En preparación' ? 'estado-preparacion'
@@ -311,12 +368,29 @@ class ControlCocina {
                                 <i class="fas fa-shield-alt"></i> Sin alérgenos
                                </div>`}
                     </div>
-                    <select class="plato-estado-select ${epClass}"
-                        onchange="controlCocina.cambiarEstadoPlato('${pedido.id}', ${idx}, this.value)">
-                        <option value="Pendiente"      ${epPlato === 'Pendiente'      ? 'selected' : ''}>⏳ Pendiente</option>
-                        <option value="En preparación" ${epPlato === 'En preparación' ? 'selected' : ''}>🔥 En preparación</option>
-                        <option value="Listo"          ${epPlato === 'Listo'          ? 'selected' : ''}>✅ Listo</option>
-                    </select>
+                        <div class="plato-estado-buttons">
+                            <button type="button" 
+                                class="btn-estado-plato ${epPlato === 'Pendiente' ? 'active' : ''}"
+                                data-estado="Pendiente"
+                                onclick="controlCocina.cambiarEstadoPlato('${pedido.codigo}', ${idx}, 'Pendiente')">
+                                <i class="fas fa-hourglass-start"></i>
+                                <span>Pendiente</span>
+                            </button>
+                            <button type="button" 
+                                class="btn-estado-plato ${epPlato === 'En preparación' ? 'active' : ''}"
+                                data-estado="En preparación"
+                                onclick="controlCocina.cambiarEstadoPlato('${pedido.codigo}', ${idx}, 'En preparación')">
+                                <i class="fas fa-fire"></i>
+                                <span>Cocinando</span>
+                            </button>
+                            <button type="button" 
+                                class="btn-estado-plato ${epPlato === 'Listo' ? 'active' : ''}"
+                                data-estado="Listo"
+                                onclick="controlCocina.cambiarEstadoPlato('${pedido.codigo}', ${idx}, 'Listo')">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Listo</span>
+                            </button>
+                        </div>
                 </div>`;
         }).join('');
 
@@ -336,7 +410,7 @@ class ControlCocina {
                 <div class="pedido-header">
                     <div class="pedido-header-info">
                         <h3 class="pedido-codigo">
-                            Pedido #${pedido.id.toString().slice(-6)}
+                            Pedido #${pedido.codigo}
                             ${esUrgente ? '<span class="urgente-chip">URGENTE</span>' : ''}
                         </h3>
                         <div class="pedido-meta">
@@ -388,29 +462,35 @@ class ControlCocina {
             </div>`;
     }
 
-    renderizarBotones(pedido, estadoGeneral) {
-        switch (estadoGeneral) {
-            case 'Pendiente':
-                return `
-                    <button class="btn-accion btn-preparacion"
-                        onclick="controlCocina.cambiarEstadoPedido('${pedido.id}', 'En preparación')">
-                        <i class="fas fa-play"></i> Iniciar preparación
-                    </button>`;
-            case 'En preparación':
-                return `
-                    <button class="btn-accion btn-listo"
-                        onclick="controlCocina.cambiarEstadoPedido('${pedido.id}', 'Listo')">
-                        <i class="fas fa-check"></i> Marcar todos como listos
-                    </button>`;
+renderizarBotones(pedido, estadoGeneral) {
+    switch (estadoGeneral) {
+        case 'Pendiente':
+            return `
+                <button class="btn-accion btn-preparacion"
+                    onclick="controlCocina.cambiarEstadoPedido('${pedido.codigo}', 'En preparación')">
+                    <i class="fas fa-play"></i>
+                    <span class="btn-text">Iniciar preparación</span>
+                    <span class="btn-subtext">Comienza la cocina</span>
+                </button>`;
+        case 'En preparación':
+            return `
+                <button class="btn-accion btn-listo-pedido"
+                    onclick="controlCocina.cambiarEstadoPedido('${pedido.codigo}', 'Listo')">
+                    <i class="fas fa-check-double"></i> 
+                    <span class="btn-text">Marcar todos como listos</span>
+                    <span class="btn-subtext">Presiona para completar</span>
+                </button>`;
             case 'Listo':
                 return `
                     <button class="btn-accion btn-completado" disabled>
-                        <i class="fas fa-check-circle"></i> Listo para servir
+                        <i class="fas fa-star"></i> 
+                        <span class="btn-text">¡Listo para servir!</span>
                     </button>`;
-            default:
-                return '';
-        }
+
+        default:
+            return '';
     }
+}
 }
 
 let controlCocina;
