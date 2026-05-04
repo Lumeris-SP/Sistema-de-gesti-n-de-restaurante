@@ -303,7 +303,7 @@ class GestionPlatos {
 
     eliminarPlato(id) {
         const pedidos = JSON.parse(localStorage.getItem('pedidos')) || [];
-<<<<<<< HEAD
+ HEAD
        // DESPUÉS — compara ambos como string, siempre funciona
         const enUso = pedidos
             .filter(p => p.estado !== 'Cancelado')
@@ -311,12 +311,10 @@ class GestionPlatos {
                 (p.platos || []).some(item => String(item.id) === String(id))
             );
         
-=======
         const enUso = pedidos.some(p =>
             (p.platos || []).some(item => String(item.id) === String(id))
         );
 
->>>>>>> RAMA_EBER
         if (enUso) {
             alert('No se puede eliminar el plato porque tiene pedidos asociados');
             return;
