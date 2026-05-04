@@ -234,12 +234,17 @@ function renderizarPlatos() {
     const contenedor = document.getElementById('platosDisponibles');
     contenedor.innerHTML = '';
     PLATOS_DB.filter(p => p.activo).forEach(plato => {
-        const div = document.createElement('div');
+        const div = document.createElement('div');      
         div.className = 'plato-item';
         div.id = `plato-item-${plato.id}`;
         div.innerHTML = `
             <div class="plato-header" onclick="togglePlato(${plato.id}, false)">
-                <input class="plato-check" type="checkbox" id="chk-${plato.id}" onchange="togglePlato(${plato.id}, true)" onclick="event.stopPropagation()">
+                <input 
+                    class="plato-check" 
+                    type="checkbox" 
+                    id="chk-${plato.id}"
+                    onclick="event.stopPropagation(); togglePlato(${plato.id}, true)"
+                >
                 <span class="plato-name">${plato.nombre}</span>
                 <span class="plato-precio">S/ ${plato.precio.toFixed(2)}</span>
             </div>
@@ -689,7 +694,21 @@ function avanzarEstado(i) {
 function cancelarPedido(i) {
     if (confirm('¿Cancelar este pedido?')) {
         pedidos[i].estado = 'cancelado';
-        guardarPedidosStorage();
-        renderizarPedidos();
+        
+        // Animar desaparición
+        const card = document.querySelectorAll('.pedido-card')[i];
+        if (card) {
+            card.style.transition = 'opacity 0.3s, transform 0.3s';
+            card.style.opacity = '0';
+            card.style.transform = 'translateX(20px)';
+            
+            setTimeout(() => {
+                guardarPedidosStorage();
+                renderizarPedidos();
+            }, 300);
+        } else {
+            guardarPedidosStorage();
+            renderizarPedidos();
+        }
     }
 }

@@ -16,13 +16,22 @@ class DashboardApp {
         
         // Obtener pedidos
         const pedidos = JSON.parse(localStorage.getItem('pedidos')) || [];
-        const pedidosActivos = pedidos.filter(p => p.estado !== 'Pagado').length;
+        const pedidosActivos = pedidos.filter(p => 
+            p.estado !== 'Pagado' && p.estado !== 'Cancelado'
+        ).length;
         
         // Pedidos en cocina (pendientes y en preparación)
-        const enCocina = pedidos.filter(p => p.estadoCocina === 'Pendiente' || p.estadoCocina === 'En preparación').length;
+        const enCocina = pedidos.filter(p => 
+            p.estado !== 'Cancelado' &&
+            (p.estadoCocina === 'Pendiente' || p.estadoCocina === 'En preparación')
+        ).length;
         
         // Pedidos listos
-        const listos = pedidos.filter(p => p.estadoCocina === 'Listo' && p.estado !== 'Pagado').length;
+        const listos = pedidos.filter(p => 
+            p.estado !== 'Pagado' &&
+            p.estado !== 'Cancelado' &&
+            p.estadoCocina === 'Listo'
+        ).length;
         
         // Actualizar DOM
         document.getElementById('totalPlatos').textContent = platosActivos;
