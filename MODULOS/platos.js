@@ -1,10 +1,18 @@
+// ============================================================
 // platos.js - Gestión completa de platos
+// MAFFIA Restaurante Oriental
+// ============================================================
+
 class GestionPlatos {
     constructor() {
         this.platos = [];
         this.editandoId = null;
         this.init();
     }
+
+    // ─────────────────────────────────────────
+    // INICIALIZACIÓN
+    // ─────────────────────────────────────────
 
     init() {
         this.cargarPlatos();
@@ -13,10 +21,14 @@ class GestionPlatos {
         this.manejarAlergenos();
     }
 
+    // ─────────────────────────────────────────
+    // CARGA Y PERSISTENCIA
+    // ─────────────────────────────────────────
+
     cargarPlatos() {
         const stored = localStorage.getItem('platos');
         this.platos = stored ? JSON.parse(stored) : [];
-        
+
         // Datos de ejemplo si está vacío
         if (this.platos.length === 0) {
             this.platos = [
@@ -57,6 +69,10 @@ class GestionPlatos {
         this.actualizarListado();
     }
 
+    // ─────────────────────────────────────────
+    // EVENTOS
+    // ─────────────────────────────────────────
+
     registrarEventos() {
         document.getElementById('platoForm').addEventListener('submit', (e) => {
             e.preventDefault();
@@ -79,7 +95,7 @@ class GestionPlatos {
     manejarAlergenos() {
         const checkboxes = document.querySelectorAll('.alergeno');
         const otroInput = document.getElementById('otroAlergeno');
-        
+
         checkboxes.forEach(cb => {
             cb.addEventListener('change', () => {
                 // Si selecciona "Ninguno", desmarcar los demás
@@ -89,15 +105,15 @@ class GestionPlatos {
                     });
                     otroInput.style.display = 'none';
                 }
-                
-                // Si selecciona "Otro", mostrar campo
+
+                // Si selecciona "Otro", mostrar campo de texto
                 if (cb.value === 'Otro' && cb.checked) {
                     otroInput.style.display = 'block';
                 } else if (cb.value === 'Otro' && !cb.checked) {
                     otroInput.style.display = 'none';
                     otroInput.value = '';
                 }
-                
+
                 // Si se marca cualquier otro, desmarcar "Ninguno"
                 if (cb.value !== 'Ninguno' && cb.checked) {
                     const ninguno = document.querySelector('.alergeno[value="Ninguno"]');
@@ -107,53 +123,86 @@ class GestionPlatos {
         });
     }
 
+    // ─────────────────────────────────────────
+    // VALIDACIÓN
+    // ─────────────────────────────────────────
+
     validarPlato(datos) {
         const errores = {};
 
-        // Validar código
-        if (!datos.codigo) errores.codigo = 'El código es obligatorio';
-        else if (datos.codigo.length < 3) errores.codigo = 'Mínimo 3 caracteres';
-        else if (datos.codigo !== datos.codigo.trim()) errores.codigo = 'No debe tener espacios al inicio o final';
-        else if (!this.editandoId && this.platos.some(p => p.codigo === datos.codigo)) {
+        // Código
+        if (!datos.codigo) {
+            errores.codigo = 'El código es obligatorio';
+        } else if (datos.codigo.length < 3) {
+            errores.codigo = 'Mínimo 3 caracteres';
+        } else if (datos.codigo !== datos.codigo.trim()) {
+            errores.codigo = 'No debe tener espacios al inicio o final';
+        } else if (!this.editandoId && this.platos.some(p => p.codigo === datos.codigo)) {
             errores.codigo = 'El código ya existe';
         }
 
-        // Validar nombre
-        if (!datos.nombre) errores.nombre = 'El nombre es obligatorio';
-        else if (datos.nombre.length < 3) errores.nombre = 'Mínimo 3 caracteres';
-        else if (datos.nombre.length > 60) errores.nombre = 'Máximo 60 caracteres';
-        else if (/^\d+$/.test(datos.nombre)) errores.nombre = 'No puede ser solo números';
+        // Nombre
+        if (!datos.nombre) {
+            errores.nombre = 'El nombre es obligatorio';
+        } else if (datos.nombre.length < 3) {
+            errores.nombre = 'Mínimo 3 caracteres';
+        } else if (datos.nombre.length > 60) {
+            errores.nombre = 'Máximo 60 caracteres';
+        } else if (/^\d+$/.test(datos.nombre)) {
+            errores.nombre = 'No puede ser solo números';
+        }
 
-        // Validar descripción
-        if (!datos.descripcion) errores.descripcion = 'La descripción es obligatoria';
-        else if (datos.descripcion.length < 10) errores.descripcion = 'Mínimo 10 caracteres';
-        else if (datos.descripcion.length > 250) errores.descripcion = 'Máximo 250 caracteres';
+        // Descripción
+        if (!datos.descripcion) {
+            errores.descripcion = 'La descripción es obligatoria';
+        } else if (datos.descripcion.length < 10) {
+            errores.descripcion = 'Mínimo 10 caracteres';
+        } else if (datos.descripcion.length > 250) {
+            errores.descripcion = 'Máximo 250 caracteres';
+        }
 
-        // Validar categoría
-        if (!datos.categoria) errores.categoria = 'Seleccione una categoría';
+        // Categoría
+        if (!datos.categoria) {
+            errores.categoria = 'Seleccione una categoría';
+        }
 
-        // Validar precio
-        if (!datos.precio) errores.precio = 'El precio es obligatorio';
-        else if (isNaN(datos.precio) || datos.precio <= 0) errores.precio = 'Precio debe ser mayor a 0';
-        else if (datos.precio > 500) errores.precio = 'Precio máximo S/ 500';
+        // Precio
+        if (!datos.precio) {
+            errores.precio = 'El precio es obligatorio';
+        } else if (isNaN(datos.precio) || datos.precio <= 0) {
+            errores.precio = 'Precio debe ser mayor a 0';
+        } else if (datos.precio > 500) {
+            errores.precio = 'Precio máximo S/ 500';
+        }
 
-        // Validar tiempo
-        if (!datos.tiempo) errores.tiempo = 'El tiempo es obligatorio';
-        else if (isNaN(datos.tiempo) || datos.tiempo <= 0) errores.tiempo = 'Tiempo debe ser mayor a 0';
-        else if (datos.tiempo > 120) errores.tiempo = 'Tiempo máximo 120 minutos';
+        // Tiempo
+        if (!datos.tiempo) {
+            errores.tiempo = 'El tiempo es obligatorio';
+        } else if (isNaN(datos.tiempo) || datos.tiempo <= 0) {
+            errores.tiempo = 'Tiempo debe ser mayor a 0';
+        } else if (datos.tiempo > 120) {
+            errores.tiempo = 'Tiempo máximo 120 minutos';
+        }
 
-        // Validar estado
-        if (!datos.estado) errores.estado = 'Seleccione un estado';
+        // Estado
+        if (!datos.estado) {
+            errores.estado = 'Seleccione un estado';
+        }
 
-        // Validar alérgenos
-        if (datos.alergenos.length === 0) errores.alergenos = 'Seleccione al menos un alérgeno';
+        // Alérgenos
+        if (datos.alergenos.length === 0) {
+            errores.alergenos = 'Seleccione al menos un alérgeno';
+        }
         if (datos.alergenos.includes('Otro') && !datos.otroAlergeno) {
             errores.alergenos = 'Especifique el otro alérgeno';
         }
 
-        // Validar modificable
-        if (!datos.modificable) errores.modificable = 'Este campo es obligatorio';
-        else if (datos.modificable.length > 200) errores.modificable = 'Máximo 200 caracteres';
+        // Modificable
+        if (!datos.modificable) {
+            errores.modificable = 'Este campo es obligatorio';
+        } else if (datos.modificable.length > 200) {
+            errores.modificable = 'Máximo 200 caracteres';
+        }
 
         return errores;
     }
@@ -166,9 +215,12 @@ class GestionPlatos {
     }
 
     limpiarErrores() {
-        const errorSpans = document.querySelectorAll('.error-message');
-        errorSpans.forEach(span => span.textContent = '');
+        document.querySelectorAll('.error-message').forEach(span => span.textContent = '');
     }
+
+    // ─────────────────────────────────────────
+    // CRUD - GUARDAR / EDITAR / ELIMINAR
+    // ─────────────────────────────────────────
 
     guardarPlato() {
         const datos = {
@@ -186,7 +238,7 @@ class GestionPlatos {
         };
 
         const errores = this.validarPlato(datos);
-        
+
         if (Object.keys(errores).length > 0) {
             this.mostrarErrores(errores);
             return;
@@ -212,29 +264,28 @@ class GestionPlatos {
         if (!plato) return;
 
         this.editandoId = id;
-        
-        document.getElementById('codigo').value = plato.codigo;
-        document.getElementById('nombre').value = plato.nombre;
+
+        document.getElementById('codigo').value      = plato.codigo;
+        document.getElementById('nombre').value      = plato.nombre;
         document.getElementById('descripcion').value = plato.descripcion;
-        document.getElementById('categoria').value = plato.categoria;
-        document.getElementById('precio').value = plato.precio;
-        document.getElementById('tiempo').value = plato.tiempo;
-        document.getElementById('estado').value = plato.estado;
+        document.getElementById('categoria').value   = plato.categoria;
+        document.getElementById('precio').value      = plato.precio;
+        document.getElementById('tiempo').value      = plato.tiempo;
+        document.getElementById('estado').value      = plato.estado;
         document.getElementById('modificable').value = plato.modificable;
-        
+
         // Marcar alérgenos
-        const checkboxes = document.querySelectorAll('.alergeno');
-        checkboxes.forEach(cb => cb.checked = false);
+        document.querySelectorAll('.alergeno').forEach(cb => cb.checked = false);
         plato.alergenos.forEach(alergeno => {
             const cb = document.querySelector(`.alergeno[value="${alergeno}"]`);
             if (cb) cb.checked = true;
         });
-        
+
         if (plato.alergenos.includes('Otro')) {
             document.getElementById('otroAlergeno').style.display = 'block';
             document.getElementById('otroAlergeno').value = plato.otroAlergeno;
         }
-        
+
         document.getElementById('cancelarEdicion').style.display = 'inline-block';
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -244,17 +295,20 @@ class GestionPlatos {
         document.getElementById('platoForm').reset();
         document.getElementById('cancelarEdicion').style.display = 'none';
         this.limpiarErrores();
-        
-        // Resetear alérgenos
-        const checkboxes = document.querySelectorAll('.alergeno');
-        checkboxes.forEach(cb => cb.checked = false);
+
+        document.querySelectorAll('.alergeno').forEach(cb => cb.checked = false);
         document.getElementById('otroAlergeno').style.display = 'none';
         document.getElementById('otroAlergeno').value = '';
     }
 
     eliminarPlato(id) {
-        // Verificar si el plato está en algún pedido
         const pedidos = JSON.parse(localStorage.getItem('pedidos')) || [];
+<<<<<<< HEAD
+        const enUso = pedidos.some(p =>
+            (p.platos || []).some(item => String(item.id) === String(id))
+        );
+
+=======
        // DESPUÉS — compara ambos como string, siempre funciona
         const enUso = pedidos
             .filter(p => p.estado !== 'Cancelado')
@@ -262,11 +316,12 @@ class GestionPlatos {
                 (p.platos || []).some(item => String(item.id) === String(id))
             );
         
+>>>>>>> main
         if (enUso) {
             alert('No se puede eliminar el plato porque tiene pedidos asociados');
             return;
         }
-        
+
         if (confirm('¿Está seguro de eliminar este plato?')) {
             this.platos = this.platos.filter(p => p.id !== id);
             this.guardarPlatos();
@@ -283,34 +338,42 @@ class GestionPlatos {
         }
     }
 
+    // ─────────────────────────────────────────
+    // FILTRADO Y RENDERIZADO
+    // ─────────────────────────────────────────
+
     filtrarPlatos() {
-        const busqueda = document.getElementById('buscarInput').value.toLowerCase();
+        const busqueda    = document.getElementById('buscarInput').value.toLowerCase();
         const filtroEstado = document.getElementById('filtroEstado').value;
-        
+
         let filtrados = this.platos;
-        
+
         if (busqueda) {
-            filtrados = filtrados.filter(p => 
-                p.nombre.toLowerCase().includes(busqueda) || 
+            filtrados = filtrados.filter(p =>
+                p.nombre.toLowerCase().includes(busqueda) ||
                 p.categoria.toLowerCase().includes(busqueda)
             );
         }
-        
+
         if (filtroEstado !== 'todos') {
             filtrados = filtrados.filter(p => p.estado === filtroEstado);
         }
-        
+
         this.renderizarListado(filtrados);
     }
 
     renderizarListado(platos) {
         const container = document.getElementById('platosList');
-        
+
         if (platos.length === 0) {
-            container.innerHTML = '<div class="empty-state"><i class="fas fa-utensils"></i><p>No hay platos registrados</p></div>';
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-utensils"></i>
+                    <p>No hay platos registrados</p>
+                </div>`;
             return;
         }
-        
+
         container.innerHTML = platos.map(plato => `
             <div class="item-card">
                 <div class="item-header">
@@ -345,6 +408,10 @@ class GestionPlatos {
         this.renderizarListado(this.platos);
     }
 }
+
+// ─────────────────────────────────────────
+// INICIALIZAR AL CARGAR EL DOM
+// ─────────────────────────────────────────
 
 let gestionPlatos;
 document.addEventListener('DOMContentLoaded', () => {
