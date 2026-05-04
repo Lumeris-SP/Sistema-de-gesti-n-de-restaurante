@@ -5,10 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de Platos - Walok</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="navbar.css">
+    <style>
+        body {
+            background-image: url('25.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+    </style>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand">
+            <img src="e.png" alt="MAFFIA Logo" class="navbar-logo">
+            <div class="navbar-brand-text">
+                <span class="brand-name">MAFFIA</span>
+                <span class="brand-sub">Sistema de Gestión Restaurante Oriental</span>
+            </div>
+        </a>
+        <ul class="navbar-links">
+            <li><a href="index.html"><i class="fas fa-home"></i> <span>Inicio</span></a></li>
+            <li><a href="platos.html" class="active"><i class="fas fa-utensils"></i> <span>Platos</span></a></li>
+            <li><a href="pedidos.html"><i class="fas fa-clipboard-list"></i> <span>Pedidos</span></a></li>
+            <li><a href="cocina.html"><i class="fas fa-fire-burner"></i> <span>Cocina</span></a></li>
+            <li><a href="cuenta.html"><i class="fas fa-receipt"></i> <span>Cuenta</span></a></li>
+        </ul>
+    </nav>
+    <!-- ===== END NAVBAR ===== -->
+
     <div class="container">
         <header class="header">
             <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Inicio</a>
@@ -125,7 +155,7 @@
         </div>
 
         <footer class="footer">
-            <p>&copy; 2026 MAFFIA Restaurante Oriental - Módulo de Platos</p>
+            <p>&copy; 2027 MAFFIA Restaurante Oriental - Módulo de Platos</p>
         </footer>
     </div>
 
