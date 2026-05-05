@@ -64,11 +64,18 @@ class GestionPlatos {
     }
 
     guardarPlatos() {
-        localStorage.setItem('platos', JSON.stringify(this.platos));
-        window.dispatchEvent(new StorageEvent('storage', { key: 'platos' }));
+        const json = JSON.stringify(this.platos);
+        localStorage.setItem('platos', json);
+        
+        window.dispatchEvent(new StorageEvent('storage', {
+            key: 'platos',
+            newValue: json,
+            storageArea: localStorage
+        }));
+        
         this.actualizarListado();
     }
-
+        
     // ─────────────────────────────────────────
     // EVENTOS
     // ─────────────────────────────────────────
@@ -303,19 +310,12 @@ class GestionPlatos {
 
     eliminarPlato(id) {
         const pedidos = JSON.parse(localStorage.getItem('pedidos')) || [];
-
-       // DESPUÉS — compara ambos como string, siempre funciona
+    
         const enUso = pedidos
             .filter(p => p.estado !== 'Cancelado')
             .some(p => 
                 (p.platos || []).some(item => String(item.id) === String(id))
             );
-        
-
-        const enUso = pedidos.some(p =>
-            (p.platos || []).some(item => String(item.id) === String(id))
-        );
-
 
         if (enUso) {
             alert('No se puede eliminar el plato porque tiene pedidos asociados');
