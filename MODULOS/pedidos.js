@@ -75,7 +75,8 @@ const guardarPedidosStorage = () => {
 };
 
 function mapearEstadoExterno(estadoInterno) {
-    if (estadoInterno === 'entregado') return 'Pagado';
+    if (estadoInterno === 'entregado') return 'Entregado';
+    if (estadoInterno === 'listo')     return 'Entregado';
     if (estadoInterno === 'cancelado') return 'Cancelado';
     return 'Activo';
 }
@@ -94,6 +95,8 @@ function mapearEstadoCocina(estadoInterno) {
 
 function mapearEstadoInterno(estadoCocina, estadoExterno) {
     if (estadoExterno === 'Pagado')    return 'entregado';
+    if (estadoExterno === 'Entregado') return 'entregado';
+    if (estadoExterno === 'Facturado') return 'entregado';
     if (estadoExterno === 'Cancelado') return 'cancelado';
     const mapa = {
         'Pendiente':      'cocina',
@@ -149,6 +152,8 @@ document.addEventListener('DOMContentLoaded', () => {
         platos:            p.platos || [],
         observacionGeneral: p.observaciones || '',
         estado: p.estado === 'Pagado'    ? 'entregado'
+              : p.estado === 'Entregado' ? 'entregado'
+              : p.estado === 'Facturado' ? 'entregado'
               : p.estado === 'Cancelado' ? 'cancelado'
               : mapearEstadoInterno(p.estadoCocina, p.estado),
     }));
@@ -469,106 +474,149 @@ function validarJustificacion() {
 }
 
 // ============================================================
-// CREAR PEDIDO
+// CREAR O ACTUALIZAR PEDIDO (Lógica mejorada)
 // ============================================================
 function crearPedido(e) {
     e.preventDefault();
+    
+    // 1. Validaciones existentes
     const okMesa   = validarMesa();
     const okMozo   = validarMozo(true);
     const okPlatos = validarPlatos();
     const okJust   = validarJustificacion();
     if (!okMesa || !okMozo || !okPlatos || !okJust) return;
 
-    const mesa          = parseInt(document.getElementById('mesa').value);
-    const mozo          = document.getElementById('mozo').value.trim();
-    const cliente       = document.getElementById('cliente').value.trim();
+    const mesaVal       = parseInt(document.getElementById('mesa').value);
+    const mozoVal       = document.getElementById('mozo').value.trim();
+    const clienteVal    = document.getElementById('cliente').value.trim();
     const observaciones = document.getElementById('observaciones').value.trim();
     const ahora         = new Date();
 
-    const platosSeleccionados = [];
+    // 2. Recolectar platos seleccionados del formulario actual
+    const nuevosPlatos = [];
     PLATOS_DB.filter(p => p.activo).forEach(plato => {
         const chk = document.getElementById(`chk-${plato.id}`);
         if (chk && chk.checked) {
             const qty     = parseInt(document.getElementById(`qty-${plato.id}`)?.value) || 1;
             const obsList = document.getElementById(`obs-list-${plato.id}`);
             const obsData = [];
+            
             obsList.querySelectorAll('.obs-row').forEach(row => {
-                const sel  = row.querySelector('.obs-select');
-                const ta   = row.querySelector('.obs-custom');
-                let texto  = '';
-                if (sel.value === '__custom__' && ta) {
-                    texto = ta.value.trim();
-                } else {
-                    texto = sel.value;
-                }
+                const sel = row.querySelector('.obs-select');
+                const ta  = row.querySelector('.obs-custom');
+                let texto = (sel.value === '__custom__' && ta) ? ta.value.trim() : sel.value;
+                
                 if (texto) {
                     const ad = ADICIONALES_DB.find(a => a.nombre === texto);
                     obsData.push({ texto, extra: ad ? ad.precio : 0 });
                 }
             });
-            const extras = obsData.reduce((s, o) => s + o.extra, 0);
-            platosSeleccionados.push({
-                id:             plato.id,
-                nombre:         plato.nombre,
-                precioUnitario: plato.precio,
-                cantidad:       qty,
-                subtotal:       (plato.precio + extras) * qty,
-                observaciones:  obsData,
 
-                // 
-                platoId:        plato.id,
-                estadoPlato:    'Pendiente',
-                tiempo:         20,
+            const extras = obsData.reduce((s, o) => s + o.extra, 0);
+            nuevosPlatos.push({
+                id: plato.id,
+                nombre: plato.nombre,
+                precioUnitario: plato.precio,
+                cantidad: qty,
+                subtotal: (plato.precio + extras) * qty,
+                observaciones: obsData,
+                platoId: plato.id,
+                estadoPlato: 'Pendiente',
+                tiempo: 20,
             });
         }
     });
 
-    const total       = platosSeleccionados.reduce((s, p) => s + p.subtotal, 0);
-    const justSel     = document.getElementById('justificacionSelect').value;
-    const justTxt     = document.getElementById('justificacionTexto').value.trim();
-    const justificacion = prioridadSeleccionada === 'urgente'
-        ? (justSel === 'Otro' ? justTxt : justSel)
-        : '';
+    // 3. BUSCAR SI LA MESA YA TIENE UN PEDIDO ACTIVO (Para no duplicar)
+    // Se considera activo si no está 'entregado' ni 'cancelado'
+    let pedidoExistente = pedidos.find(p => 
+        parseInt(p.mesa) === mesaVal && 
+        p.estado !== 'entregado' && 
+        p.estado !== 'cancelado'
+    );
 
-    const pedido = {
-        codigo:             `PED${String(contadorPedido).padStart(3, '0')}`,
-        mesa,
-        mozo,
-        cliente,
-        fecha:              ahora,
-        platos:             platosSeleccionados,
-        observacionGeneral: observaciones,
-        prioridad:          prioridadSeleccionada,
-        justificacion,
-        estado:             'registrado',
-        total,
+    if (pedidoExistente) {
+        // --- CASO: ACTUALIZAR ---
+        // Añadimos los nuevos platos al array existente
+        pedidoExistente.platos = [...pedidoExistente.platos, ...nuevosPlatos];
+        
+        // Recalculamos el total sumando lo nuevo
+        const nuevoSubtotal = nuevosPlatos.reduce((s, p) => s + p.subtotal, 0);
+        pedidoExistente.total += nuevoSubtotal;
+
+        // Añadimos nota si existe
+        if (observaciones) {
+            pedidoExistente.observacionGeneral += (pedidoExistente.observacionGeneral ? ' | ' : '') + observaciones;
+        }
+
+        // Si esta nueva adición es urgente, el pedido completo sube de prioridad
+        if (prioridadSeleccionada === 'urgente') {
+            pedidoExistente.prioridad = 'urgente';
+            pedidoExistente.urgente = true;
+            pedidoExistente.justificacionUrgente = "Adición: " + (document.getElementById('justificacionSelect').value || "Urgente");
+        }
+
+        alert(`Se han añadido platos al pedido existente de la Mesa ${mesaVal}`);
+
+    } else {
+        // --- CASO: CREAR NUEVO ---
+        const total = nuevosPlatos.reduce((s, p) => s + p.subtotal, 0);
+        const justSel = document.getElementById('justificacionSelect').value;
+        const justTxt = document.getElementById('justificacionTexto').value.trim();
+        const justificacion = prioridadSeleccionada === 'urgente' ? (justSel === 'Otro' ? justTxt : justSel) : '';
+
+        const nuevoPedido = {
+            codigo: `PED${String(contadorPedido).padStart(3, '0')}`,
+            mesa: mesaVal,
+            mozo: mozoVal,
+            cliente: clienteVal,
+            fecha: ahora,
+            platos: nuevosPlatos,
+            observacionGeneral: observaciones,
+            prioridad: prioridadSeleccionada,
+            justificacion,
+            estado: 'registrado',
+            total,
             estadoCocina: 'Pendiente',
-        urgente: prioridadSeleccionada === 'urgente',
-        justificacionUrgente: prioridadSeleccionada === 'urgente' ? justificacion : '',
-    };
+            urgente: prioridadSeleccionada === 'urgente',
+            justificacionUrgente: prioridadSeleccionada === 'urgente' ? justificacion : '',
+        };
 
-    pedidos.unshift(pedido);
-    contadorPedido++;
-    actualizarCodigo();
+        pedidos.unshift(nuevoPedido);
+        contadorPedido++;
+        actualizarCodigo();
+    }
 
+    // 4. Persistir y Limpiar
     guardarPedidosStorage();
     renderizarPedidos();
     resetForm();
 }
 
 function resetForm() {
-    document.getElementById('mesa').value               = '';
-    document.getElementById('mozo').value               = '';
-    document.getElementById('cliente').value            = '';
-    document.getElementById('observaciones').value      = '';
+    // Limpiamos los inputs de texto
+    document.getElementById('mesa').value = '';
+    document.getElementById('mozo').value = '';
+    document.getElementById('cliente').value = '';
+    document.getElementById('observaciones').value = '';
     document.getElementById('justificacionSelect').value = '';
-    document.getElementById('justificacionTexto').value  = '';
+    document.getElementById('justificacionTexto').value = '';
+    
+    // Ocultamos bloques de urgencia
     document.getElementById('justificacionBlock').classList.remove('visible');
+    
+    // Reset de prioridad a normal
     prioridadSeleccionada = 'normal';
     document.querySelectorAll('.prio-btn').forEach(b => b.className = 'prio-btn');
-    document.querySelector('[data-prio="normal"]').classList.add('active-normal');
+    const btnNormal = document.querySelector('[data-prio="normal"]');
+    if (btnNormal) btnNormal.classList.add('active-normal');
+    
+    // Reset visual de platos y total
     renderizarPlatos();
     document.getElementById('totalDisplay').textContent = 'S/ 0.00';
+    
+    // Enfocar mesa para el siguiente pedido
+    document.getElementById('mesa').focus();
 }
 
 // ============================================================
