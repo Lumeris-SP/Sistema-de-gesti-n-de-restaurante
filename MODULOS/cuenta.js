@@ -8,11 +8,8 @@
 // ============================================================
 
 function getLS(key) {
-    try {
-        return JSON.parse(localStorage.getItem(key)) || [];
-    } catch {
-        return [];
-    }
+    try { return JSON.parse(localStorage.getItem(key)) || []; }
+    catch { return []; }
 }
 
 function setLS(key, data) {
@@ -29,15 +26,17 @@ function formatMoney(val) {
     return 'S/ ' + parseFloat(val || 0).toFixed(2);
 }
 
+function parseMoney(str) {
+    return parseFloat((str || '').replace('S/ ', '').replace(',', '.')) || 0;
+}
+
 function getFechaHora() {
-    const now = new Date();
-    return now.toLocaleString('es-PE', {
+    return new Date().toLocaleString('es-PE', {
         day: '2-digit', month: '2-digit', year: 'numeric',
         hour: '2-digit', minute: '2-digit'
     });
 }
 
-// ── NUEVO: formatea un campo fecha (ISO string o Date) al formato peruano ──
 function formatFecha(fecha) {
     if (!fecha) return '—';
     try {
@@ -45,15 +44,13 @@ function formatFecha(fecha) {
             day: '2-digit', month: '2-digit', year: 'numeric',
             hour: '2-digit', minute: '2-digit'
         });
-    } catch {
-        return '—';
-    }
+    } catch { return '—'; }
 }
 
 function showToast(msg, tipo = 'success') {
-    const toast = document.getElementById('toast');
+    const toast    = document.getElementById('toast');
     const toastMsg = document.getElementById('toast-msg');
-    const icon = toast.querySelector('.toast-icon');
+    const icon     = toast.querySelector('.toast-icon');
     toast.className = 'toast ' + tipo;
     toastMsg.textContent = msg;
     icon.className = 'toast-icon fas ' + (tipo === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle');
@@ -72,12 +69,65 @@ function showError(id, msg) {
 }
 
 // ============================================================
+// DETECTAR SI UN PEDIDO ESTÁ LISTO PARA FACTURAR
+// Acepta todas las variantes que pueden escribir cocina.js
+// y pedidos.js en localStorage.
+// ============================================================
+
+function pedidoFacturable(p) {
+    const est = (p.estado       || '').toLowerCase().trim();
+    const coc = (p.estadoCocina || '').toLowerCase().trim();
+
+    // Excluir cancelados y ya facturados
+    if (est === 'cancelado' || est === 'facturado') return false;
+
+    // Variantes de "listo" escritas por cocina.js y pedidos.js:
+    // - cocina.js  → p.estado = 'Entregado'  (con mayúscula)
+    // - pedidos.js → mapearEstadoExterno('entregado') = 'Pagado'
+    // - estadoCocina puede quedar en 'Listo' aunque estado sea 'Activo'
+    const estadosOk = ['entregado', 'listo', 'pagado'];
+    if (estadosOk.includes(est)) return true;
+    if (coc === 'listo')         return true;
+
+    return false;
+}
+
+// ============================================================
+// NORMALIZAR PLATOS
+// Compatibilidad con cualquier estructura guardada por los módulos.
+// ============================================================
+
+function normalizarPlatos(pedido) {
+    if (Array.isArray(pedido.platos) && pedido.platos.length > 0) {
+        return pedido.platos.map(p => ({
+            nombre:         p.nombre         || 'Sin nombre',
+            cantidad:       parseInt(p.cantidad)                       || 1,
+            precioUnitario: parseFloat(p.precioUnitario || p.precio)   || 0,
+            subtotal:       parseFloat(p.subtotal       || p.precio)   || 0,
+            observacion:    Array.isArray(p.observaciones)
+                                ? p.observaciones.map(o => o.texto || o).join(', ')
+                                : (p.observacion || p.modificaciones || ''),
+        }));
+    }
+    if (Array.isArray(pedido.items) && pedido.items.length > 0) {
+        return pedido.items.map(item => ({
+            nombre:         item.nombre         || 'Sin nombre',
+            cantidad:       parseInt(item.cantidad)                          || 1,
+            precioUnitario: parseFloat(item.precioUnitario || item.precio)   || 0,
+            subtotal:       parseFloat(item.subtotal       || item.precio)   || 0,
+            observacion:    item.modificaciones || '',
+        }));
+    }
+    return [];
+}
+
+// ============================================================
 // ESTADO GLOBAL DEL MÓDULO
 // ============================================================
 
-let mesaActual = null;
+let mesaActual           = null;
 let pedidosSeleccionados = [];
-let facturaEnEdicion = null;
+let facturaEnEdicion     = null;
 
 // ============================================================
 // TABS
@@ -88,14 +138,13 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
         btn.classList.add('active');
-        const tabId = 'tab-' + btn.dataset.tab;
-        document.getElementById(tabId).classList.remove('hidden');
+        document.getElementById('tab-' + btn.dataset.tab).classList.remove('hidden');
         if (btn.dataset.tab === 'cuentas-guardadas') renderFacturas();
     });
 });
 
 // ============================================================
-// PASO 1 - BUSCAR MESA
+// PASO 1 — BUSCAR MESA
 // ============================================================
 
 document.getElementById('btn-buscar-mesa').addEventListener('click', buscarMesa);
@@ -105,10 +154,10 @@ document.getElementById('input-mesa').addEventListener('keydown', e => {
 
 function buscarMesa() {
     clearErrors();
-    const inputMesa = document.getElementById('input-mesa');
-    const mesa = parseInt(inputMesa.value);
+    const inputEl = document.getElementById('input-mesa');
+    const mesa    = parseInt(inputEl.value);
 
-    if (!inputMesa.value.trim()) {
+    if (!inputEl.value.trim()) {
         showError('error-mesa', 'Ingrese un número de mesa.');
         return;
     }
@@ -119,32 +168,29 @@ function buscarMesa() {
 
     const pedidos = getLS('pedidos');
 
-    // ── CORRECCIÓN: aceptar 'Entregado' (viene de pedidos.js estado 'listo')
-    //    y también 'Listo' por si cocina.js lo marca directamente
+    // Filtrar pedidos de esta mesa que estén listos para facturar
     const pedidosMesa = pedidos.filter(p =>
-        parseInt(p.mesa) === mesa &&
-        (p.estado || '').toLowerCase() === 'entregado'
+        parseInt(p.mesa) === mesa && pedidoFacturable(p)
     );
 
-    // Verificar que no hayan sido ya facturados
-    const facturas = getLS('facturas');
-    const pedidosYaFacturados = new Set();
+    // Excluir los ya incluidos en facturas activas (no anuladas)
+    const facturas     = getLS('facturas');
+    const yaFacturados = new Set();
     facturas.forEach(f => {
         if (f.estado !== 'Anulada') {
-            (f.pedidosIds || []).forEach(id => pedidosYaFacturados.add(id));
+            (f.pedidosIds || []).forEach(id => yaFacturados.add(String(id)));
         }
     });
 
-    // Usar p.id o p.codigo (pedidos.js guarda ambos)
-    const pedidosDisponibles = pedidosMesa.filter(p =>
-        !pedidosYaFacturados.has(p.id) && !pedidosYaFacturados.has(p.codigo)
+    const disponibles = pedidosMesa.filter(p =>
+        !yaFacturados.has(String(p.id)) && !yaFacturados.has(String(p.codigo))
     );
 
-    if (pedidosDisponibles.length === 0) {
+    if (disponibles.length === 0) {
         showError('error-mesa',
             pedidosMesa.length > 0
                 ? 'Todos los pedidos de esta mesa ya fueron facturados.'
-                : 'No hay pedidos entregados para esta mesa.'
+                : 'No hay pedidos listos para cobrar en esta mesa. Primero márcalos como Listos en Cocina.'
         );
         document.getElementById('paso-pedidos').classList.add('hidden');
         document.getElementById('paso-pago').classList.add('hidden');
@@ -152,150 +198,102 @@ function buscarMesa() {
     }
 
     mesaActual = mesa;
-    pedidosSeleccionados = [];
-    renderPedidosMesa(pedidosDisponibles);
+    renderPedidosMesa(disponibles);
     document.getElementById('paso-pedidos').classList.remove('hidden');
-    document.getElementById('paso-pago').classList.add('hidden');
     document.getElementById('label-mesa-seleccionada').textContent = 'Mesa #' + mesa;
 }
 
 // ============================================================
-// PASO 2 - MOSTRAR PEDIDOS DE LA MESA
+// PASO 2 — MOSTRAR PEDIDOS DE LA MESA
 // ============================================================
 
 function renderPedidosMesa(pedidos) {
     const container = document.getElementById('lista-pedidos-mesa');
     container.innerHTML = '';
 
-    if (pedidos.length === 0) {
-        container.innerHTML = `<div class="empty-state">
-            <i class="fas fa-clipboard"></i>
-            <p>No hay pedidos entregados disponibles.</p>
-        </div>`;
-        return;
-    }
-
     pedidos.forEach(pedido => {
-        const card = document.createElement('div');
-        card.className = 'pedido-item-card';
+        const platosNorm   = normalizarPlatos(pedido);
+        const fechaMostrar = pedido.fechaHora || formatFecha(pedido.fecha);
 
-        // ── CORRECCIÓN: normalizar platos desde cualquier formato ──────────
-        // pedidos.js guarda p.platos con {nombre, cantidad, precioUnitario, subtotal}
-        // pero también puede venir en p.items con {nombre, precio, modificaciones}
-        const platosNormalizados = normalizarPlatos(pedido);
-
-        const platos = platosNormalizados.map(p => `
+        const filas = platosNorm.map(p => `
             <tr>
-                <td>${p.nombre}</td>
-                <td class="td-cant">${p.cantidad}</td>
-                <td class="td-precio">${formatMoney(p.precioUnitario)}</td>
-                <td class="td-subtotal">${formatMoney(p.subtotal)}</td>
-                ${p.observaciones && p.observaciones.length > 0 
-                    ? `<td style="font-size:0.75rem;color:var(--text-muted);font-style:italic">
-                        ${p.observaciones.map(o => o.texto).join(', ')}
-                    </td>` 
-                    : '<td></td>'}
+                <td style="padding:5px 8px">${p.nombre}</td>
+                <td style="text-align:center;padding:5px 8px">${p.cantidad}</td>
+                <td style="text-align:right;padding:5px 8px">${formatMoney(p.precioUnitario)}</td>
+                <td style="text-align:right;font-weight:600;padding:5px 8px">${formatMoney(p.subtotal)}</td>
+                <td style="font-size:0.75rem;color:var(--text-muted);font-style:italic;padding:5px 8px">${p.observacion || ''}</td>
             </tr>
         `).join('');
 
-        // ── CORRECCIÓN: usar fecha si fechaHora no existe ──────────────────
-        const fechaMostrar = pedido.fechaHora || formatFecha(pedido.fecha);
-
+        const card = document.createElement('div');
+        card.className = 'pedido-item-card';
         card.innerHTML = `
             <div class="pedido-item-header">
                 <span class="pedido-code">
                     <i class="fas fa-hashtag"></i> ${pedido.id || pedido.codigo}
                 </span>
                 <span class="pedido-meta">
-                    <i class="fas fa-user"></i> ${pedido.mozo} &nbsp;|&nbsp;
+                    <i class="fas fa-user"></i> ${pedido.mozo || '—'} &nbsp;|&nbsp;
                     <i class="fas fa-clock"></i> ${fechaMostrar}
                 </span>
                 <span class="prioridad-${(pedido.prioridad || 'normal').toLowerCase()}">
                     <i class="fas fa-flag"></i> ${pedido.prioridad || 'Normal'}
                 </span>
             </div>
-            <table class="pedido-platos-table">
+            <table style="width:100%;border-collapse:collapse;margin-top:8px">
                 <thead>
-                    <tr>
-                        <th>Plato</th>
-                        <th style="text-align:center">Cant.</th>
-                        <th style="text-align:right">P. Unit.</th>
-                        <th style="text-align:right">Subtotal</th>
-                        <th>Obs.</th>
+                    <tr style="font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;border-bottom:1px solid var(--dark-border)">
+                        <th style="text-align:left;padding:4px 8px">Plato</th>
+                        <th style="text-align:center;padding:4px 8px">Cant.</th>
+                        <th style="text-align:right;padding:4px 8px">P. Unit.</th>
+                        <th style="text-align:right;padding:4px 8px">Subtotal</th>
+                        <th style="padding:4px 8px">Obs.</th>
                     </tr>
                 </thead>
-                <tbody>${platos}</tbody>
+                <tbody style="font-size:0.85rem">${filas}</tbody>
             </table>
         `;
-
         container.appendChild(card);
     });
 
-    // Guardar referencia con platos normalizados y armar paso 3
+    // Guardar con platos normalizados para los cálculos
     pedidosSeleccionados = pedidos.map(p => ({
         ...p,
         platos: normalizarPlatos(p),
-        // Asegurar que id siempre exista
-        id: p.id || p.codigo,
+        id:     String(p.id || p.codigo),
     }));
 
     armarResumen();
     document.getElementById('paso-pago').classList.remove('hidden');
-}
 
-// ── NUEVO: normaliza el array de platos sin importar el formato de origen ──
-function normalizarPlatos(pedido) {
-    // Preferir p.platos (formato completo de pedidos.js)
-    if (Array.isArray(pedido.platos) && pedido.platos.length > 0) {
-        return pedido.platos.map(p => ({
-            nombre:         p.nombre,
-            cantidad:       parseInt(p.cantidad) || 1,
-            precioUnitario: parseFloat(p.precioUnitario) || parseFloat(p.precio) || 0,
-            subtotal:       parseFloat(p.subtotal) || parseFloat(p.precio) || 0,
-            observacion:    p.observaciones
-                                ? p.observaciones.map(o => o.texto || o).join(', ')
-                                : (p.observacion || p.modificaciones || ''),
-        }));
-    }
-
-    // Fallback: p.items (formato reducido)
-    if (Array.isArray(pedido.items) && pedido.items.length > 0) {
-        return pedido.items.map(item => ({
-            nombre:         item.nombre,
-            cantidad:       parseInt(item.cantidad) || 1,
-            precioUnitario: parseFloat(item.precioUnitario) || parseFloat(item.precio) || 0,
-            subtotal:       parseFloat(item.subtotal) || parseFloat(item.precio) || 0,
-            observacion:    item.modificaciones || '',
-        }));
-    }
-
-    return [];
+    setTimeout(() => {
+        document.getElementById('paso-pago').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 150);
 }
 
 // ============================================================
-// PASO 3 - RESUMEN Y CÁLCULOS
+// PASO 3 — RESUMEN Y CÁLCULOS
 // ============================================================
 
 function armarResumen() {
     const tablaContainer = document.getElementById('tabla-resumen-items');
     tablaContainer.innerHTML = '';
-
     if (pedidosSeleccionados.length === 0) return;
 
-    // Agrupar todos los platos de todos los pedidos
-    const itemsAgrupados = {};
+    // Agrupar platos iguales de todos los pedidos
+    const agrupados = {};
     pedidosSeleccionados.forEach(pedido => {
         (pedido.platos || []).forEach(p => {
             const key = p.nombre;
-            if (itemsAgrupados[key]) {
-                itemsAgrupados[key].cantidad += parseInt(p.cantidad);
-                itemsAgrupados[key].subtotal  += parseFloat(p.subtotal);
+            if (agrupados[key]) {
+                agrupados[key].cantidad += parseInt(p.cantidad)    || 1;
+                agrupados[key].subtotal  += parseFloat(p.subtotal) || 0;
             } else {
-                itemsAgrupados[key] = {
+                agrupados[key] = {
                     nombre:         p.nombre,
-                    cantidad:       parseInt(p.cantidad),
-                    precioUnitario: parseFloat(p.precioUnitario),
-                    subtotal:       parseFloat(p.subtotal)
+                    cantidad:       parseInt(p.cantidad)         || 1,
+                    precioUnitario: parseFloat(p.precioUnitario) || 0,
+                    subtotal:       parseFloat(p.subtotal)       || 0,
                 };
             }
         });
@@ -303,7 +301,6 @@ function armarResumen() {
 
     const wrapper = document.createElement('div');
     wrapper.className = 'tabla-resumen-wrap';
-
     wrapper.innerHTML = `
         <div class="resumen-item-row resumen-header-row">
             <span class="ri-nombre">Plato</span>
@@ -313,7 +310,7 @@ function armarResumen() {
         </div>
     `;
 
-    Object.values(itemsAgrupados).forEach(item => {
+    Object.values(agrupados).forEach(item => {
         const row = document.createElement('div');
         row.className = 'resumen-item-row';
         row.innerHTML = `
@@ -330,10 +327,11 @@ function armarResumen() {
 }
 
 function recalcular() {
+    // Sumar subtotales de todos los platos
     let subtotal = 0;
     pedidosSeleccionados.forEach(pedido => {
         (pedido.platos || []).forEach(p => {
-            subtotal += parseFloat(p.subtotal || 0);
+            subtotal += parseFloat(p.subtotal) || 0;
         });
     });
 
@@ -342,22 +340,15 @@ function recalcular() {
     if (document.getElementById('chk-descuento').checked) {
         const tipo  = document.getElementById('tipo-descuento').value;
         const valor = parseFloat(document.getElementById('input-descuento').value) || 0;
-        if (tipo === 'porcentaje') {
-            descuento = (subtotal * valor) / 100;
-        } else {
-            descuento = valor;
-        }
-        if (descuento > subtotal) descuento = subtotal;
-        if (descuento < 0)        descuento = 0;
+        descuento = (tipo === 'porcentaje') ? (subtotal * valor / 100) : valor;
+        descuento = Math.max(0, Math.min(descuento, subtotal));
     }
 
     // IGV
-    let igv = 0;
-    const conIgv      = document.getElementById('chk-igv').checked;
-    const baseCalculo = subtotal - descuento;
-    if (conIgv) igv = baseCalculo * 0.18;
-
-    const total = baseCalculo + igv;
+    const conIgv = document.getElementById('chk-igv').checked;
+    const base   = subtotal - descuento;
+    const igv    = conIgv ? base * 0.18 : 0;
+    const total  = base + igv;
 
     document.getElementById('val-subtotal').textContent  = formatMoney(subtotal);
     document.getElementById('val-descuento').textContent = '- ' + formatMoney(descuento);
@@ -368,12 +359,11 @@ function recalcular() {
 }
 
 // ============================================================
-// DESCUENTO
+// DESCUENTO — listeners
 // ============================================================
 
 document.getElementById('chk-descuento').addEventListener('change', function () {
-    const form = document.getElementById('descuento-form');
-    form.classList.toggle('hidden', !this.checked);
+    document.getElementById('descuento-form').classList.toggle('hidden', !this.checked);
     if (!this.checked) {
         document.getElementById('input-descuento').value          = '';
         document.getElementById('input-justificacion-desc').value = '';
@@ -382,47 +372,75 @@ document.getElementById('chk-descuento').addEventListener('change', function () 
 });
 
 document.getElementById('tipo-descuento').addEventListener('change', recalcular);
-document.getElementById('input-descuento').addEventListener('input', recalcular);
-document.getElementById('chk-igv').addEventListener('change', recalcular);
+document.getElementById('input-descuento').addEventListener('input',  recalcular);
+document.getElementById('chk-igv').addEventListener('change',          recalcular);
 
 // ============================================================
-// MÉTODO DE PAGO
+// MÉTODO DE PAGO — listeners
 // ============================================================
 
 document.querySelectorAll('input[name="metodo-pago"]').forEach(radio => {
     radio.addEventListener('change', function () {
-        const efectivoFields = document.getElementById('efectivo-fields');
-        efectivoFields.classList.toggle('hidden', this.value !== 'Efectivo');
-        if (this.value !== 'Efectivo') {
-            document.getElementById('input-monto-recibido').value = '';
-            document.getElementById('display-vuelto').value       = '';
+        const metodoSeleccionado = this.value; // "Efectivo", "Tarjeta", "Yape", etc.
+
+        // 1. Lista de todos tus contenedores de campos
+        const contenedores = {
+            'Efectivo': 'fields-efectivo',
+            'Tarjeta': 'fields-tarjeta',
+            'Yape': 'fields-yape',
+            'Plin': 'fields-plin',
+            'Transferencia': 'fields-transferencia'
+        };
+
+        // 2. Iterar sobre el objeto para mostrar el seleccionado y ocultar los demás
+        Object.keys(contenedores).forEach(key => {
+            const idContenedor = contenedores[key];
+            const el = document.getElementById(idContenedor);
+            
+            if (el) {
+                // Si la llave coincide con el radio presionado, le quita 'hidden'
+                el.classList.toggle('hidden', key !== metodoSeleccionado);
+            }
+        });
+
+        // 3. Limpiar campos de efectivo si se cambia a otro método
+        if (metodoSeleccionado !== 'Efectivo') {
+            const inputRecibido = document.getElementById('input-monto-recibido');
+            const displayVuelto = document.getElementById('display-vuelto');
+            if (inputRecibido) inputRecibido.value = '';
+            if (displayVuelto) displayVuelto.value = '';
         }
     });
 });
 
-document.getElementById('input-monto-recibido').addEventListener('input', calcularVuelto);
+// Listener para el cálculo de vuelto (Efectivo)
+const inputMonto = document.getElementById('input-monto-recibido');
+if (inputMonto) {
+    inputMonto.addEventListener('input', calcularVuelto);
+}
 
 function calcularVuelto() {
-    const total   = parseMoney(document.getElementById('val-total').textContent);
-    const monto   = parseFloat(document.getElementById('input-monto-recibido').value) || 0;
-    const vueltoEl = document.getElementById('display-vuelto');
-    if (monto >= total && total > 0) {
+    // Asumiendo que parseMoney y formatMoney ya existen en tu cuenta.js
+    const total      = parseMoney(document.getElementById('val-total').textContent);
+    const monto      = parseFloat(document.getElementById('input-monto-recibido').value) || 0;
+    const vueltoEl   = document.getElementById('display-vuelto');
+
+    if (!vueltoEl) return;
+    if (total <= 0) { vueltoEl.value = ''; return; }
+
+    if (monto >= total) {
         vueltoEl.value       = formatMoney(monto - total);
-        vueltoEl.style.color = 'var(--success)';
+        vueltoEl.style.color = 'var(--success-color, #2ecc71)'; // Usando tus variables de CSS
     } else if (monto > 0) {
-        vueltoEl.value       = '⚠ Insuficiente';
-        vueltoEl.style.color = 'var(--danger)';
+        vueltoEl.value       = '⚠ Monto insuficiente';
+        vueltoEl.style.color = 'var(--danger-color, #e74c3c)';
     } else {
         vueltoEl.value = '';
     }
 }
 
-function parseMoney(str) {
-    return parseFloat((str || '').replace('S/ ', '').replace(',', '.')) || 0;
-}
-
 // ============================================================
-// VALIDAR Y CONFIRMAR PAGO
+// CONFIRMAR PAGO — validaciones completas
 // ============================================================
 
 document.getElementById('btn-confirmar-pago').addEventListener('click', confirmarPago);
@@ -431,7 +449,12 @@ function confirmarPago() {
     clearErrors();
     let valido = true;
 
-    // Validar descuento
+    if (pedidosSeleccionados.length === 0) {
+        showToast('No hay pedidos para facturar.', 'error');
+        return;
+    }
+
+    // --- Validar descuento ---
     if (document.getElementById('chk-descuento').checked) {
         const tipo      = document.getElementById('tipo-descuento').value;
         const valorDesc = parseFloat(document.getElementById('input-descuento').value);
@@ -442,27 +465,26 @@ function confirmarPago() {
             showError('error-descuento', 'El descuento no puede ser negativo.');
             valido = false;
         } else if (tipo === 'monto' && valorDesc > subtotal) {
-            showError('error-descuento', 'El descuento no puede ser mayor al subtotal.');
+            showError('error-descuento', 'El descuento no puede superar el subtotal.');
             valido = false;
         } else if (tipo === 'porcentaje' && (valorDesc < 0 || valorDesc > 100)) {
             showError('error-descuento', 'El porcentaje debe estar entre 0 y 100.');
             valido = false;
         }
-
         if (justDesc.length < 10) {
             showError('error-justificacion-desc', 'La justificación debe tener al menos 10 caracteres.');
             valido = false;
         }
     }
 
-    // Validar método de pago
+    // --- Validar método de pago ---
     const metodoPago = document.querySelector('input[name="metodo-pago"]:checked');
     if (!metodoPago) {
         showError('error-metodo-pago', 'Seleccione un método de pago.');
         valido = false;
     }
 
-    // Validar efectivo
+    // --- Validar efectivo ---
     if (metodoPago && metodoPago.value === 'Efectivo') {
         const total = parseMoney(document.getElementById('val-total').textContent);
         const monto = parseFloat(document.getElementById('input-monto-recibido').value);
@@ -470,35 +492,33 @@ function confirmarPago() {
             showError('error-monto-recibido', 'Ingrese el monto recibido.');
             valido = false;
         } else if (monto < total) {
-            showError('error-monto-recibido', 'El monto recibido es menor al total.');
+            showError('error-monto-recibido', 'El monto recibido es menor al total a pagar.');
             valido = false;
         }
     }
 
     if (!valido) return;
 
-    // Construir objeto factura
-    const subtotal    = parseMoney(document.getElementById('val-subtotal').textContent);
-    const descuentoStr = document.getElementById('val-descuento').textContent;
-    const descuento   = parseMoney(descuentoStr.replace('- ', ''));
-    const igv         = parseMoney(document.getElementById('val-igv').textContent);
-    const total       = parseMoney(document.getElementById('val-total').textContent);
+    // --- Construir factura ---
+    const subtotal  = parseMoney(document.getElementById('val-subtotal').textContent);
+    const descuento = parseMoney(document.getElementById('val-descuento').textContent.replace('- ', ''));
+    const igv       = parseMoney(document.getElementById('val-igv').textContent);
+    const total     = parseMoney(document.getElementById('val-total').textContent);
 
     const factura = {
-        id:          generarCodigoFactura(),
-        mesa:        mesaActual,
-        // ── CORRECCIÓN: usar id o codigo según lo que exista ──
-        pedidosIds:  pedidosSeleccionados.map(p => p.id || p.codigo),
-        pedidos:     pedidosSeleccionados,
+        id:         generarCodigoFactura(),
+        mesa:       mesaActual,
+        pedidosIds: pedidosSeleccionados.map(p => String(p.id || p.codigo)),
+        pedidos:    pedidosSeleccionados,
         subtotal,
         descuento,
         justificacionDescuento: document.getElementById('chk-descuento').checked
             ? document.getElementById('input-justificacion-desc').value.trim()
             : '',
-        conIgv:      document.getElementById('chk-igv').checked,
+        conIgv:    document.getElementById('chk-igv').checked,
         igv,
         total,
-        metodoPago:  metodoPago.value,
+        metodoPago: metodoPago.value,
         montoRecibido: metodoPago.value === 'Efectivo'
             ? parseFloat(document.getElementById('input-monto-recibido').value) || 0
             : null,
@@ -506,7 +526,7 @@ function confirmarPago() {
             ? Math.max(0, (parseFloat(document.getElementById('input-monto-recibido').value) || 0) - total)
             : null,
         estado:    'Pagada',
-        fechaHora: getFechaHora()
+        fechaHora: getFechaHora(),
     };
 
     // Guardar factura
@@ -514,15 +534,16 @@ function confirmarPago() {
     facturas.push(factura);
     setLS('facturas', facturas);
 
-    // ── CORRECCIÓN: marcar pedidos como Facturado usando id o codigo ──
-    const pedidos = getLS('pedidos');
-    const idsFacturados = new Set(pedidosSeleccionados.map(ps => ps.id || ps.codigo));
-    pedidos.forEach(p => {
-        if (idsFacturados.has(p.id) || idsFacturados.has(p.codigo)) {
-            p.estado = 'Facturado';
+    // Marcar pedidos como Facturado para evitar doble facturación
+    const pedidosLS     = getLS('pedidos');
+    const idsFacturados = new Set(factura.pedidosIds);
+    pedidosLS.forEach(p => {
+        if (idsFacturados.has(String(p.id)) || idsFacturados.has(String(p.codigo))) {
+            p.estado       = 'Facturado';
+            p.estadoCocina = 'Listo';
         }
     });
-    setLS('pedidos', pedidos);
+    setLS('pedidos', pedidosLS);
 
     showToast('¡Pago confirmado! Factura ' + factura.id + ' generada.', 'success');
     mostrarTicket(factura);
@@ -534,26 +555,32 @@ function confirmarPago() {
 // ============================================================
 
 function resetFormulario() {
-    mesaActual          = null;
+    mesaActual           = null;
     pedidosSeleccionados = [];
+
     document.getElementById('input-mesa').value               = '';
     document.getElementById('paso-pedidos').classList.add('hidden');
     document.getElementById('paso-pago').classList.add('hidden');
     document.getElementById('lista-pedidos-mesa').innerHTML   = '';
     document.getElementById('tabla-resumen-items').innerHTML  = '';
+
     document.getElementById('chk-descuento').checked          = false;
     document.getElementById('descuento-form').classList.add('hidden');
     document.getElementById('input-descuento').value          = '';
     document.getElementById('input-justificacion-desc').value = '';
+
     document.getElementById('chk-igv').checked                = true;
+
     document.querySelectorAll('input[name="metodo-pago"]').forEach(r => r.checked = false);
     document.getElementById('efectivo-fields').classList.add('hidden');
     document.getElementById('input-monto-recibido').value     = '';
     document.getElementById('display-vuelto').value           = '';
+
     document.getElementById('val-subtotal').textContent       = 'S/ 0.00';
     document.getElementById('val-descuento').textContent      = '- S/ 0.00';
     document.getElementById('val-igv').textContent            = 'S/ 0.00';
     document.getElementById('val-total').textContent          = 'S/ 0.00';
+
     clearErrors();
 }
 
@@ -641,20 +668,18 @@ document.getElementById('btn-imprimir-ticket').addEventListener('click', () => {
 // ============================================================
 
 function renderFacturas() {
-    const facturas    = getLS('facturas');
-    const container   = document.getElementById('lista-facturas');
-    const busqueda    = document.getElementById('buscador-facturas').value.toLowerCase();
+    const facturas     = getLS('facturas');
+    const container    = document.getElementById('lista-facturas');
+    const busqueda     = document.getElementById('buscador-facturas').value.toLowerCase();
     const filtroEstado = document.getElementById('filtro-estado-factura').value;
 
-    let filtradas = facturas.filter(f => {
-        const coincideBusqueda =
-            f.id.toLowerCase().includes(busqueda) ||
+    const filtradas = facturas.filter(f => {
+        const matchBusqueda =
+            (f.id || '').toLowerCase().includes(busqueda) ||
             String(f.mesa).includes(busqueda);
-        const coincideEstado = !filtroEstado || f.estado === filtroEstado;
-        return coincideBusqueda && coincideEstado;
-    });
-
-    filtradas = filtradas.reverse();
+        const matchEstado = !filtroEstado || f.estado === filtroEstado;
+        return matchBusqueda && matchEstado;
+    }).reverse();
 
     if (filtradas.length === 0) {
         container.innerHTML = `<div class="empty-state">
@@ -665,19 +690,16 @@ function renderFacturas() {
     }
 
     container.innerHTML = '';
-
     filtradas.forEach(f => {
+        const estadoClass = f.estado === 'Pagada'  ? 'estado-pagada'
+                          : f.estado === 'Anulada' ? 'estado-anulada'
+                          : 'estado-pendiente';
+        const estadoIcon  = f.estado === 'Pagada'  ? 'fa-check-circle'
+                          : f.estado === 'Anulada' ? 'fa-ban'
+                          : 'fa-clock';
+
         const card = document.createElement('div');
         card.className = 'factura-card';
-
-        const estadoClass =
-            f.estado === 'Pagada'  ? 'estado-pagada'  :
-            f.estado === 'Anulada' ? 'estado-anulada' : 'estado-pendiente';
-
-        const estadoIcon =
-            f.estado === 'Pagada'  ? 'fa-check-circle' :
-            f.estado === 'Anulada' ? 'fa-ban'          : 'fa-clock';
-
         card.innerHTML = `
             <div class="factura-card-header">
                 <span class="factura-code"><i class="fas fa-file-invoice"></i> ${f.id}</span>
@@ -701,11 +723,11 @@ function renderFacturas() {
                     <i class="fas fa-ban"></i> Anular
                 </button>` : `
                 <span style="font-size:0.75rem;color:var(--text-dim);padding:0.35rem 0.5rem">
-                    <i class="fas fa-info-circle"></i> ${f.motivoAnulacion ? 'Motivo: ' + f.motivoAnulacion : 'Anulada'}
+                    <i class="fas fa-info-circle"></i>
+                    ${f.motivoAnulacion ? 'Motivo: ' + f.motivoAnulacion : 'Anulada'}
                 </span>`}
             </div>
         `;
-
         container.appendChild(card);
     });
 }
@@ -718,12 +740,9 @@ document.getElementById('filtro-estado-factura').addEventListener('change', rend
 // ============================================================
 
 function verDetalleFactura(id) {
-    const facturas = getLS('facturas');
-    const f = facturas.find(fa => fa.id === id);
-    if (!f) return;
-    mostrarTicket(f);
+    const f = getLS('facturas').find(fa => fa.id === id);
+    if (f) mostrarTicket(f);
 }
-
 window.verDetalleFactura = verDetalleFactura;
 
 // ============================================================
@@ -732,11 +751,10 @@ window.verDetalleFactura = verDetalleFactura;
 
 function iniciarAnulacion(id) {
     facturaEnEdicion = id;
-    document.getElementById('input-motivo-anulacion').value  = '';
+    document.getElementById('input-motivo-anulacion').value       = '';
     document.getElementById('error-motivo-anulacion').textContent = '';
     document.getElementById('modal-anular').classList.remove('hidden');
 }
-
 window.iniciarAnulacion = iniciarAnulacion;
 
 document.getElementById('btn-cancelar-anulacion').addEventListener('click', () => {
@@ -746,7 +764,6 @@ document.getElementById('btn-cancelar-anulacion').addEventListener('click', () =
 
 document.getElementById('btn-confirmar-anulacion').addEventListener('click', () => {
     const motivo = document.getElementById('input-motivo-anulacion').value.trim();
-
     if (motivo.length < 10) {
         showError('error-motivo-anulacion', 'El motivo debe tener al menos 10 caracteres.');
         return;
@@ -767,25 +784,24 @@ document.getElementById('btn-confirmar-anulacion').addEventListener('click', () 
     facturas[idx].fechaAnulacion  = getFechaHora();
     setLS('facturas', facturas);
 
-    // ── CORRECCIÓN: revertir pedidos usando id o codigo ──
-    const pedidos = getLS('pedidos');
+    // Revertir pedidos a Entregado para que puedan refacturarse
+    const pedidosLS   = getLS('pedidos');
     const idsAnulados = new Set(facturas[idx].pedidosIds || []);
-    pedidos.forEach(p => {
-        if (idsAnulados.has(p.id) || idsAnulados.has(p.codigo)) {
-            p.estado      = 'Entregado';
+    pedidosLS.forEach(p => {
+        if (idsAnulados.has(String(p.id)) || idsAnulados.has(String(p.codigo))) {
+            p.estado       = 'Entregado';
             p.estadoCocina = 'Listo';
         }
     });
-    setLS('pedidos', pedidos);
+    setLS('pedidos', pedidosLS);
 
     document.getElementById('modal-anular').classList.add('hidden');
     facturaEnEdicion = null;
-
     showToast('Factura anulada correctamente.', 'success');
     renderFacturas();
 });
 
-// Cerrar modales al hacer clic fuera
+// Cerrar modales haciendo clic en el fondo
 document.getElementById('modal-ticket').addEventListener('click', function (e) {
     if (e.target === this) this.classList.add('hidden');
 });
