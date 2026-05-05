@@ -170,7 +170,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('storage', (e) => {
         if (e.key === 'pedidos') {
             sincronizarDesdeStorage();
-        } else if (e.key === 'platos') {
+        } 
+        if (e.key === 'platos') {
             cargarPlatosDB();
             renderizarPlatos();
         }
