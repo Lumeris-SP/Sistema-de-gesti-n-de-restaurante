@@ -75,6 +75,7 @@ const guardarPedidosStorage = () => {
 };
 
 function mapearEstadoExterno(estadoInterno) {
+    if (estadoInterno === 'pagado')    return 'Pagado';
     if (estadoInterno === 'entregado') return 'Entregado';
     if (estadoInterno === 'listo')     return 'Entregado';
     if (estadoInterno === 'cancelado') return 'Cancelado';
@@ -107,11 +108,18 @@ function mapearEstadoInterno(estadoCocina, estadoExterno) {
 }
 
 function calcularContador() {
-    if (pedidos.length === 0) return 1;
-    const nums = pedidos.map(p => {
+    const activos   = cargarPedidosStorage();
+    const historial = JSON.parse(localStorage.getItem('pedidosHistorial')) || [];
+
+    const todos = [...activos, ...historial];
+
+    if (todos.length === 0) return 1;
+
+    const nums = todos.map(p => {
         const n = parseInt((p.codigo || '').replace('PED', ''));
         return isNaN(n) ? 0 : n;
     });
+
     return Math.max(...nums) + 1;
 }
 
@@ -151,11 +159,10 @@ document.addEventListener('DOMContentLoaded', () => {
         ...p,
         platos:            p.platos || [],
         observacionGeneral: p.observaciones || '',
-        estado: p.estado === 'Pagado'    ? 'entregado'
-              : p.estado === 'Entregado' ? 'entregado'
-              : p.estado === 'Facturado' ? 'entregado'
-              : p.estado === 'Cancelado' ? 'cancelado'
-              : mapearEstadoInterno(p.estadoCocina, p.estado),
+estado: p.estado === 'Pagado'    ? 'pagado'
+      : p.estado === 'Entregado' ? 'entregado'
+      : p.estado === 'Cancelado' ? 'cancelado'
+      : mapearEstadoInterno(p.estadoCocina, p.estado),
     }));
     contadorPedido = calcularContador();
 
