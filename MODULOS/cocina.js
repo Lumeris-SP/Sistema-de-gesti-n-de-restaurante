@@ -21,8 +21,14 @@ class ControlCocina {
     // ── Carga pedidos Y catálogo de platos ──────────────────────────────────
     cargarDatos() {
         this.pedidos = JSON.parse(localStorage.getItem('pedidos')) || [];
+        this.pedidos.forEach(p => {
+    if (!p.codigo && p.id) p.codigo = p.id;
+    if (!p.id && p.codigo) p.id = p.codigo;
+});
         this.platos  = JSON.parse(localStorage.getItem('platos'))  || [];
+        
     }
+    
 
     guardarPedidos() {
         localStorage.setItem('pedidos', JSON.stringify(this.pedidos));
@@ -139,21 +145,33 @@ class ControlCocina {
     }
 
     // ── Acciones ─────────────────────────────────────────────────────────────
-    cambiarEstadoPlato(pedidoId, itemIndex, nuevoEstado) {
-        const pedido = this.pedidos.find(p => p.codigo === pedidoId);
-        if (!pedido) return;
+cambiarEstadoPlato(pedidoId, itemIndex, nuevoEstado) {
+    const pedido = this.pedidos.find(p => p.codigo === pedidoId);
+    if (!pedido) return;
 
-        if (pedido.estado === 'Cancelado') {
-            this.mostrarToast('No se puede modificar un pedido cancelado', 'error');
-            return;
-        }
-
-        // ✅ CAMBIO AQUÍ
-        pedido.platos[itemIndex].estadoPlato = nuevoEstado;
-
-        pedido.estadoCocina = this.estadoGeneral(pedido);
-        this.guardarPedidos();
+    if (pedido.estado === 'Cancelado') {
+        this.mostrarToast('No se puede modificar un pedido cancelado', 'error');
+        return;
     }
+
+    const estadoActual = pedido.platos[itemIndex].estadoPlato || 'Pendiente';
+    
+    // Definir orden de progresión
+    const orden = ['Pendiente', 'En preparación', 'Listo'];
+    const indiceActual = orden.indexOf(estadoActual);
+    const indiceNuevo = orden.indexOf(nuevoEstado);
+    
+    // Solo permitir avanzar, no retroceder
+    if (indiceNuevo < indiceActual) {
+        this.mostrarToast('No se puede retroceder a un estado anterior', 'error');
+        return;
+    }
+
+    pedido.platos[itemIndex].estadoPlato = nuevoEstado;
+    pedido.estadoCocina = this.estadoGeneral(pedido);
+    this.guardarPedidos();
+    this.mostrarToast(`Plato marcado como ${nuevoEstato}`, 'ok');
+}
 
     cambiarEstadoPedido(pedidoId, nuevoEstado) {
         const pedido = this.pedidos.find(p => p.codigo === pedidoId);
@@ -239,9 +257,10 @@ class ControlCocina {
     // ── Render ───────────────────────────────────────────────────────────────
 
     actualizarVista() {
-        let pedidosCocina = this.pedidos.filter(
-            p => p.estado !== 'Cancelado' && p.estado !== 'Pagado'
-        );
+  let pedidosCocina = this.pedidos.filter(p => {
+    const est = (p.estado || '').toLowerCase();
+    return est !== 'cancelado' && est !== 'pagado' && est !== 'facturado';
+});
 
         let lista = pedidosCocina;
         if (this.filtro === 'urgente') {
@@ -324,8 +343,27 @@ class ControlCocina {
             const cantidad = item.cantidad || 1;
 
             // ── Datos de cocina enriquecidos (alérgenos + modificable + obs mozo)
-            const { alergenos, modificable, observacion } = this._infoCocinaItem(item);
-            const aleStr = alergenos.join(', ');
+const { alergenos, modificable } = this._infoCocinaItem(item);
+const aleStr = alergenos.join(', ');
+
+// 🔥 NUEVO: extras bonitos en tags
+let extrasHTML = '';
+
+if (Array.isArray(item.observaciones) && item.observaciones.length > 0) {
+    const tags = item.observaciones.map(o => `
+        <span class="obs-extra-tag">
+            ${o.texto}
+            ${o.extra > 0 ? `<strong>+S/ ${o.extra.toFixed(2)}</strong>` : ''}
+        </span>
+    `).join('');
+
+    extrasHTML = `
+        <div class="plato-obs-extras">
+            <i class="fas fa-plus-circle"></i>
+            ${tags}
+        </div>
+    `;
+}
 
             return `
                 <div class="plato-row">
@@ -339,14 +377,11 @@ class ControlCocina {
                             : ''}
 
                         <!-- OBSERVACIÓN DEL MOZO (por pedido) -->
-                        ${observacion
-                            ? `<div class="plato-obs">
-                                <i class="fas fa-pencil-alt"></i>
-                                <span><strong>Observación del mozo:</strong> ${observacion}</span>
-                               </div>`
-                            : `<div class="plato-sin-obs">
-                                <i class="fas fa-minus-circle"></i> Sin observaciones del mozo
-                               </div>`}
+ ${extrasHTML || `
+    <div class="plato-sin-obs">
+        <i class="fas fa-minus-circle"></i> Sin extras
+    </div>
+`}
 
                         <!-- MODIFICACIONES PERMITIDAS (del catálogo de platos) -->
                         ${modificable
@@ -368,29 +403,31 @@ class ControlCocina {
                                 <i class="fas fa-shield-alt"></i> Sin alérgenos
                                </div>`}
                     </div>
-                        <div class="plato-estado-buttons">
-                            <button type="button" 
-                                class="btn-estado-plato ${epPlato === 'Pendiente' ? 'active' : ''}"
-                                data-estado="Pendiente"
-                                onclick="controlCocina.cambiarEstadoPlato('${pedido.codigo}', ${idx}, 'Pendiente')">
-                                <i class="fas fa-hourglass-start"></i>
-                                <span>Pendiente</span>
-                            </button>
-                            <button type="button" 
-                                class="btn-estado-plato ${epPlato === 'En preparación' ? 'active' : ''}"
-                                data-estado="En preparación"
-                                onclick="controlCocina.cambiarEstadoPlato('${pedido.codigo}', ${idx}, 'En preparación')">
-                                <i class="fas fa-fire"></i>
-                                <span>Cocinando</span>
-                            </button>
-                            <button type="button" 
-                                class="btn-estado-plato ${epPlato === 'Listo' ? 'active' : ''}"
-                                data-estado="Listo"
-                                onclick="controlCocina.cambiarEstadoPlato('${pedido.codigo}', ${idx}, 'Listo')">
-                                <i class="fas fa-check-circle"></i>
-                                <span>Listo</span>
-                            </button>
-                        </div>
+<div class="plato-estado-buttons">
+    <button type="button" 
+        class="btn-estado-plato ${epPlato === 'Pendiente' ? 'active' : ''}"
+        data-estado="Pendiente"
+        ${epPlato !== 'Pendiente' ? 'disabled' : ''}
+        onclick="controlCocina.cambiarEstadoPlato('${pedido.codigo}', ${idx}, 'Pendiente')">
+        <i class="fas fa-hourglass-start"></i>
+        <span>Pendiente</span>
+    </button>
+    <button type="button" 
+        class="btn-estado-plato ${epPlato === 'En preparación' ? 'active' : ''}"
+        data-estado="En preparación"
+        ${epPlato === 'Listo' ? 'disabled' : ''}
+        onclick="controlCocina.cambiarEstadoPlato('${pedido.codigo}', ${idx}, 'En preparación')">
+        <i class="fas fa-fire"></i>
+        <span>Cocinando</span>
+    </button>
+    <button type="button" 
+        class="btn-estado-plato ${epPlato === 'Listo' ? 'active' : ''}"
+        data-estado="Listo"
+        onclick="controlCocina.cambiarEstadoPlato('${pedido.codigo}', ${idx}, 'Listo')">
+        <i class="fas fa-check-circle"></i>
+        <span>Listo</span>
+    </button>
+</div>
                 </div>`;
         }).join('');
 
