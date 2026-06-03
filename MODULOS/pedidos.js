@@ -1,3 +1,11 @@
+const SUPABASE_URL = 'https://cczecqowdakqftojmidx.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNjemVjcW93ZGFrcWZ0b2ptaWR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0MzI3MjAsImV4cCI6MjA5NjAwODcyMH0.yb34bWeGd-oN0MzepWSs1LDZ9NG_s8-WR1WtQ1rMO8U';
+
+const supabaseHeaders = {
+    'apikey': SUPABASE_KEY,
+    'Authorization': `Bearer ${SUPABASE_KEY}`,
+    'Content-Type': 'application/json'
+};
 // ============================================================
 // DATOS BASE — se carga desde localStorage (platos.js)
 // ============================================================
@@ -16,17 +24,34 @@ function cargarPlatosDB() {
         }));
 }
 
-const ADICIONALES_DB = [
-    { nombre: 'Porción extra de arroz',   precio: 3.00 },
-    { nombre: 'Salsa de soya extra',      precio: 1.50 },
-    { nombre: 'Extra de vegetales',       precio: 4.00 },
-    { nombre: 'Sin sal',                  precio: 0    },
-    { nombre: 'Sin glutamato',            precio: 0    },
-    { nombre: 'Extra picante',            precio: 0    },
-    { nombre: 'Sin cebolla',              precio: 0    },
-    { nombre: 'Sin ajo',                  precio: 0    },
-    { nombre: 'Porción extra de carne',   precio: 6.00 },
-];
+let ADICIONALES_DB = []; // Ahora es let, se llenará desde Supabase
+async function cargarAdicionalesDB() {
+    try {
+        const response = await fetch(
+            `${SUPABASE_URL}/rest/v1/adicionales?select=*`,
+            { headers: supabaseHeaders }
+        );
+
+        if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+
+        const data = await response.json();
+
+        // Mapea los campos de Supabase a la estructura que usa el código
+        // Ajusta 'nombre' y 'precio' si tus columnas tienen otros nombres
+        ADICIONALES_DB = data.map(a => ({
+            nombre: a.nombre,
+            precio: parseFloat(a.precio) || 0
+        }));
+
+    } catch (error) {
+        console.error('Error cargando adicionales desde Supabase:', error);
+        // Fallback: carga valores por defecto si Supabase falla
+        ADICIONALES_DB = [
+            { nombre: 'Porción extra de arroz', precio: 3.00 },
+            { nombre: 'Salsa de soya extra',    precio: 1.50 },
+        ];
+    }
+}
 
 // ============================================================
 // ESTADO EN MEMORIA (se sincroniza con localStorage)
@@ -153,20 +178,20 @@ function limpiarPedidosActivos() {
 // ============================================================
 // INIT
 // ============================================================
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {   // 1. agregar async
+    await cargarAdicionalesDB();  // 2. agregar esta línea ANTES de cargarPlatosDB
     cargarPlatosDB();
 
     pedidos = cargarPedidosStorage().map(p => ({
         ...p,
         platos:            p.platos || [],
         observacionGeneral: p.observaciones || '',
-estado: p.estado === 'Pagado'    ? 'pagado'
-      : p.estado === 'Entregado' ? 'entregado'
-      : p.estado === 'Cancelado' ? 'cancelado'
-      : mapearEstadoInterno(p.estadoCocina, p.estado),
+        estado: p.estado === 'Pagado'    ? 'pagado'
+              : p.estado === 'Entregado' ? 'entregado'
+              : p.estado === 'Cancelado' ? 'cancelado'
+              : mapearEstadoInterno(p.estadoCocina, p.estado),
     }));
     contadorPedido = calcularContador();
-
     actualizarCodigo();
     actualizarFechaHora();
     renderizarPlatos();
