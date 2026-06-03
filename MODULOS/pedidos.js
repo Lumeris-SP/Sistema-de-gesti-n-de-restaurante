@@ -25,27 +25,26 @@ function cargarPlatosDB() {
 }
 
 let ADICIONALES_DB = []; // Ahora es let, se llenará desde Supabase
+
 async function cargarAdicionalesDB() {
     try {
         const response = await fetch(
-            `${SUPABASE_URL}/rest/v1/adicionales?select=*`,
+            `${SUPABASE_URL}/rest/v1/adicionales?select=*&order=id.asc`,
             { headers: supabaseHeaders }
         );
 
         if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
 
         const data = await response.json();
+        console.log('✅ Adicionales cargados:', data); // ← AGREGA ESTA LÍNEA
 
-        // Mapea los campos de Supabase a la estructura que usa el código
-        // Ajusta 'nombre' y 'precio' si tus columnas tienen otros nombres
         ADICIONALES_DB = data.map(a => ({
             nombre: a.nombre,
             precio: parseFloat(a.precio) || 0
         }));
 
     } catch (error) {
-        console.error('Error cargando adicionales desde Supabase:', error);
-        // Fallback: carga valores por defecto si Supabase falla
+        console.error('❌ Error cargando adicionales:', error); // ← Y CAMBIA ESTO
         ADICIONALES_DB = [
             { nombre: 'Porción extra de arroz', precio: 3.00 },
             { nombre: 'Salsa de soya extra',    precio: 1.50 },
