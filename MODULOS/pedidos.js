@@ -1,3 +1,11 @@
+const SUPABASE_URL = 'https://cczecqowdakqftojmidx.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNjemVjcW93ZGFrcWZ0b2ptaWR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0MzI3MjAsImV4cCI6MjA5NjAwODcyMH0.yb34bWeGd-oN0MzepWSs1LDZ9NG_s8-WR1WtQ1rMO8U';
+
+const supabaseHeaders = {
+    'apikey': SUPABASE_KEY,
+    'Authorization': `Bearer ${SUPABASE_KEY}`,
+    'Content-Type': 'application/json'
+};
 // ============================================================
 // DATOS BASE — se carga desde localStorage (platos.js)
 // ============================================================
@@ -8,24 +16,41 @@ function cargarPlatosDB() {
     PLATOS_DB = stored
         .filter(p => p.estado === 'Activo')
         .map(p => ({
-            id:     p.id,
-            nombre: p.nombre,
-            precio: p.precio,
-            activo: true,
+            id:        p.id,
+            nombre:    p.nombre,
+            precio:    p.precio,
+            categoria: p.categoria,   // ← ESTO FALTABA
+            activo:    true,
         }));
 }
 
-const ADICIONALES_DB = [
-    { nombre: 'Porción extra de arroz',   precio: 3.00 },
-    { nombre: 'Salsa de soya extra',      precio: 1.50 },
-    { nombre: 'Extra de vegetales',       precio: 4.00 },
-    { nombre: 'Sin sal',                  precio: 0    },
-    { nombre: 'Sin glutamato',            precio: 0    },
-    { nombre: 'Extra picante',            precio: 0    },
-    { nombre: 'Sin cebolla',              precio: 0    },
-    { nombre: 'Sin ajo',                  precio: 0    },
-    { nombre: 'Porción extra de carne',   precio: 6.00 },
-];
+let ADICIONALES_DB = []; // Ahora es let, se llenará desde Supabase
+
+async function cargarAdicionalesDB() {
+    try {
+        const response = await fetch(
+            `${SUPABASE_URL}/rest/v1/adicionales?select=*&order=id.asc`,
+            { headers: supabaseHeaders }
+        );
+
+        if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+
+        const data = await response.json();
+        console.log('✅ Adicionales cargados:', data); // ← AGREGA ESTA LÍNEA
+
+        ADICIONALES_DB = data.map(a => ({
+            nombre: a.nombre,
+            precio: parseFloat(a.precio) || 0
+        }));
+
+    } catch (error) {
+        console.error('❌ Error cargando adicionales:', error); // ← Y CAMBIA ESTO
+        ADICIONALES_DB = [
+            { nombre: 'Porción extra de arroz', precio: 3.00 },
+            { nombre: 'Salsa de soya extra',    precio: 1.50 },
+        ];
+    }
+}
 
 // ============================================================
 // ESTADO EN MEMORIA (se sincroniza con localStorage)
@@ -75,6 +100,7 @@ const guardarPedidosStorage = () => {
 };
 
 function mapearEstadoExterno(estadoInterno) {
+    if (estadoInterno === 'pagado')    return 'Pagado';
     if (estadoInterno === 'entregado') return 'Entregado';
     if (estadoInterno === 'listo')     return 'Entregado';
     if (estadoInterno === 'cancelado') return 'Cancelado';
@@ -107,11 +133,18 @@ function mapearEstadoInterno(estadoCocina, estadoExterno) {
 }
 
 function calcularContador() {
-    if (pedidos.length === 0) return 1;
-    const nums = pedidos.map(p => {
+    const activos   = cargarPedidosStorage();
+    const historial = JSON.parse(localStorage.getItem('pedidosHistorial')) || [];
+
+    const todos = [...activos, ...historial];
+
+    if (todos.length === 0) return 1;
+
+    const nums = todos.map(p => {
         const n = parseInt((p.codigo || '').replace('PED', ''));
         return isNaN(n) ? 0 : n;
     });
+
     return Math.max(...nums) + 1;
 }
 
@@ -144,21 +177,20 @@ function limpiarPedidosActivos() {
 // ============================================================
 // INIT
 // ============================================================
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {   // 1. agregar async
+    await cargarAdicionalesDB();  // 2. agregar esta línea ANTES de cargarPlatosDB
     cargarPlatosDB();
 
     pedidos = cargarPedidosStorage().map(p => ({
         ...p,
         platos:            p.platos || [],
         observacionGeneral: p.observaciones || '',
-        estado: p.estado === 'Pagado'    ? 'entregado'
+        estado: p.estado === 'Pagado'    ? 'pagado'
               : p.estado === 'Entregado' ? 'entregado'
-              : p.estado === 'Facturado' ? 'entregado'
               : p.estado === 'Cancelado' ? 'cancelado'
               : mapearEstadoInterno(p.estadoCocina, p.estado),
     }));
     contadorPedido = calcularContador();
-
     actualizarCodigo();
     actualizarFechaHora();
     renderizarPlatos();
@@ -239,35 +271,141 @@ function actualizarFechaHora() {
 function renderizarPlatos() {
     const contenedor = document.getElementById('platosDisponibles');
     contenedor.innerHTML = '';
-    PLATOS_DB.filter(p => p.activo).forEach(plato => {
-        const div = document.createElement('div');      
-        div.className = 'plato-item';
-        div.id = `plato-item-${plato.id}`;
-        div.innerHTML = `
-            <div class="plato-header" onclick="togglePlato(${plato.id}, false)">
-                <input 
-                    class="plato-check" 
-                    type="checkbox" 
-                    id="chk-${plato.id}"
-                    onclick="event.stopPropagation(); togglePlato(${plato.id}, true)"
-                >
-                <span class="plato-name">${plato.nombre}</span>
-                <span class="plato-precio">S/ ${plato.precio.toFixed(2)}</span>
-            </div>
-            <div class="plato-controls" id="ctrl-${plato.id}">
-                <div class="plato-qty-row">
-                    <button type="button" class="qty-btn" onclick="cambiarQty(${plato.id}, -1)"><i class="fas fa-minus"></i></button>
-                    <input class="qty-input" type="text" id="qty-${plato.id}" value="1" oninput="validarQty(${plato.id})" inputmode="numeric">
-                    <button type="button" class="qty-btn" onclick="cambiarQty(${plato.id}, 1)"><i class="fas fa-plus"></i></button>
-                    <span class="qty-subtotal">Subtotal: <span id="sub-${plato.id}">S/ ${plato.precio.toFixed(2)}</span></span>
-                </div>
-                <div class="obs-list" id="obs-list-${plato.id}"></div>
-                <button type="button" class="btn-add-obs-main" onclick="agregarObservacion(${plato.id})">
-                    <i class="fas fa-plus"></i> Adicionar observación especial
-                </button>
-            </div>
+
+    // Categorías en el orden deseado
+    const CATEGORIAS = [
+        { key: 'Entrada',              icono: '🥢', label: 'Entradas' },
+        { key: 'Plato de fondo',       icono: '🍚', label: 'Platos de Fondo' },
+        { key: 'Menú ejecutivo',       icono: '🥡', label: 'Menú Ejecutivo' },
+        { key: 'Postre',               icono: '🍡', label: 'Postres' },
+        { key: 'Bebida',               icono: '🍵', label: 'Bebidas' },
+        { key: 'Especial de la casa',  icono: '🐉', label: 'Especial de la Casa' },
+    ];
+
+    const platosActivos = PLATOS_DB.filter(p => p.activo);
+
+    if (platosActivos.length === 0) {
+        contenedor.innerHTML = `<p style="color:var(--text-muted);font-size:13px;padding:10px 0;">
+            No hay platos activos registrados.</p>`;
+        return;
+    }
+
+    CATEGORIAS.forEach(cat => {
+        const platosDeCategoria = platosActivos.filter(p => p.categoria === cat.key);
+        if (platosDeCategoria.length === 0) return; // Ocultar categorías sin platos
+
+        // Contenedor de categoría
+        const seccion = document.createElement('div');
+        seccion.className = 'categoria-seccion';
+        seccion.style.cssText = `
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            background: rgba(0,0,0,0.18);
         `;
-        contenedor.appendChild(div);
+
+        // Cabecera (toggle)
+        const header = document.createElement('div');
+        header.className = 'categoria-header';
+        header.style.cssText = `
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            cursor: pointer;
+            background: rgba(255,255,255,0.07);
+            user-select: none;
+            transition: background 0.2s;
+        `;
+        header.innerHTML = `
+            <span style="font-size:14px;font-weight:600;color:var(--text,#eee);letter-spacing:0.3px;">
+                <span style="margin-right:8px;">${cat.icono}</span>${cat.label}
+                <span style="
+                    margin-left:10px;
+                    background:rgba(255,255,255,0.12);
+                    color:var(--text,#eee);
+                    font-size:11px;
+                    font-weight:500;
+                    padding:2px 8px;
+                    border-radius:12px;
+                ">${platosDeCategoria.length}</span>
+            </span>
+            <span class="cat-chevron" style="
+                font-size:13px;
+                color:var(--text-muted,#aaa);
+                transition: transform 0.25s;
+                transform: rotate(0deg);
+            ">▼</span>
+        `;
+
+        // Cuerpo de la categoría (lista de platos)
+        const cuerpo = document.createElement('div');
+        cuerpo.className = 'categoria-cuerpo';
+        cuerpo.style.cssText = `
+            display: none;
+            padding: 8px 10px 10px 10px;
+        `;
+
+        // Toggle al hacer clic en el header
+        header.addEventListener('click', () => {
+            const abierto = cuerpo.style.display === 'block';
+            cuerpo.style.display = abierto ? 'none' : 'block';
+            header.querySelector('.cat-chevron').style.transform =
+                abierto ? 'rotate(0deg)' : 'rotate(180deg)';
+        });
+
+        // Hover en header
+        header.addEventListener('mouseenter', () => {
+            header.style.background = 'rgba(255,255,255,0.11)';
+        });
+        header.addEventListener('mouseleave', () => {
+            header.style.background = 'rgba(255,255,255,0.07)';
+        });
+
+        // Renderizar cada plato dentro de la categoría
+        platosDeCategoria.forEach(plato => {
+            const div = document.createElement('div');
+            div.className = 'plato-item';
+            div.id = `plato-item-${plato.id}`;
+            div.innerHTML = `
+                <div class="plato-header" onclick="togglePlato(${plato.id}, false)">
+                    <input
+                        class="plato-check"
+                        type="checkbox"
+                        id="chk-${plato.id}"
+                        onclick="event.stopPropagation(); togglePlato(${plato.id}, true)"
+                    >
+                    <span class="plato-name">${plato.nombre}</span>
+                    <span class="plato-precio">S/ ${plato.precio.toFixed(2)}</span>
+                </div>
+                <div class="plato-controls" id="ctrl-${plato.id}">
+                    <div class="plato-qty-row">
+                        <button type="button" class="qty-btn" onclick="cambiarQty(${plato.id}, -1)">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <input class="qty-input" type="text" id="qty-${plato.id}" value="1"
+                            oninput="validarQty(${plato.id})" inputmode="numeric">
+                        <button type="button" class="qty-btn" onclick="cambiarQty(${plato.id}, 1)">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <span class="qty-subtotal">
+                            Subtotal: <span id="sub-${plato.id}">S/ ${plato.precio.toFixed(2)}</span>
+                        </span>
+                    </div>
+                    <div class="obs-list" id="obs-list-${plato.id}"></div>
+                    <button type="button" class="btn-add-obs-main"
+                        onclick="agregarObservacion(${plato.id})">
+                        <i class="fas fa-plus"></i> Adicionar observación especial
+                    </button>
+                </div>
+            `;
+            cuerpo.appendChild(div);
+        });
+
+        seccion.appendChild(header);
+        seccion.appendChild(cuerpo);
+        contenedor.appendChild(seccion);
     });
 }
 

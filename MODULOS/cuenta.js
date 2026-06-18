@@ -8,8 +8,21 @@
 // ============================================================
 
 function getLS(key) {
-    try { return JSON.parse(localStorage.getItem(key)) || []; }
-    catch { return []; }
+    try {
+        const data = JSON.parse(localStorage.getItem(key)) || [];
+
+        // 🔥 NORMALIZAR pedidos
+        if (key === 'pedidos') {
+            data.forEach(p => {
+                if (!p.codigo && p.id) p.codigo = p.id;
+                if (!p.id && p.codigo) p.id = p.codigo;
+            });
+        }
+
+        return data;
+    } catch {
+        return [];
+    }
 }
 
 function setLS(key, data) {
@@ -169,9 +182,14 @@ function buscarMesa() {
     const pedidos = getLS('pedidos');
 
     // Filtrar pedidos de esta mesa que estén listos para facturar
-    const pedidosMesa = pedidos.filter(p =>
-        parseInt(p.mesa) === mesa && pedidoFacturable(p)
-    );
+const pedidosMesa = pedidos.filter(p => {
+    const est = (p.estado || '').toLowerCase();
+    return parseInt(p.mesa) === mesa &&
+           est !== 'pagado' &&
+           est !== 'facturado' &&
+           est !== 'cancelado' &&
+           pedidoFacturable(p);
+});
 
     // Excluir los ya incluidos en facturas activas (no anuladas)
     const facturas     = getLS('facturas');
@@ -230,7 +248,7 @@ function renderPedidosMesa(pedidos) {
         card.innerHTML = `
             <div class="pedido-item-header">
                 <span class="pedido-code">
-                    <i class="fas fa-hashtag"></i> ${pedido.id || pedido.codigo}
+                    <i class="fas fa-hashtag"></i> ${pedido.codigo}
                 </span>
                 <span class="pedido-meta">
                     <i class="fas fa-user"></i> ${pedido.mozo || '—'} &nbsp;|&nbsp;
@@ -260,7 +278,7 @@ function renderPedidosMesa(pedidos) {
     pedidosSeleccionados = pedidos.map(p => ({
         ...p,
         platos: normalizarPlatos(p),
-        id:     String(p.id || p.codigo),
+        codigo: String(p.codigo),
     }));
 
     armarResumen();
@@ -508,7 +526,7 @@ function confirmarPago() {
     const factura = {
         id:         generarCodigoFactura(),
         mesa:       mesaActual,
-        pedidosIds: pedidosSeleccionados.map(p => String(p.id || p.codigo)),
+        pedidosIds: pedidosSeleccionados.map(p => String(p.codigo)),
         pedidos:    pedidosSeleccionados,
         subtotal,
         descuento,
@@ -535,19 +553,31 @@ function confirmarPago() {
     setLS('facturas', facturas);
 
     // Marcar pedidos como Facturado para evitar doble facturación
-    const pedidosLS     = getLS('pedidos');
-    const idsFacturados = new Set(factura.pedidosIds);
-    pedidosLS.forEach(p => {
-        if (idsFacturados.has(String(p.id)) || idsFacturados.has(String(p.codigo))) {
-            p.estado       = 'Facturado';
-            p.estadoCocina = 'Listo';
-        }
-    });
-    setLS('pedidos', pedidosLS);
+const pedidosLS = getLS('pedidos');
+const historial = getLS('pedidosHistorial'); // nuevo storage
+const idsFacturados = new Set(factura.pedidosIds);
 
-    showToast('¡Pago confirmado! Factura ' + factura.id + ' generada.', 'success');
-    mostrarTicket(factura);
-    resetFormulario();
+// separar pedidos
+const pedidosRestantes = [];
+const pedidosPagados = [];
+
+pedidosLS.forEach(p => {
+    if (idsFacturados.has(String(p.codigo))) {
+        p.estado = 'pagado';
+        pedidosPagados.push(p); // se van a historial
+    } else {
+        pedidosRestantes.push(p); // siguen activos
+    }
+});
+
+// guardar ambos
+// guardar ambos
+setLS('pedidos', pedidosRestantes);
+setLS('pedidosHistorial', [...historial, ...pedidosPagados]);
+
+showToast('¡Pago confirmado! Factura ' + factura.id + ' generada.', 'success');
+mostrarTicket(factura);
+resetFormulario();
 }
 
 // ============================================================
