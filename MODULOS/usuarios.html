@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAFFIA - Gestión de Usuarios</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="navbar.css">
+    <link rel="stylesheet" href="usuarios.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            background-image: url('25.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand">
+            <img src="e.png" alt="MAFFIA Logo" class="navbar-logo">
+            <div class="navbar-brand-text">
+                <span class="brand-name">MAFFIA</span>
+                <span class="brand-sub">Sistema de Gestión Restaurante Oriental</span>
+            </div>
+        </a>
+        <ul class="navbar-links">
+            <li><a href="index.html"><i class="fas fa-home"></i> <span>Inicio</span></a></li>
+            <li><a href="platos.html"><i class="fas fa-utensils"></i> <span>Platos</span></a></li>
+            <li><a href="pedidos.html"><i class="fas fa-clipboard-list"></i> <span>Pedidos</span></a></li>
+            <li><a href="cocina.html"><i class="fas fa-fire-burner"></i> <span>Cocina</span></a></li>
+            <li><a href="cuenta.html"><i class="fas fa-receipt"></i> <span>Cuenta</span></a></li>
+            <li><a href="usuarios.html" class="active"><i class="fas fa-users-cog"></i> <span>Usuarios</span></a></li>
+            <li><a href="#" id="navLogout"><i class="fas fa-sign-out-alt"></i> <span>Salir</span></a></li>
+        </ul>
+    </nav>
+    <!-- ===== END NAVBAR ===== -->
+
+    <div class="container">
+
+        <header class="header">
+            <div class="logo-container">
+                <div class="dragon-logo">
+                    <img src="e.png" alt="Dragón Realista" class="dragon-img">
+                </div>
+                <h1>Usuarios</h1>
+            </div>
+            <p class="subtitle">Gestión de cuentas y aprobación de accesos</p>
+            <div class="session-chip" id="sessionChip">
+                <i class="fas fa-user-shield"></i> <span id="sessionText">Cargando...</span>
+            </div>
+        </header>
+
+        <!-- Estadísticas -->
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <i class="fas fa-users"></i>
+                <div class="stat-info">
+                    <h4>Total Usuarios</h4>
+                    <span id="statTotal">0</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-hourglass-half"></i>
+                <div class="stat-info">
+                    <h4>Pendientes</h4>
+                    <span id="statPendientes">0</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-check-circle"></i>
+                <div class="stat-info">
+                    <h4>Activos</h4>
+                    <span id="statActivos">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="filters">
+            <input type="text" id="filtroBusqueda" placeholder="Buscar por nombre o correo...">
+            <select id="filtroEstado">
+                <option value="">Todos los estados</option>
+                <option value="Pendiente">Pendiente</option>
+                <option value="Activo">Activo</option>
+                <option value="Inactivo">Inactivo</option>
+            </select>
+            <select id="filtroRol">
+                <option value="">Todos los roles</option>
+                <option value="Cliente">Cliente</option>
+                <option value="Mozo">Mozo</option>
+                <option value="Cocina">Cocina</option>
+                <option value="Caja">Caja</option>
+                <option value="Administrador">Administrador</option>
+            </select>
+        </div>
+
+        <!-- Lista de usuarios -->
+        <div class="items-list" id="listaUsuarios">
+            <!-- Se rellena por JS -->
+        </div>
+
+        <div class="empty-state" id="emptyState" style="display:none;">
+            <i class="fas fa-user-slash"></i>
+            <p>No se encontraron usuarios con esos filtros.</p>
+        </div>
+
+        <footer class="footer">
+            <p>&copy; 2027 MAFFIA Restaurante Oriental - Experiencia Auténtica</p>
+        </footer>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="usuarios.js"></script>
+</body>
+</html>

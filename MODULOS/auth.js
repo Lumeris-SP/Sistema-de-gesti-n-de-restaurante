@@ -1,30 +1,31 @@
-// auth.js - Sistema central de autenticación y roles MAFFIA
-// Incluir en TODAS las páginas antes de cualquier otro script
-
 const Auth = {
     ROLES: {
         CLIENTE: 'Cliente',
         MOZO: 'Mozo',
-        COCINERO: 'Cocinero',
+        COCINA: 'Cocina',
+        CAJA: 'Caja',
         ADMINISTRADOR: 'Administrador'
     },
 
-    // Permisos por rol
     PERMISOS: {
         Cliente: ['ver_menu', 'hacer_pedidos', 'ver_historial_propio'],
-        Mozo: ['ver_pedidos', 'cambiar_estado_pedido', 'asignar_mesa'],
-        Cocinero: ['ver_pedidos_cocina', 'marcar_preparado'],
-        Administrador: ['gestionar_usuarios', 'gestionar_productos', 'gestionar_pedidos', 'ver_reportes', 'ver_ventas', 'ver_pedidos', 'cambiar_estado_pedido', 'asignar_mesa', 'ver_pedidos_cocina', 'marcar_preparado']
+        Mozo: ['ver_pedidos', 'cambiar_estado_pedido', 'asignar_mesa', 'ver_menu'],
+        Cocina: ['ver_pedidos_cocina', 'marcar_preparado'],
+        Caja: ['ver_facturacion', 'generar_factura', 'cerrar_cuenta'],
+        Administrador: [
+            'gestionar_usuarios', 'gestionar_productos', 'gestionar_pedidos',
+            'ver_reportes', 'ver_ventas', 'ver_pedidos', 'cambiar_estado_pedido',
+            'asignar_mesa', 'ver_pedidos_cocina', 'marcar_preparado',
+            'ver_facturacion', 'generar_factura', 'cerrar_cuenta', 'ver_menu'
+        ]
     },
 
-    // Obtener sesión activa
-    getSesion() {
-        const s = localStorage.getItem('maffia_sesion');
+    getSesion: function () {
+        var s = localStorage.getItem('maffia_sesion');
         return s ? JSON.parse(s) : null;
     },
 
-    // Guardar sesión
-    setSesion(usuario) {
+    setSesion: function (usuario) {
         localStorage.setItem('maffia_sesion', JSON.stringify({
             id: usuario.id,
             nombre: usuario.nombre,
@@ -35,62 +36,63 @@ const Auth = {
         }));
     },
 
-    // Cerrar sesión
-    cerrarSesion() {
+    cerrarSesion: function () {
         localStorage.removeItem('maffia_sesion');
         window.location.href = 'login.html';
     },
 
-    // Verificar si está autenticado
-    estaAutenticado() {
+    estaAutenticado: function () {
         return this.getSesion() !== null;
     },
 
-    // Obtener rol actual
-    getRol() {
-        const s = this.getSesion();
+    getRol: function () {
+        var s = this.getSesion();
         return s ? s.rol : null;
     },
 
-    // Verificar permiso
-    tienePermiso(permiso) {
-        const rol = this.getRol();
+    tienePermiso: function (permiso) {
+        var rol = this.getRol();
         if (!rol) return false;
-        return (this.PERMISOS[rol] || []).includes(permiso);
+        var lista = this.PERMISOS[rol] || [];
+        return lista.indexOf(permiso) !== -1;
     },
 
-    // Proteger página - redirige si no autenticado o no tiene rol permitido
-    proteger(rolesPermitidos = []) {
+    proteger: function (rolesPermitidos) {
+        rolesPermitidos = rolesPermitidos || [];
         if (!this.estaAutenticado()) {
             window.location.href = 'login.html';
             return false;
         }
-        if (rolesPermitidos.length > 0 && !rolesPermitidos.includes(this.getRol())) {
-            alert('No tienes permiso para acceder a esta sección.');
+        if (rolesPermitidos.length > 0 && rolesPermitidos.indexOf(this.getRol()) === -1) {
+            alert('No tienes permiso para acceder a esta seccion.');
             window.location.href = 'index.html';
             return false;
         }
         return true;
     },
 
-    // Obtener todos los usuarios
-    getUsuarios() {
-        return JSON.parse(localStorage.getItem('maffia_usuarios')) || [];
+    getUsuarios: function () {
+        var data = localStorage.getItem('maffia_usuarios');
+        return data ? JSON.parse(data) : [];
     },
 
-    // Guardar usuarios
-    setUsuarios(usuarios) {
+    setUsuarios: function (usuarios) {
         localStorage.setItem('maffia_usuarios', JSON.stringify(usuarios));
     },
 
-    // Buscar usuario por correo
-    buscarPorCorreo(correo) {
-        return this.getUsuarios().find(u => u.correo.toLowerCase() === correo.toLowerCase());
+    buscarPorCorreo: function (correo) {
+        var usuarios = this.getUsuarios();
+        var correoBuscado = correo.toLowerCase();
+        for (var i = 0; i < usuarios.length; i++) {
+            if (usuarios[i].correo.toLowerCase() === correoBuscado) {
+                return usuarios[i];
+            }
+        }
+        return null;
     },
 
-    // Inicializar con admin por defecto si no hay usuarios
-    inicializarDatos() {
-        const usuarios = this.getUsuarios();
+    inicializarDatos: function () {
+        var usuarios = this.getUsuarios();
         if (usuarios.length === 0) {
             this.setUsuarios([
                 {
@@ -122,7 +124,18 @@ const Auth = {
                     correo: 'cocina@maffia.com',
                     celular: '999000003',
                     contrasena: btoa('cocina123'),
-                    rol: 'Cocinero',
+                    rol: 'Cocina',
+                    estado: 'Activo',
+                    fechaRegistro: new Date().toISOString()
+                },
+                {
+                    id: 4,
+                    nombre: 'Luis',
+                    apellidos: 'Caja',
+                    correo: 'caja@maffia.com',
+                    celular: '999000004',
+                    contrasena: btoa('caja123'),
+                    rol: 'Caja',
                     estado: 'Activo',
                     fechaRegistro: new Date().toISOString()
                 }
@@ -131,5 +144,4 @@ const Auth = {
     }
 };
 
-// Inicializar datos al cargar
 Auth.inicializarDatos();

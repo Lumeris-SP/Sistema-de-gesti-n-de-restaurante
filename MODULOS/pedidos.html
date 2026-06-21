@@ -6,7 +6,6 @@
     <title>MAFFIA-Pedidos</title>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">  
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="navbar.css">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="pedidos.css">
     <style>
@@ -22,23 +21,24 @@
 <body>
 <div class="container">
 
-  <nav class="navbar">
-    <a href="index.html" class="navbar-brand">
-        <img src="e.png" alt="MAFFIA Logo" class="navbar-logo">
-        <div class="navbar-brand-text">
-            <span class="brand-name">MAFFIA</span>
-            <span class="brand-sub">Sistema de Gestión Restaurante Oriental</span>
+    <header class="main-header">
+        <div class="header-content">
+            <div class="logo-area">
+                <div class="logo-icon"><i class="fas fa-dragon"></i></div>
+                <div class="logo-text">
+                    <h1>MAFFIA</h1>
+                    <span>Sistema de Gestión Restaurante Oriental</span>
+                </div>
+            </div>
+            <nav class="main-nav">
+                <a href="index.html"><i class="fas fa-home"></i> Inicio</a>
+                <a href="platos.html"><i class="fas fa-utensils"></i> Platos</a>
+                <a href="pedidos.html"><i class="fas fa-clipboard-list"></i> Pedidos</a>
+                <a href="cocina.html"><i class="fas fa-fire"></i></i> Cocina</a>
+                <a href="cuenta.html"><i class="fas fa-receipt"></i> Cuenta</a>
+            </nav>
         </div>
-    </a>
-
-    <ul class="navbar-links">
-        <li><a href="index.html"><i class="fas fa-home"></i> <span>Inicio</span></a></li>
-        <li><a href="platos.html"><i class="fas fa-utensils"></i> <span>Platos</span></a></li>
-        <li><a href="pedidos.html" class="active"><i class="fas fa-clipboard-list"></i> <span>Pedidos</span></a></li>
-        <li><a href="cocina.html"><i class="fas fa-fire-burner"></i> <span>Cocina</span></a></li>
-        <li><a href="cuenta.html"><i class="fas fa-receipt"></i> <span>Cuenta</span></a></li>
-    </ul>
-</nav>  
+    </header>
 
     <div class="module-content">
 

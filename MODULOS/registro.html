@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAFFIA - Registrarse</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="registro.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="chinese-bg"></div>
+
+    <div class="auth-page">
+        <div class="auth-wrapper">
+
+            <!-- Header -->
+            <div class="auth-header">
+                <div class="auth-logo-row">
+                    <div class="auth-dragon">
+                        <img src="e.png" alt="Dragon MAFFIA">
+                    </div>
+                    <span class="auth-brand">MAFFIA</span>
+                </div>
+                <p class="auth-subtitle">Sistema de Gestión Restaurante Oriental</p>
+            </div>
+
+            <!-- Card -->
+            <div class="auth-card">
+
+                <!-- Barra de pasos -->
+                <div class="steps-bar" id="stepsBar">
+                    <div class="step-dot active" id="sDot1"><i class="fas fa-user"></i></div>
+                    <div class="step-line" id="sLine1"></div>
+                    <div class="step-dot" id="sDot2"><i class="fas fa-envelope"></i></div>
+                    <div class="step-line" id="sLine2"></div>
+                    <div class="step-dot" id="sDot3"><i class="fas fa-check"></i></div>
+                </div>
+
+                <!-- Mensaje general -->
+                <div class="auth-msg" id="regMsg"></div>
+
+                <!-- ══ PASO 1: Datos personales ══ -->
+                <div class="step-section active" id="step1">
+                    <h2 class="auth-card-title"><i class="fas fa-user-plus"></i> Crear cuenta</h2>
+                    <p class="auth-card-desc">Completa tus datos para registrarte</p>
+
+                    <div class="auth-row">
+                        <div class="auth-field">
+                            <label>Nombres</label>
+                            <div class="auth-input-wrap">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="regNombre" placeholder="Juan">
+                            </div>
+                        </div>
+                        <div class="auth-field">
+                            <label>Apellidos</label>
+                            <div class="auth-input-wrap">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="regApellidos" placeholder="Pérez">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="auth-field">
+                        <label>Correo electrónico</label>
+                        <div class="auth-input-wrap">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="regCorreo" placeholder="tucorreo@email.com">
+                        </div>
+                    </div>
+
+                    <div class="auth-field">
+                        <label>Celular</label>
+                        <div class="auth-input-wrap">
+                            <i class="fas fa-phone"></i>
+                            <input type="tel" id="regCelular" placeholder="987 654 321" maxlength="12">
+                        </div>
+                    </div>
+
+                    <div class="auth-field">
+                        <label>Rol del usuario</label>
+                        <div class="auth-input-wrap">
+                            <i class="fas fa-id-badge"></i>
+                            <select id="regRol" class="auth-select">
+                                <option value="" disabled selected>Selecciona tu rol</option>
+                                <option value="Cliente">Cliente</option>
+                                <option value="Mozo">Mozo</option>
+                                <option value="Cocina">Cocina</option>
+                                <option value="Caja">Caja</option>
+                                <option value="Administrador">Administrador</option>
+                            </select>
+                        </div>
+                        <p class="pass-hint">El acceso a roles internos requiere aprobación del Administrador.</p>
+                    </div>
+
+                    <div class="auth-field">
+                        <label>Contraseña</label>
+                        <div class="auth-input-wrap">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="regPass" placeholder="Mínimo 6 caracteres" oninput="checkStrength(this.value)">
+                            <button class="toggle-pass" onclick="togglePass('regPass', this)" type="button">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="pass-strength">
+                            <div class="strength-bar" id="sb1"></div>
+                            <div class="strength-bar" id="sb2"></div>
+                            <div class="strength-bar" id="sb3"></div>
+                        </div>
+                        <p class="pass-hint" id="passHint">Ingresa una contraseña</p>
+                    </div>
+
+                    <div class="auth-field">
+                        <label>Confirmar contraseña</label>
+                        <div class="auth-input-wrap">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="regPassConfirm" placeholder="Repite tu contraseña">
+                            <button class="toggle-pass" onclick="togglePass('regPassConfirm', this)" type="button">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button class="btn-auth" id="btnPaso1" onclick="irPaso2()">
+                        <i class="fas fa-arrow-right"></i> &nbsp;Continuar
+                    </button>
+
+                    <div class="auth-switch">
+                        ¿Ya tienes cuenta? <a href="login.html">Iniciar Sesión</a>
+                    </div>
+                </div>
+
+                <!-- ══ PASO 2: Verificación de correo ══ -->
+                <div class="step-section" id="step2">
+                    <h2 class="auth-card-title"><i class="fas fa-envelope-open-text"></i> Verificar correo</h2>
+                    <p class="auth-card-desc">Te enviamos un código de 6 dígitos</p>
+
+                    <div class="verify-panel">
+                        <p style="font-size:13px; color:rgba(245,245,245,0.6);">
+                            Código enviado a <strong id="correoMostrado" style="color:#c9a227;"></strong>
+                        </p>
+
+                        <div class="code-display">
+                            <p><i class="fas fa-envelope"></i> &nbsp;Código de verificación</p>
+                            <div class="code-number" id="codigoDisplay">------</div>
+                            <p style="margin-top:8px; font-size:10px; color:rgba(201,162,39,0.5);">
+                                (Simulado — en producción llegaría a tu correo)
+                            </p>
+                        </div>
+
+                        <p style="font-size:12px; color:rgba(245,245,245,0.5); margin-bottom:4px;">
+                            Ingresa el código:
+                        </p>
+
+                        <div class="code-input-row" id="codeInputs">
+                            <input class="code-digit" maxlength="1" type="text" pattern="[0-9]" inputmode="numeric">
+                            <input class="code-digit" maxlength="1" type="text" pattern="[0-9]" inputmode="numeric">
+                            <input class="code-digit" maxlength="1" type="text" pattern="[0-9]" inputmode="numeric">
+                            <input class="code-digit" maxlength="1" type="text" pattern="[0-9]" inputmode="numeric">
+                            <input class="code-digit" maxlength="1" type="text" pattern="[0-9]" inputmode="numeric">
+                            <input class="code-digit" maxlength="1" type="text" pattern="[0-9]" inputmode="numeric">
+                        </div>
+
+                        <button class="btn-auth" id="btnVerificar" onclick="verificarCodigo()">
+                            <i class="fas fa-check-circle"></i> &nbsp;Verificar Código
+                        </button>
+
+                        <button class="btn-auth-outline" onclick="reenviarCodigo()">
+                            <i class="fas fa-redo"></i> &nbsp;Reenviar código
+                        </button>
+                    </div>
+
+                    <div class="auth-switch" style="margin-top:16px;">
+                        <a href="#" onclick="volverPaso1()"><i class="fas fa-arrow-left"></i> Volver</a>
+                    </div>
+                </div>
+
+                <!-- ══ PASO 3: Éxito ══ -->
+                <div class="step-section" id="step3">
+                    <div class="success-panel">
+                        <div class="success-icon"><i class="fas fa-hourglass-half"></i></div>
+                        <h3>¡Registro completado!</h3>
+                        <p id="successText">Tu cuenta fue creada y verificada.<br>Queda pendiente de aprobación por el Administrador.</p>
+                        <button class="btn-auth" onclick="window.location.href='login.html'">
+                            <i class="fas fa-sign-in-alt"></i> &nbsp;Ir a Iniciar Sesión
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="registro.js"></script>
+</body>
+</html>

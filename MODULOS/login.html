@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAFFIA - Iniciar Sesion</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="auth.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="chinese-bg"></div>
+
+    <div class="auth-page">
+        <div class="auth-wrapper">
+
+            <div class="auth-header">
+                <div class="auth-logo-row">
+                    <div class="auth-dragon">
+                        <img src="e.png" alt="Dragon MAFFIA">
+                    </div>
+                    <span class="auth-brand">MAFFIA</span>
+                </div>
+                <p class="auth-subtitle">Sistema de Gestion Restaurante Oriental</p>
+            </div>
+
+            <div class="auth-card">
+                <h2 class="auth-card-title">
+                    <i class="fas fa-sign-in-alt"></i> Iniciar Sesion
+                </h2>
+                <p class="auth-card-desc">Accede con tu correo y contrasena</p>
+
+                <div class="auth-msg" id="loginMsg"></div>
+
+                <div class="auth-field">
+                    <label for="loginCorreo"><i class="fas fa-envelope"></i> &nbsp;Correo electronico</label>
+                    <div class="auth-input-wrap">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="loginCorreo" placeholder="tucorreo@email.com" autocomplete="email">
+                    </div>
+                </div>
+
+                <div class="auth-field">
+                    <label for="loginPass"><i class="fas fa-lock"></i> &nbsp;Contrasena</label>
+                    <div class="auth-input-wrap">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="loginPass" placeholder="Tu contrasena" autocomplete="current-password">
+                        <button class="toggle-pass" onclick="togglePass('loginPass', this)" type="button">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button class="btn-auth" id="btnLogin" onclick="iniciarSesion()">
+                    <i class="fas fa-sign-in-alt"></i> &nbsp;Ingresar
+                </button>
+
+                <div class="auth-welcome">
+                    <i class="fas fa-utensils"></i>
+                    <p>Bienvenido de nuevo. Inicia sesion para gestionar tus pedidos.</p>
+                </div>
+
+                <div class="auth-switch">
+                    No tienes cuenta? <a href="registro.html">Registrarse</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script src="login.js"></script>
+</body>
+</html>
