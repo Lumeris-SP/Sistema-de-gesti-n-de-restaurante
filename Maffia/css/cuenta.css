@@ -1,0 +1,213 @@
+/* ============================================================
+   cuenta.css — Módulo de facturación MAFFIA
+   ============================================================ */
+
+/* Decoraciones esquina */
+.corner-deco {
+  position: fixed;
+  font-size: 50px;
+  color: rgba(212,175,55,0.06);
+  pointer-events: none;
+  z-index: 0;
+  animation: floatDeco 9s ease-in-out infinite;
+}
+.corner-deco.top-left  { top: 88px; left: 20px; }
+.corner-deco.top-right { top: 88px; right: 20px; animation-delay: -4.5s; }
+@keyframes floatDeco {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-10px) rotate(6deg); }
+}
+
+.bg-overlay {
+  position: fixed; inset: 0; z-index: -1;
+  background: linear-gradient(160deg,
+    rgba(10,6,3,0.92) 0%,
+    rgba(10,6,3,0.85) 100%);
+}
+.bg-pattern {
+  position: fixed; inset: 0; z-index: -1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cg fill='none' stroke='%23D4AF37' stroke-width='0.3' opacity='0.06'%3E%3Crect x='10' y='10' width='80' height='80' rx='6'/%3E%3Ccircle cx='50' cy='50' r='30'/%3E%3Cpath d='M50 10 L90 50 L50 90 L10 50 Z'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 100px;
+}
+
+/* Cuenta pedido card (paso 2) */
+.cuenta-pedido-item {
+  background: rgba(25,14,6,0.7);
+  border: 1px solid rgba(212,175,55,0.18);
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 12px;
+  transition: border-color 0.25s, box-shadow 0.25s;
+  position: relative;
+}
+.cuenta-pedido-item:hover {
+  border-color: rgba(212,175,55,0.4);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+
+.cuenta-pedido-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cuenta-pedido-codigo {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: #D4AF37;
+  font-weight: 700;
+}
+
+.cuenta-pedido-platos { margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(212,175,55,0.1); }
+
+.cuenta-plato-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  font-size: 12px;
+  color: rgba(242,234,216,0.75);
+}
+.cuenta-plato-row .precio { color: #D4AF37; font-weight: 600; }
+
+/* Resumen de factura */
+.factura-resumen {
+  background: rgba(212,175,55,0.06);
+  border: 1px solid rgba(212,175,55,0.2);
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 16px;
+}
+.factura-linea {
+  display: flex;
+  justify-content: space-between;
+  padding: 7px 0;
+  font-size: 13px;
+  color: rgba(242,234,216,0.65);
+  border-bottom: 1px solid rgba(212,175,55,0.08);
+}
+.factura-linea:last-child { border-bottom: none; }
+.factura-linea.total {
+  font-size: 18px;
+  font-weight: 700;
+  color: #D4AF37;
+  font-family: 'Playfair Display', serif;
+  padding-top: 14px;
+  border-top: 2px solid rgba(212,175,55,0.3);
+  border-bottom: none;
+  margin-top: 8px;
+}
+
+/* Descuento */
+.descuento-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.descuento-group input {
+  flex: 1;
+  min-width: 120px;
+}
+
+/* Pago métodos */
+.metodo-pago-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.metodo-btn {
+  flex: 1;
+  min-width: 100px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(212,175,55,0.22);
+  background: rgba(255,255,255,0.03);
+  color: rgba(242,234,216,0.6);
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.25s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.metodo-btn:hover { border-color: rgba(212,175,55,0.5); color: #D4AF37; background: rgba(212,175,55,0.08); }
+.metodo-btn.active {
+  border-color: #D4AF37;
+  background: rgba(212,175,55,0.14);
+  color: #F5D76E;
+  box-shadow: 0 0 12px rgba(212,175,55,0.2);
+}
+
+/* Factura imprimible */
+.factura-print {
+  background: rgba(255,255,255,0.97);
+  color: #1a0a00;
+  border-radius: 12px;
+  padding: 28px;
+  font-family: 'Poppins', sans-serif;
+  max-width: 400px;
+  margin: 0 auto;
+}
+.factura-print-header {
+  text-align: center;
+  margin-bottom: 18px;
+  border-bottom: 2px dashed rgba(0,0,0,0.15);
+  padding-bottom: 14px;
+}
+.factura-print-header h2 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 22px;
+  color: #8B1A10;
+  letter-spacing: 3px;
+}
+.factura-print-header p { font-size: 11px; color: #666; margin-top: 4px; }
+
+.factura-print-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+  font-size: 12px;
+  border-bottom: 1px dashed rgba(0,0,0,0.06);
+}
+.factura-print-row.total {
+  font-size: 16px;
+  font-weight: 700;
+  color: #8B1A10;
+  border-bottom: none;
+  padding-top: 12px;
+  margin-top: 8px;
+  border-top: 2px solid rgba(139,26,16,0.25);
+}
+
+/* Cuentas guardadas list */
+.cuenta-guardada-card {
+  background: rgba(20,12,6,0.8);
+  border: 1px solid rgba(212,175,55,0.18);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  transition: all 0.25s;
+  cursor: pointer;
+}
+.cuenta-guardada-card:hover {
+  border-color: rgba(212,175,55,0.4);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+.cuenta-guardada-meta { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.cuenta-guardada-total {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  color: #D4AF37;
+  font-weight: 700;
+}

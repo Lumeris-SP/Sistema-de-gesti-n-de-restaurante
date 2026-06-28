@@ -1,0 +1,176 @@
+/* ============================================================
+   MAFFIA — platos.css
+   Estilos exclusivos del módulo Registro de Platos.
+   Requiere styles.css + navbar.css cargados antes.
+   ============================================================ */
+
+/* ── Card de plato en la lista ── */
+.plato-card {
+  background: rgba(25,14,6,0.78);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition),
+    transform var(--transition);
+  backdrop-filter: blur(8px);
+  position: relative;
+  overflow: hidden;
+}
+.plato-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  border-radius: 3px 0 0 3px;
+  background: var(--border);
+  transition: background var(--transition);
+}
+.plato-card.activo::before  { background: var(--green); }
+.plato-card.inactivo::before { background: rgba(255,255,255,0.12); }
+
+.plato-card:hover {
+  border-color: rgba(212,175,55,0.4);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4), 0 0 10px rgba(212,175,55,0.07);
+  transform: translateX(3px);
+}
+.plato-card.editing {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px rgba(212,175,55,0.2);
+  background: rgba(212,175,55,0.04);
+}
+
+/* Icono de categoría */
+.plato-cat-icon {
+  width: 40px; height: 40px;
+  border-radius: var(--radius-sm);
+  background: rgba(212,175,55,0.1);
+  border: 1px solid rgba(212,175,55,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* Info principal */
+.plato-body { flex: 1; min-width: 0; }
+
+.plato-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+.plato-nombre {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.2;
+}
+.plato-codigo {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  color: var(--text-faint);
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+
+.plato-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+/* Badge de categoría */
+.badge-categoria {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  background: rgba(212,175,55,0.1);
+  border: 1px solid rgba(212,175,55,0.22);
+  color: var(--gold);
+}
+
+/* Precio */
+.plato-precio {
+  font-family: 'Playfair Display', serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--gold);
+  white-space: nowrap;
+}
+
+/* Tags de alérgenos en la lista */
+.alergeno-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 100px;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  background: rgba(255,152,0,0.1);
+  border: 1px solid rgba(255,152,0,0.25);
+  color: #FFB74D;
+}
+.alergeno-tag.ninguno {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.1);
+  color: var(--text-faint);
+}
+
+/* Acciones del card */
+.plato-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* ── Formulario: indicador de plato en edición ── */
+.editing-indicator {
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: rgba(212,175,55,0.08);
+  border: 1px solid rgba(212,175,55,0.25);
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  color: var(--gold);
+  margin-bottom: 16px;
+  animation: platosSlideIn 0.25s ease;
+}
+.editing-indicator.visible { display: flex; }
+.editing-indicator i { color: var(--gold); }
+
+@keyframes platosSlideIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Empty state específico de platos ── */
+.platos-empty {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--text-faint);
+}
+.platos-empty i {
+  font-size: 40px;
+  display: block;
+  margin-bottom: 12px;
+  color: rgba(212,175,55,0.2);
+}
+.platos-empty p { font-size: 13px; }

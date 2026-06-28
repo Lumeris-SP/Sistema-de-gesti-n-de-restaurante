@@ -1,0 +1,232 @@
+/* ============================================================
+   pedidos.css — Módulo de pedidos MAFFIA
+   ============================================================ */
+
+/* Pedido card en la lista */
+.pedido-card {
+  background: rgba(20,12,6,0.85);
+  border: 1px solid rgba(212,175,55,0.22);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin-bottom: 14px;
+  backdrop-filter: blur(10px);
+  transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+  animation: slideIn 0.3s ease both;
+  position: relative;
+  overflow: hidden;
+}
+.pedido-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: linear-gradient(to bottom, #D4AF37, rgba(212,175,55,0.3));
+  border-radius: 4px 0 0 4px;
+}
+.pedido-card.urgente::before { background: linear-gradient(to bottom, #C0281C, rgba(192,40,28,0.3)); }
+.pedido-card.alta::before    { background: linear-gradient(to bottom, #FF9800, rgba(255,152,0,0.3)); }
+
+.pedido-card:hover {
+  border-color: rgba(212,175,55,0.45);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.4), 0 0 14px rgba(212,175,55,0.08);
+  transform: translateY(-2px);
+}
+
+@keyframes slideIn {
+  from { opacity:0; transform: translateX(-16px); }
+  to   { opacity:1; transform: translateX(0); }
+}
+
+.pedido-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.pedido-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pedido-codigo {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: #D4AF37;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.pedido-info-row {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: rgba(242,234,216,0.6);
+}
+
+.pedido-info-row i { color: rgba(212,175,55,0.5); margin-right: 4px; }
+
+.pedido-badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+/* Platos dentro de un pedido */
+.pedido-platos {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(212,175,55,0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pedido-plato-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(212,175,55,0.1);
+  border-radius: 8px;
+  font-size: 12px;
+  gap: 10px;
+}
+
+.pedido-plato-nombre { font-weight: 500; color: rgba(242,234,216,0.85); }
+.pedido-plato-qty    { color: #D4AF37; font-weight: 700; }
+.pedido-plato-precio { color: rgba(212,175,55,0.7); margin-left: auto; }
+
+/* Total del pedido */
+.pedido-total {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(212,175,55,0.12);
+}
+.pedido-total .label { font-size: 11px; color: rgba(242,234,216,0.5); text-transform: uppercase; letter-spacing: 1px; }
+.pedido-total .amount {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  color: #D4AF37;
+  font-weight: 700;
+  filter: drop-shadow(0 0 6px rgba(212,175,55,0.4));
+}
+
+/* Observación del pedido */
+.pedido-obs {
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: rgba(212,175,55,0.05);
+  border: 1px solid rgba(212,175,55,0.15);
+  border-radius: 8px;
+  font-size: 12px;
+  color: rgba(242,234,216,0.6);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.pedido-obs i { color: rgba(212,175,55,0.5); flex-shrink: 0; margin-top: 2px; }
+
+/* Acciones del pedido */
+.pedido-actions {
+  margin-top: 14px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+/* Justificación urgente */
+.justificacion-urgente {
+  display: none;
+  margin-top: 14px;
+  padding: 16px;
+  background: rgba(192,40,28,0.08);
+  border: 1px solid rgba(192,40,28,0.3);
+  border-radius: 10px;
+  animation: slideDown 0.25s ease;
+}
+.justificacion-urgente.visible { display: block; }
+@keyframes slideDown {
+  from { opacity:0; transform: translateY(-8px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+.justificacion-urgente label {
+  color: #E57373;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.justificacion-urgente select,
+.justificacion-urgente textarea {
+  width: 100%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(192,40,28,0.3);
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: #F2EAD8;
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  outline: none;
+  margin-bottom: 8px;
+  transition: border-color 0.25s;
+  appearance: none;
+  resize: vertical;
+}
+.justificacion-urgente select:focus,
+.justificacion-urgente textarea:focus { border-color: rgba(192,40,28,0.6); }
+
+/* Urgente badge pulsante */
+.urgente-pulse {
+  animation: pulseRed 1.5s ease-in-out infinite;
+}
+@keyframes pulseRed {
+  0%,100% { box-shadow: 0 0 0 0 rgba(192,40,28,0.5); }
+  50%      { box-shadow: 0 0 0 6px rgba(192,40,28,0); }
+}
+
+/* Estado del pedido en lista */
+.estado-timeline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 11px;
+  color: rgba(242,234,216,0.5);
+}
+.estado-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+}
+.estado-dot.active { background: #D4AF37; box-shadow: 0 0 6px rgba(212,175,55,0.6); }
+.estado-dot.done   { background: #4CAF50; }
+
+/* Sin pedidos */
+.no-pedidos {
+  text-align: center;
+  padding: 48px 20px;
+  color: rgba(242,234,216,0.3);
+  font-size: 14px;
+}
+.no-pedidos i {
+  font-size: 48px;
+  color: rgba(212,175,55,0.15);
+  display: block;
+  margin-bottom: 14px;
+}

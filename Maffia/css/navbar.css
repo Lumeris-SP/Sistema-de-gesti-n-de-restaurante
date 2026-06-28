@@ -1,0 +1,190 @@
+/* ============================================================
+   navbar.css — Barra de navegación global MAFFIA
+   ============================================================ */
+
+.navbar {
+  position: sticky;
+  top: 0; z-index: 1000;
+  width: 100%;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  background: rgba(8,4,2,0.96);
+  border-bottom: 1px solid rgba(212,175,55,0.28);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 2px 24px rgba(0,0,0,0.6), 0 1px 0 rgba(212,175,55,0.1);
+}
+
+/* Linea dorada inferior animada (pulse) */
+.navbar::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 100%; height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(212,175,55,0.6) 30%,
+    rgba(192,40,28,0.8) 50%,
+    rgba(212,175,55,0.6) 70%,
+    transparent 100%);
+  animation: shimmerBar 5s ease-in-out infinite;
+}
+@keyframes shimmerBar {
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 1; }
+}
+
+/* ── Brand ── */
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.navbar-logo {
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: rgba(0,0,0,0.5);
+  border: 2px solid rgba(212,175,55,0.4);
+  box-shadow: 0 0 14px rgba(212,175,55,0.3);
+  transition: box-shadow 0.3s, transform 0.3s;
+  filter: drop-shadow(0 0 6px rgba(212,175,55,0.5));
+}
+.navbar-brand:hover .navbar-logo {
+  box-shadow: 0 0 24px rgba(212,175,55,0.6);
+  transform: scale(1.08) rotate(-5deg);
+}
+
+.navbar-brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+  gap: 3px;
+}
+.brand-name {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 18px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #F5D76E, #D4AF37, #B8860B);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  letter-spacing: 5px;
+}
+.brand-sub {
+  font-family: 'Poppins', sans-serif;
+  font-size: 9px;
+  font-weight: 300;
+  color: rgba(212,175,55,0.5);
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+}
+
+/* ── Links ── */
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  list-style: none;
+}
+
+.navbar-links a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  text-decoration: none;
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(212,175,55,0.7);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  border-radius: 6px;
+  transition: all 0.25s;
+  position: relative;
+  white-space: nowrap;
+}
+
+.navbar-links a i {
+  font-size: 13px;
+  transition: transform 0.25s;
+}
+
+.navbar-links a:hover {
+  color: #F5D76E;
+  background: rgba(212,175,55,0.1);
+}
+.navbar-links a:hover i {
+  transform: translateY(-2px);
+}
+
+.navbar-links a.active {
+  color: #F5D76E;
+  background: rgba(212,175,55,0.12);
+}
+
+/* Indicador activo: línea roja inferior */
+.navbar-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 0; height: 2px;
+  background: linear-gradient(90deg, var(--red, #C0281C), #D4AF37);
+  border-radius: 2px;
+  transition: width 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+.navbar-links a:hover::after,
+.navbar-links a.active::after { width: 60%; }
+
+/* Salir: rojo */
+.navbar-links a[onclick*="cerrar"],
+.navbar-links a#navLogout {
+  color: rgba(229,115,115,0.7);
+}
+.navbar-links a[onclick*="cerrar"]:hover,
+.navbar-links a#navLogout:hover {
+  color: #E57373;
+  background: rgba(192,40,28,0.15);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .navbar { padding: 0 16px; height: 60px; }
+  .brand-sub { display: none; }
+  .navbar-links a span { display: none; }
+  .navbar-links a { padding: 8px 10px; }
+  .brand-name { font-size: 14px; }
+}
+@media (max-width: 480px) {
+  .navbar-logo { width: 36px; height: 36px; }
+}
+
+/* ── Extra util: obs en pedido ── */
+.plato-obs-extras {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: rgba(76,175,80,0.08);
+  border-left: 3px solid rgba(76,175,80,0.5);
+  border-radius: 4px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: rgba(129,199,132,0.9);
+}
+.obs-extra-tag {
+  background: rgba(76,175,80,0.15);
+  color: #81C784;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(76,175,80,0.3);
+  font-weight: 500;
+}
+.obs-extra-tag strong { color: #FFB74D; margin-left: 4px; }

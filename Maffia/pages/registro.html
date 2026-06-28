@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAFFIA — Crear Cuenta</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/auth.css">
+    <link rel="stylesheet" href="../css/registro.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Noto+Serif+SC:wght@400;700&family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <div class="chinese-bg" style="background-image:url('../assets/img/25.jpg');"></div>
+
+    <div class="auth-page">
+        <div class="auth-wrapper">
+
+            <!-- Header -->
+            <div class="auth-header">
+                <div class="auth-logo-row">
+                    <div class="auth-dragon">
+                        <img src="../assets/img/e.png" alt="Dragón MAFFIA">
+                    </div>
+                    <span class="auth-brand">MAFFIA</span>
+                </div>
+                <p class="auth-subtitle">Sistema de Gestión Restaurante Oriental</p>
+            </div>
+
+            <!-- Card de registro -->
+            <div class="auth-card">
+                <h2 class="auth-card-title">
+                    <i class="fas fa-user-plus"></i> Crear Cuenta
+                </h2>
+                <p class="auth-card-desc">Completa los datos para solicitar acceso al sistema</p>
+
+                <!-- Barra de pasos -->
+                <div class="steps-bar">
+                    <div class="step-dot active" id="sDot1">1</div>
+                    <div class="step-line" id="sLine1"></div>
+                    <div class="step-dot" id="sDot2">2</div>
+                    <div class="step-line" id="sLine2"></div>
+                    <div class="step-dot" id="sDot3">3</div>
+                </div>
+
+                <!-- Mensaje de error / éxito global -->
+                <div class="auth-msg" id="regMsg"></div>
+
+                <!-- ══════════════════════════════════════
+                     PASO 1 — Datos personales y cuenta
+                     ══════════════════════════════════════ -->
+                <div class="step-section active" id="stepSection1">
+
+                    <div class="auth-row">
+                        <div class="auth-field">
+                            <label for="regNombre"><i class="fas fa-user"></i> &nbsp;Nombre</label>
+                            <div class="auth-input-wrap">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="regNombre" placeholder="Tu nombre" autocomplete="given-name">
+                            </div>
+                        </div>
+                        <div class="auth-field">
+                            <label for="regApellidos"><i class="fas fa-user"></i> &nbsp;Apellidos</label>
+                            <div class="auth-input-wrap">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="regApellidos" placeholder="Tus apellidos" autocomplete="family-name">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="auth-field">
+                        <label for="regCorreo"><i class="fas fa-envelope"></i> &nbsp;Correo electrónico</label>
+                        <div class="auth-input-wrap">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="regCorreo" placeholder="tucorreo@email.com" autocomplete="email">
+                        </div>
+                    </div>
+
+                    <div class="auth-field">
+                        <label for="regCelular"><i class="fas fa-phone"></i> &nbsp;Celular</label>
+                        <div class="auth-input-wrap">
+                            <i class="fas fa-phone"></i>
+                            <input type="tel" id="regCelular" placeholder="Ej. 987654321" autocomplete="tel">
+                        </div>
+                    </div>
+
+                    <div class="auth-field">
+                        <label for="regRol"><i class="fas fa-id-badge"></i> &nbsp;Rol solicitado</label>
+                        <div class="auth-input-wrap">
+                            <i class="fas fa-id-badge"></i>
+                            <select id="regRol" class="auth-select">
+                                <option value="">— Selecciona un rol —</option>
+                                <option value="Cliente">Cliente</option>
+                                <option value="Mozo">Mozo</option>
+                                <option value="Cocina">Cocina</option>
+                                <option value="Caja">Caja</option>
+                                <option value="Administrador">Administrador</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="auth-field">
+                        <label for="regPass"><i class="fas fa-lock"></i> &nbsp;Contraseña</label>
+                        <div class="auth-input-wrap">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="regPass" placeholder="Mínimo 6 caracteres"
+                                autocomplete="new-password"
+                                oninput="checkStrength(this.value)">
+                            <button class="toggle-pass" type="button" onclick="togglePass('regPass', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="pass-strength">
+                            <div class="strength-bar" id="sb1"></div>
+                            <div class="strength-bar" id="sb2"></div>
+                            <div class="strength-bar" id="sb3"></div>
+                        </div>
+                        <p class="pass-hint" id="passHint">Ingresa una contraseña</p>
+                    </div>
+
+                    <div class="auth-field">
+                        <label for="regPassConfirm"><i class="fas fa-lock"></i> &nbsp;Confirmar contraseña</label>
+                        <div class="auth-input-wrap">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="regPassConfirm" placeholder="Repite tu contraseña"
+                                autocomplete="new-password">
+                            <button class="toggle-pass" type="button" onclick="togglePass('regPassConfirm', this)">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button class="btn-auth" id="btnIrPaso2" onclick="irPaso2()">
+                        <i class="fas fa-arrow-right"></i> &nbsp;Continuar
+                    </button>
+
+                    <div class="auth-switch">
+                        ¿Ya tienes cuenta? <a href="login.html">Iniciar sesión</a>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════
+                     PASO 2 — Confirmación de correo
+                     ══════════════════════════════════════ -->
+                <div class="step-section" id="stepSection2">
+                    <div class="verify-panel">
+                        <div class="code-display">
+                            <i class="fas fa-envelope-open-text" style="font-size:36px;color:var(--gold,#D4AF37);margin-bottom:10px;display:block;"></i>
+                            <p style="font-size:13px;color:rgba(242,234,216,0.75);margin-bottom:6px;">
+                                Enviamos un enlace de confirmación a:
+                            </p>
+                            <strong id="correoMostrado" style="color:#c9a227;font-size:14px;word-break:break-all;"></strong>
+                            <p style="font-size:11px;color:rgba(242,234,216,0.45);margin-top:10px;line-height:1.5;">
+                                Revisa tu bandeja de entrada (y la carpeta de spam) y haz clic en el enlace para activar tu cuenta.
+                            </p>
+                        </div>
+
+                        <button class="btn-auth" onclick="continuarAPaso3()">
+                            <i class="fas fa-check"></i> &nbsp;Ya confirmé mi correo
+                        </button>
+
+                        <button class="btn-auth-outline" onclick="volverPaso1()" style="margin-top:10px;">
+                            <i class="fas fa-arrow-left"></i> &nbsp;Volver
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════
+                     PASO 3 — Registro completado
+                     ══════════════════════════════════════ -->
+                <div class="step-section" id="stepSection3">
+                    <div class="success-panel">
+                        <div class="success-icon">
+                            <i class="fas fa-dragon"></i>
+                        </div>
+                        <h3>¡Solicitud Enviada!</h3>
+                        <p>
+                            Tu cuenta ha sido creada correctamente.<br>
+                            Un administrador revisará tu solicitud y activará tu acceso en breve.
+                        </p>
+                        <a href="login.html" class="btn-auth" style="text-decoration:none;display:flex;">
+                            <i class="fas fa-sign-in-alt"></i> &nbsp;Ir al inicio de sesión
+                        </a>
+                    </div>
+                </div>
+
+            </div><!-- /auth-card -->
+
+        </div><!-- /auth-wrapper -->
+    </div><!-- /auth-page -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script src="../js/core/supabaseClient.js"></script>
+    <script src="../js/core/auth.js"></script>
+    <script src="../js/pages/registro.page.js"></script>
+</body>
+</html>

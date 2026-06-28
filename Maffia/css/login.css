@@ -1,0 +1,30 @@
+/* ============================================================
+   MAFFIA — login.css
+   Estilos específicos de la página login.html.
+   Requiere auth.css cargado antes.
+   ============================================================ */
+
+/* El wrapper del login es más estrecho que el de registro */
+.auth-wrapper.login-wrapper {
+  max-width: 420px;
+}
+
+/* Bloque de bienvenida inferior */
+.auth-welcome {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(212,175,55,0.12);
+  text-align: center;
+}
+.auth-welcome i {
+  color: var(--gold, #D4AF37);
+  opacity: 0.7;
+  font-size: 18px;
+  display: block;
+  margin-bottom: 6px;
+}
+.auth-welcome p {
+  font-size: 11px;
+  color: rgba(242,234,216,0.45);
+  line-height: 1.6;
+}

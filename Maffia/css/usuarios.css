@@ -1,0 +1,82 @@
+/* registro.css — hereda todo de auth.css, solo overrides específicos */
+/* La página de registro usa .auth-page / .auth-wrapper / .auth-card / .auth-field */
+/* Los estilos de steps, auth-row, etc. ya están en auth.css */
+
+/* Ajuste: el wrapper del registro puede ser más ancho */
+
+.usuario-card {
+  background: rgba(20,12,6,0.82);
+  border: 1px solid rgba(212,175,55,0.18);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+  backdrop-filter: blur(8px);
+  animation: slideIn 0.3s ease both;
+  position: relative;
+  overflow: hidden;
+}
+.usuario-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  border-radius: 3px 0 0 3px;
+  background: rgba(212,175,55,0.4);
+  transition: background 0.25s;
+}
+.usuario-card.pendiente::before { background: #FF9800; }
+.usuario-card.activo::before    { background: #4CAF50; }
+.usuario-card.inactivo::before  { background: rgba(255,255,255,0.2); }
+
+.usuario-card:hover {
+  border-color: rgba(212,175,55,0.4);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4), 0 0 12px rgba(212,175,55,0.08);
+  transform: translateY(-2px);
+}
+
+@keyframes slideIn {
+  from { opacity:0; transform: translateX(-12px); }
+  to   { opacity:1; transform: translateX(0); }
+}
+
+.usuario-avatar {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(192,40,28,0.5), rgba(139,26,16,0.5));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: #F5D76E;
+  flex-shrink: 0;
+  border: 2px solid rgba(212,175,55,0.25);
+  box-shadow: 0 0 12px rgba(192,40,28,0.25);
+}
+
+.usuario-info { flex: 1; min-width: 160px; }
+.usuario-nombre { font-size: 14px; font-weight: 600; color: #F2EAD8; margin-bottom: 4px; }
+.usuario-correo { font-size: 11px; color: rgba(242,234,216,0.5); }
+.usuario-meta   { display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+
+.usuario-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+/* Select inline para cambiar rol/estado */
+.select-inline {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(212,175,55,0.22);
+  border-radius: 6px;
+  padding: 6px 10px;
+  color: #F2EAD8;
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.25s;
+  appearance: none;
+}
+.select-inline:focus { border-color: #D4AF37; }

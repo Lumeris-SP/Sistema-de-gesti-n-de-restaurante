@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAFFIA — Sistema de Gestión Restaurante Oriental</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Noto+Serif+SC:wght@400;700&family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <!-- Fondo con imagen oscurecida -->
+    <div class="page-bg" style="background-image:url('../assets/img/25.jpg');"></div>
+
+    <!-- Decoraciones de esquina -->
+    <div class="corner-deco top-left"><i class="fas fa-dragon"></i></div>
+    <div class="corner-deco top-right"><i class="fas fa-torii-gate"></i></div>
+
+    <!-- Barra de usuario -->
+    <div class="user-bar">
+        <div class="user-bar-left">
+            <span class="user-bar-logo">MAFFIA</span>
+            <div class="user-bar-sep"></div>
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">?</div>
+                <span class="user-name" id="userName">Cargando...</span>
+                <span class="user-rol-badge" id="userRol">—</span>
+            </div>
+        </div>
+        <button class="btn-logout" id="btnLogout">
+            <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+        </button>
+    </div>
+
+    <div class="container">
+        <header class="header">
+            <div class="logo-container">
+                <div class="dragon-logo">
+                    <img src="../assets/img/e.png" alt="Dragón MAFFIA" class="dragon-img">
+                </div>
+                <h1>MAFFIA</h1>
+            </div>
+            <p class="subtitle">Sistema de Gestión · Restaurante Oriental</p>
+            <div class="header-divider"></div>
+        </header>
+
+        <nav class="main-nav" id="mainNav">
+            <a href="platos.html" class="nav-card" data-roles="Administrador">
+                <i class="fas fa-utensils"></i>
+                <h3>Registro de Platos</h3>
+                <p>Gestionar menú y productos</p>
+            </a>
+            <a href="pedidos.html" class="nav-card" data-roles="Administrador,Mozo">
+                <i class="fas fa-clipboard-list"></i>
+                <h3>Pedidos</h3>
+                <p>Crear y gestionar pedidos</p>
+            </a>
+            <a href="cocina.html" class="nav-card cocina-card" data-roles="Administrador,Cocina">
+                <i class="fas fa-fire-burner"></i>
+                <h3>Control de Cocina</h3>
+                <p>Estado de preparación</p>
+            </a>
+            <a href="cuenta.html" class="nav-card" data-roles="Administrador,Caja">
+                <i class="fas fa-receipt"></i>
+                <h3>Generar Cuenta</h3>
+                <p>Facturación final</p>
+            </a>
+            <a href="usuarios.html" class="nav-card" data-roles="Administrador">
+                <i class="fas fa-users-cog"></i>
+                <h3>Gestión de Usuarios</h3>
+                <p>Aprobar accesos y roles</p>
+            </a>
+        </nav>
+
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <i class="fas fa-drumstick-bite"></i>
+                <div class="stat-info">
+                    <h4>Platos Activos</h4>
+                    <span id="totalPlatos">0</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-shopping-cart"></i>
+                <div class="stat-info">
+                    <h4>Pedidos Activos</h4>
+                    <span id="totalPedidos">0</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-clock"></i>
+                <div class="stat-info">
+                    <h4>En Cocina</h4>
+                    <span id="enCocina">0</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-check-circle"></i>
+                <div class="stat-info">
+                    <h4>Listos</h4>
+                    <span id="listos">0</span>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>© 2027 MAFFIA Restaurante Oriental &mdash; Experiencia Auténtica</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script src="../js/core/supabaseClient.js"></script>
+    <script src="../js/core/auth.js"></script>
+    <script src="../js/service/platosService.js"></script>
+    <script src="../js/service/pedidosService.js"></script>
+    <script src="../js/pages/index.page.js"></script>
+</body>
+</html>
