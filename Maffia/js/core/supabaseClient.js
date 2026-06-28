@@ -29,8 +29,8 @@
 
     // TODO: reemplazar con los valores reales de tu proyecto nuevo
     // de Supabase (Project Settings -> API -> Project URL / anon public key).
-    const SUPABASE_URL = 'https://pvqzvgvyjbpeujwrizxv.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB2cXp2Z3Z5amJwZXVqd3Jpenh2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI0MzUyMjUsImV4cCI6MjA5ODAxMTIyNX0.RANh4M39i15o0Tcysoo7TEcim8kGg9Eh2ak9tE3A1II';
+    const SUPABASE_URL = 'https://gtsxlcjvvjysgpcincgw.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd0c3hsY2p2dmp5c2dwY2luY2d3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI2MTI5NDQsImV4cCI6MjA5ODE4ODk0NH0.am8SNV-uaImF74vefznI8RO4_A9KJ6q5SLnzcX9KmQ4';
 
     if (typeof window.supabase === 'undefined') {
         console.error(
