@@ -82,10 +82,24 @@ No es solo gestión de pedidos, es el control inteligente de toda la operación 
 - Usuario
 
 ---
+## Credenciales de prueba (Supabase Auth)
 
-## Credenciales de prueba
+> Los usuarios están registrados en Supabase Authentication.  
+> La contraseña no se muestra por seguridad, se usa la definida al momento del registro.
 
-> Completar con credenciales de Supabase
+### Usuarios del sistema
+
+- eber.pauccara@upch.pe  
+- gabriela.santamaria@upch.pe  
+- gabriela12santamaria@gmail.com  
+- idania.parhuay@upch.pe  
+- idania.parhuay@gmail.com  
+- jesus.morales@upch.pe  
+- shedira.sihuincha@upch.pe  
+- sihuincha.shedira@upch.pe  
+- sihuinchalumeris@gmail.com  
+
+<img width="1577" height="373" alt="image" src="https://github.com/user-attachments/assets/16a49345-513d-4ab4-84c4-5828a150d644" />
 
 ### Administrador
 - Correo:
@@ -94,7 +108,7 @@ No es solo gestión de pedidos, es el control inteligente de toda la operación 
 ### Usuario
 - Correo:
 - Contraseña:
-
+<img width="520" height="866" alt="image" src="https://github.com/user-attachments/assets/b40a49dd-63ac-4ebd-86cf-af2fd7aee58b" />
 ---
 
 ## Estructura de tablas
