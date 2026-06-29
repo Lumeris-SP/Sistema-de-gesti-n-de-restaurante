@@ -1,0 +1,76 @@
+/* ============================================================
+   index.css — Dashboard principal MAFFIA
+   ============================================================ */
+
+/* Fondo del index con imagen oscurecida */
+.index-page-bg {
+  position: fixed; inset: 0; z-index: -1;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  filter: brightness(0.2) saturate(0.5);
+}
+
+/* Decoraciones de esquina estilo pagoda */
+.corner-deco {
+  position: fixed;
+  font-size: 44px;
+  color: rgba(212,175,55,0.08);
+  pointer-events: none;
+  z-index: 0;
+  animation: floatDeco 8s ease-in-out infinite;
+}
+.corner-deco.top-left  { top: 20px; left: 20px; }
+.corner-deco.top-right { top: 20px; right: 20px; animation-delay: -4s; }
+@keyframes floatDeco {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-8px) rotate(5deg); }
+}
+
+/* Ajuste específico: nav-cards en index — 3 cols centradas cuando hay 5 */
+@media (min-width: 961px) {
+  .main-nav {
+    grid-template-columns: repeat(3, 1fr);
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  /* Última fila centrada (2 elementos) */
+  .main-nav .nav-card:nth-last-child(-n+2):first-child,
+  .main-nav .nav-card:nth-last-child(1):nth-child(3n+1) {
+    grid-column: 2;
+  }
+}
+
+/* Ajuste stat numbers con color de realce */
+.dashboard-stats .stat-card:nth-child(1) > i { color: #E57373; filter: drop-shadow(0 0 8px rgba(229,115,115,0.5)); }
+.dashboard-stats .stat-card:nth-child(2) > i { color: #FFB74D; filter: drop-shadow(0 0 8px rgba(255,183,77,0.5)); }
+.dashboard-stats .stat-card:nth-child(3) > i { color: #E57373; filter: drop-shadow(0 0 8px rgba(229,115,115,0.5)); }
+.dashboard-stats .stat-card:nth-child(4) > i { color: #81C784; filter: drop-shadow(0 0 8px rgba(129,199,132,0.5)); }
+
+/* Animación de entrada escalonada en nav cards */
+.nav-card {
+  animation: slideUp 0.5s ease both;
+}
+.nav-card:nth-child(1) { animation-delay: 0.05s; }
+.nav-card:nth-child(2) { animation-delay: 0.12s; }
+.nav-card:nth-child(3) { animation-delay: 0.19s; }
+.nav-card:nth-child(4) { animation-delay: 0.26s; }
+.nav-card:nth-child(5) { animation-delay: 0.33s; }
+@keyframes slideUp {
+  from { opacity:0; transform: translateY(24px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+/* Stat cards — animación de entrada */
+.stat-card {
+  animation: fadeInScale 0.5s ease both;
+}
+.stat-card:nth-child(1) { animation-delay: 0.4s; }
+.stat-card:nth-child(2) { animation-delay: 0.5s; }
+.stat-card:nth-child(3) { animation-delay: 0.6s; }
+.stat-card:nth-child(4) { animation-delay: 0.7s; }
+@keyframes fadeInScale {
+  from { opacity:0; transform: scale(0.92); }
+  to   { opacity:1; transform: scale(1); }
+}

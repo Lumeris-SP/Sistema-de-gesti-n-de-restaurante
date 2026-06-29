@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAFFIA — Gestión de Usuarios</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/usuarios.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Noto+Serif+SC:wght@400;700&family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <div class="page-bg" style="background-image:url('../assets/img/47.jpg');"></div>
+
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand">
+            <img src="../assets/img/e.png" alt="MAFFIA" class="navbar-logo">
+            <div class="navbar-brand-text">
+                <span class="brand-name">MAFFIA</span>
+                <span class="brand-sub">Restaurante Oriental</span>
+            </div>
+        </a>
+        <ul class="navbar-links">
+            <li><a href="index.html"><i class="fas fa-home"></i> <span>Inicio</span></a></li>
+            <li><a href="platos.html"><i class="fas fa-utensils"></i> <span>Platos</span></a></li>
+            <li><a href="pedidos.html"><i class="fas fa-clipboard-list"></i> <span>Pedidos</span></a></li>
+            <li><a href="cocina.html"><i class="fas fa-fire-burner"></i> <span>Cocina</span></a></li>
+            <li><a href="cuenta.html"><i class="fas fa-receipt"></i> <span>Cuenta</span></a></li>
+            <li><a href="usuarios.html" class="active"><i class="fas fa-users-cog"></i> <span>Usuarios</span></a></li>
+            <li><a href="#" id="navLogout"><i class="fas fa-sign-out-alt"></i> <span>Salir</span></a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <header class="header">
+            <div class="logo-container">
+                <div class="dragon-logo">
+                    <img src="../assets/img/e.png" alt="Dragón MAFFIA" class="dragon-img">
+                </div>
+                <div>
+                    <h1>Gestión de Usuarios</h1>
+                    <p class="subtitle" id="sessionText">Cargando...</p>
+                </div>
+            </div>
+            <div class="header-divider"></div>
+        </header>
+
+        <div class="module-content">
+
+            <!-- Estadísticas rápidas -->
+            <div class="stats-row" style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
+                <div class="stat-card" style="flex:1;min-width:120px;">
+                    <i class="fas fa-users"></i>
+                    <div class="stat-info">
+                        <h4>Total</h4>
+                        <span id="statTotal">0</span>
+                    </div>
+                </div>
+                <div class="stat-card" style="flex:1;min-width:120px;">
+                    <i class="fas fa-hourglass-half" style="color:#FF9800;"></i>
+                    <div class="stat-info">
+                        <h4>Pendientes</h4>
+                        <span id="statPendientes">0</span>
+                    </div>
+                </div>
+                <div class="stat-card" style="flex:1;min-width:120px;">
+                    <i class="fas fa-user-check" style="color:#4CAF50;"></i>
+                    <div class="stat-info">
+                        <h4>Activos</h4>
+                        <span id="statActivos">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filtros -->
+            <div class="list-container">
+                <h3><i class="fas fa-users-cog"></i> Listado de Usuarios</h3>
+
+                <div class="filters">
+                    <input type="text" id="filtroBusqueda"
+                        placeholder="🔍 Buscar por nombre o correo...">
+                    <select id="filtroEstado">
+                        <option value="">Todos los estados</option>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Activo">Activo</option>
+                        <option value="Inactivo">Inactivo</option>
+                        <option value="Rechazado">Rechazado</option>
+                    </select>
+                    <select id="filtroRol">
+                        <option value="">Todos los roles</option>
+                        <option value="Mozo">Mozo</option>
+                        <option value="Cocina">Cocina</option>
+                        <option value="Caja">Caja</option>
+                        <option value="Administrador">Administrador</option>
+                    </select>
+                </div>
+
+                <!-- Lista de usuarios renderizada por usuarios.page.js -->
+                <div id="listaUsuarios" class="items-list"></div>
+
+                <!-- Estado vacío -->
+                <div id="emptyState" class="empty-state" style="display:none;">
+                    <i class="fas fa-users-slash"></i>
+                    <p>No se encontraron usuarios con ese criterio.</p>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>© 2027 MAFFIA Restaurante Oriental — Módulo de Usuarios</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script src="../js/core/supabaseClient.js"></script>
+    <script src="../js/core/auth.js"></script>
+    <script src="../js/service/usuariosService.js"></script>
+    <script src="../js/pages/usuarios.page.js"></script>
+</body>
+</html>

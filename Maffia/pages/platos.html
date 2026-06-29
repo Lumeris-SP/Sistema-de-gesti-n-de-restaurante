@@ -3,30 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Platos - Walok</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="navbar.css">
-    <style>
-        body {
-            background-image: url('25.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            background-repeat: no-repeat;
-        }
-    </style>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>MAFFIA — Registro de Platos</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/platos.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Noto+Serif+SC:wght@400;700&family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
-<body>
+<body background-size:cover; background-position:center; background-attachment:fixed;">
+    <div class="page-bg" style="background-image:url('../assets/img/47.jpg');"></div>
 
-    <!-- ===== NAVBAR ===== -->
     <nav class="navbar">
         <a href="index.html" class="navbar-brand">
-            <img src="e.png" alt="MAFFIA Logo" class="navbar-logo">
+            <img src="../assets/img/e.png" alt="MAFFIA" class="navbar-logo">
             <div class="navbar-brand-text">
                 <span class="brand-name">MAFFIA</span>
-                <span class="brand-sub">Sistema de Gestión Restaurante Oriental</span>
+                <span class="brand-sub">Restaurante Oriental</span>
             </div>
         </a>
         <ul class="navbar-links">
@@ -35,25 +27,30 @@
             <li><a href="pedidos.html"><i class="fas fa-clipboard-list"></i> <span>Pedidos</span></a></li>
             <li><a href="cocina.html"><i class="fas fa-fire-burner"></i> <span>Cocina</span></a></li>
             <li><a href="cuenta.html"><i class="fas fa-receipt"></i> <span>Cuenta</span></a></li>
+            <li><a href="usuarios.html"><i class="fas fa-users-cog"></i> <span>Usuarios</span></a></li>
+            <li><a href="#" onclick="Auth.cerrarSesion()"><i class="fas fa-sign-out-alt"></i> <span>Salir</span></a></li>
         </ul>
     </nav>
-    <!-- ===== END NAVBAR ===== -->
 
     <div class="container">
         <header class="header">
-            <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Inicio</a>
             <div class="logo-container">
-                <i class="fas fa-utensils"></i>
-                <h1>Registro de Platos</h1>
+                <div class="dragon-logo">
+                    <img src="../assets/img/e.png" alt="Dragón MAFFIA" class="dragon-img">
+                </div>
+                <div>
+                    <h1>Registro de Platos</h1>
+                    <p class="subtitle">Gestión completa del menú oriental</p>
+                </div>
             </div>
-            <p class="subtitle">Gestión completa del menú oriental</p>
+            <div class="header-divider"></div>
         </header>
 
         <div class="module-content">
-            <!-- Formulario de registro -->
+            <!-- Formulario -->
             <div class="form-container">
                 <h2><i class="fas fa-plus-circle"></i> Registrar Nuevo Plato</h2>
-                <form id="platoForm">
+                <form id="platoForm" novalidate>
                     <div class="form-row">
                         <div class="form-group">
                             <label><i class="fas fa-barcode"></i> Código del Plato *</label>
@@ -129,7 +126,7 @@
 
                     <div class="form-group">
                         <label><i class="fas fa-edit"></i> Ingredientes modificables *</label>
-                        <textarea id="modificable" rows="2" placeholder="Ej: Puede pedirse sin cebolla, puede cambiar arroz por ensalada, no permite modificaciones..."></textarea>
+                        <textarea id="modificable" rows="2" placeholder="Ej: Puede pedirse sin cebolla, puede cambiar arroz por ensalada..."></textarea>
                         <small class="error-message" id="modificableError"></small>
                     </div>
 
@@ -140,8 +137,9 @@
                 </form>
             </div>
 
-            <!-- Listado y filtros -->
+            <!-- Lista -->
             <div class="list-container">
+                <h3><i class="fas fa-list"></i> Platos del Menú</h3>
                 <div class="filters">
                     <input type="text" id="buscarInput" placeholder="🔍 Buscar por nombre o categoría...">
                     <select id="filtroEstado">
@@ -155,10 +153,14 @@
         </div>
 
         <footer class="footer">
-            <p>&copy; 2027 MAFFIA Restaurante Oriental - Módulo de Platos</p>
+            <p>© 2027 MAFFIA Restaurante Oriental — Módulo de Platos</p>
         </footer>
     </div>
 
-    <script src="platos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script src="../js/core/supabaseClient.js"></script>
+    <script src="../js/core/auth.js"></script>
+    <script src="../js/service/platosService.js"></script>
+    <script src="../js/pages/platos.page.js"></script>
 </body>
 </html>

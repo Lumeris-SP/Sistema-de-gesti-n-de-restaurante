@@ -1,0 +1,650 @@
+/* ============================================================
+   cuenta.css — Módulo de facturación MAFFIA
+   ============================================================ */
+
+/* Decoraciones esquina */
+.corner-deco {
+  position: fixed;
+  font-size: 50px;
+  color: rgba(212,175,55,0.06);
+  pointer-events: none;
+  z-index: 0;
+  animation: floatDeco 9s ease-in-out infinite;
+}
+.corner-deco.top-left  { top: 88px; left: 20px; }
+.corner-deco.top-right { top: 88px; right: 20px; animation-delay: -4.5s; }
+@keyframes floatDeco {
+  0%,100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-10px) rotate(6deg); }
+}
+
+.bg-overlay {
+  position: fixed; inset: 0; z-index: -1;
+  background: linear-gradient(160deg,
+    rgba(10,6,3,0.92) 0%,
+    rgba(10,6,3,0.85) 100%);
+}
+.bg-pattern {
+  position: fixed; inset: 0; z-index: -1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cg fill='none' stroke='%23D4AF37' stroke-width='0.3' opacity='0.06'%3E%3Crect x='10' y='10' width='80' height='80' rx='6'/%3E%3Ccircle cx='50' cy='50' r='30'/%3E%3Cpath d='M50 10 L90 50 L50 90 L10 50 Z'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 100px;
+}
+
+/* Cuenta pedido card (paso 2) */
+.cuenta-pedido-item {
+  background: rgba(25,14,6,0.7);
+  border: 1px solid rgba(212,175,55,0.18);
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 12px;
+  transition: border-color 0.25s, box-shadow 0.25s;
+  position: relative;
+}
+.cuenta-pedido-item:hover {
+  border-color: rgba(212,175,55,0.4);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+}
+
+.cuenta-pedido-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cuenta-pedido-codigo {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: #D4AF37;
+  font-weight: 700;
+}
+
+.cuenta-pedido-platos { margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(212,175,55,0.1); }
+
+.cuenta-plato-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  font-size: 12px;
+  color: rgba(242,234,216,0.75);
+}
+.cuenta-plato-row .precio { color: #D4AF37; font-weight: 600; }
+
+.hint-text {
+  color: rgba(242,234,216,0.55);
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+
+.pedido-item-card,
+.factura-card {
+  background: rgba(25,14,6,0.72);
+  border: 1px solid rgba(212,175,55,0.18);
+  border-radius: 12px;
+  padding: 15px 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+}
+
+.pedido-item-header,
+.factura-card-header,
+.factura-info,
+.factura-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pedido-item-header,
+.factura-card-header {
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.pedido-code,
+.factura-code {
+  color: #D4AF37;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.pedido-meta,
+.factura-info {
+  color: rgba(242,234,216,0.62);
+  font-size: 12px;
+}
+
+.factura-total {
+  margin-left: auto;
+  color: #D4AF37;
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.estado-pagada {
+  background: rgba(76,175,80,0.15);
+  color: #81C784;
+  border: 1px solid rgba(76,175,80,0.35);
+}
+
+.estado-anulada {
+  background: rgba(192,40,28,0.15);
+  color: #E57373;
+  border: 1px solid rgba(192,40,28,0.35);
+}
+
+.prioridad-normal,
+.prioridad-alta,
+.prioridad-urgente {
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.prioridad-normal { color: #D4AF37; background: rgba(212,175,55,0.12); }
+.prioridad-alta { color: #FFB74D; background: rgba(255,152,0,0.14); }
+.prioridad-urgente { color: #E57373; background: rgba(192,40,28,0.16); }
+
+/* Resumen de factura */
+.factura-resumen {
+  background: rgba(212,175,55,0.06);
+  border: 1px solid rgba(212,175,55,0.2);
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 16px;
+}
+.factura-linea {
+  display: flex;
+  justify-content: space-between;
+  padding: 7px 0;
+  font-size: 13px;
+  color: rgba(242,234,216,0.65);
+  border-bottom: 1px solid rgba(212,175,55,0.08);
+}
+.factura-linea:last-child { border-bottom: none; }
+.factura-linea.total {
+  font-size: 18px;
+  font-weight: 700;
+  color: #D4AF37;
+  font-family: 'Playfair Display', serif;
+  padding-top: 14px;
+  border-top: 2px solid rgba(212,175,55,0.3);
+  border-bottom: none;
+  margin-top: 8px;
+}
+
+/* Descuento */
+.descuento-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.descuento-group input {
+  flex: 1;
+  min-width: 120px;
+}
+
+.resumen-consumo,
+.pago-area {
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(212,175,55,0.14);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.resumen-title {
+  color: #D4AF37;
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+
+.calculos-area {
+  margin-top: 14px;
+  border-top: 1px solid rgba(212,175,55,0.12);
+  padding-top: 10px;
+}
+
+.calculo-row {
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) auto auto;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 0;
+  color: rgba(242,234,216,0.72);
+  font-size: 13px;
+}
+
+.calculo-row > span:last-child {
+  color: #D4AF37;
+  font-weight: 700;
+}
+
+.calculo-divider {
+  height: 1px;
+  background: rgba(212,175,55,0.18);
+  margin: 8px 0;
+}
+
+.total-row {
+  color: #F2EAD8;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.descuento-toggle,
+.switch-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.switch-label {
+  color: rgba(242,234,216,0.7);
+  font-size: 12px;
+}
+
+.descuento-fields {
+  padding: 12px;
+  margin: 4px 0 8px;
+  border: 1px dashed rgba(212,175,55,0.22);
+  border-radius: 10px;
+  background: rgba(212,175,55,0.04);
+}
+
+/* Pago métodos */
+.metodo-pago-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.metodo-btn {
+  flex: 1;
+  min-width: 100px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(212,175,55,0.22);
+  background: rgba(255,255,255,0.03);
+  color: rgba(242,234,216,0.6);
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.25s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.metodo-btn:hover { border-color: rgba(212,175,55,0.5); color: #D4AF37; background: rgba(212,175,55,0.08); }
+.metodo-btn.active {
+  border-color: #D4AF37;
+  background: rgba(212,175,55,0.14);
+  color: #F5D76E;
+  box-shadow: 0 0 12px rgba(212,175,55,0.2);
+}
+
+.metodos-pago {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.metodo-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.metodo-card {
+  min-height: 96px;
+  border: 1px solid rgba(212,175,55,0.22);
+  border-radius: 10px;
+  background: rgba(255,255,255,0.035);
+  color: rgba(242,234,216,0.72);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s, transform 0.2s;
+}
+
+.metodo-card i {
+  color: rgba(212,175,55,0.82);
+  font-size: 27px;
+}
+
+.metodo-card:hover,
+.metodo-option input:checked + .metodo-card {
+  border-color: #D4AF37;
+  background: rgba(212,175,55,0.16);
+  color: #F5D76E;
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 1px rgba(212,175,55,0.2), 0 8px 22px rgba(0,0,0,0.24);
+}
+
+.detalle-pago {
+  margin-top: 10px;
+}
+
+.detalle-metodo {
+  border-left: 3px solid #D4AF37;
+  background: rgba(192,40,28,0.08);
+  border-radius: 10px;
+  padding: 16px 18px;
+  box-shadow: 0 10px 26px rgba(0,0,0,0.18);
+}
+
+.detalle-title {
+  color: #D4AF37;
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding-bottom: 10px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid rgba(212,175,55,0.18);
+}
+
+.detalle-title i {
+  margin-right: 8px;
+}
+
+.vuelto-display input {
+  color: #81C784;
+  font-weight: 700;
+}
+
+.btn-area {
+  margin-top: 14px;
+}
+
+.btn-confirm {
+  background: linear-gradient(135deg,#D4AF37,#B8860B);
+  border-color: rgba(212,175,55,0.5);
+  color: #130C06;
+}
+
+/* Factura imprimible */
+.factura-print {
+  background: rgba(255,255,255,0.97);
+  color: #1a0a00;
+  border-radius: 12px;
+  padding: 28px;
+  font-family: 'Poppins', sans-serif;
+  max-width: 400px;
+  margin: 0 auto;
+}
+.factura-print-header {
+  text-align: center;
+  margin-bottom: 18px;
+  border-bottom: 2px dashed rgba(0,0,0,0.15);
+  padding-bottom: 14px;
+}
+.factura-print-header h2 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 22px;
+  color: #8B1A10;
+  letter-spacing: 3px;
+}
+.factura-print-header p { font-size: 11px; color: #666; margin-top: 4px; }
+
+.factura-print-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+  font-size: 12px;
+  border-bottom: 1px dashed rgba(0,0,0,0.06);
+}
+.factura-print-row.total {
+  font-size: 16px;
+  font-weight: 700;
+  color: #8B1A10;
+  border-bottom: none;
+  padding-top: 12px;
+  margin-top: 8px;
+  border-top: 2px solid rgba(139,26,16,0.25);
+}
+
+.search-wrap {
+  position: relative;
+  min-width: 220px;
+}
+
+.search-wrap i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(212,175,55,0.6);
+}
+
+.search-wrap input {
+  padding-left: 36px;
+}
+
+.header-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 9999;
+  min-width: 260px;
+  max-width: 420px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  background: rgba(13,8,4,0.95);
+  border: 1px solid rgba(76,175,80,0.45);
+  color: #F2EAD8;
+  box-shadow: 0 12px 34px rgba(0,0,0,0.38);
+}
+
+.toast.error {
+  border-color: rgba(192,40,28,0.5);
+}
+
+.toast-icon {
+  color: #81C784;
+}
+
+.toast.error .toast-icon {
+  color: #E57373;
+}
+
+.boleta-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  background: rgba(0,0,0,0.72);
+}
+
+.boleta-dialog {
+  width: min(480px, 96vw);
+}
+
+.boleta-print {
+  background: rgba(22,7,9,0.96);
+  border: 1px solid rgba(212,175,55,0.45);
+  border-radius: 12px;
+  padding: 28px;
+  color: #F2EAD8;
+  box-shadow: 0 18px 46px rgba(0,0,0,0.55);
+}
+
+.boleta-logo {
+  text-align: center;
+}
+
+.boleta-logo img {
+  width: 54px;
+  height: 54px;
+  object-fit: contain;
+  filter: sepia(1) saturate(1.4) hue-rotate(5deg);
+}
+
+.boleta-logo h2 {
+  color: #D4AF37;
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.22em;
+  margin-top: 4px;
+}
+
+.boleta-logo p,
+.boleta-gracias,
+.boleta-experiencia {
+  color: rgba(242,234,216,0.62);
+  font-size: 12px;
+  text-align: center;
+}
+
+.boleta-separator {
+  border-top: 1px dashed rgba(212,175,55,0.35);
+  margin: 14px 0;
+}
+
+.boleta-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 4px 0;
+  font-size: 13px;
+}
+
+.boleta-row strong {
+  color: #F2EAD8;
+  white-space: nowrap;
+}
+
+.boleta-row.muted {
+  color: rgba(242,234,216,0.65);
+}
+
+.boleta-row.descuento strong {
+  color: #E57373;
+}
+
+.boleta-row.total {
+  align-items: baseline;
+  color: #D4AF37;
+  font-size: 18px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.boleta-row.total strong {
+  color: #D4AF37;
+  font-size: 20px;
+}
+
+.boleta-note {
+  color: rgba(242,234,216,0.58);
+  font-size: 11px;
+  line-height: 1.45;
+  padding: 4px 0;
+}
+
+.boleta-experiencia {
+  color: #D4AF37;
+  letter-spacing: 0.24em;
+  margin-top: 4px;
+  text-transform: uppercase;
+}
+
+.boleta-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+
+.boleta-actions .btn-secondary,
+.boleta-actions .btn-primary {
+  width: auto;
+}
+
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+
+  #boleta-contenido,
+  #boleta-contenido * {
+    visibility: visible !important;
+  }
+
+  #boleta-contenido {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: #fff !important;
+    color: #1a0a00 !important;
+    box-shadow: none !important;
+    border-color: #b59a45 !important;
+  }
+
+  #boleta-contenido .boleta-row strong,
+  #boleta-contenido .boleta-row.total,
+  #boleta-contenido .boleta-row.total strong,
+  #boleta-contenido .boleta-logo h2,
+  #boleta-contenido .boleta-experiencia {
+    color: #8B6F1F !important;
+  }
+
+  .boleta-actions {
+    display: none !important;
+  }
+}
+
+/* Cuentas guardadas list */
+.cuenta-guardada-card {
+  background: rgba(20,12,6,0.8);
+  border: 1px solid rgba(212,175,55,0.18);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  transition: all 0.25s;
+  cursor: pointer;
+}
+.cuenta-guardada-card:hover {
+  border-color: rgba(212,175,55,0.4);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+.cuenta-guardada-meta { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+.cuenta-guardada-total {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  color: #D4AF37;
+  font-weight: 700;
+}

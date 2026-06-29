@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAFFIA — Control de Cocina</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/navbar.css">
+    <link rel="stylesheet" href="../css/cocina.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Noto+Serif+SC:wght@400;700&family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <div class="page-bg" style="background-image:url('../assets/img/47.jpg');"></div>
+
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand">
+            <img src="../assets/img/e.png" alt="MAFFIA Logo" class="navbar-logo">
+            <div class="navbar-brand-text">
+                <span class="brand-name">MAFFIA</span>
+                <span class="brand-sub">Restaurante Oriental</span>
+            </div>
+        </a>
+        <ul class="navbar-links">
+            <li><a href="index.html"><i class="fas fa-home"></i> <span>Inicio</span></a></li>
+            <li><a href="platos.html"><i class="fas fa-utensils"></i> <span>Platos</span></a></li>
+            <li><a href="pedidos.html"><i class="fas fa-clipboard-list"></i> <span>Pedidos</span></a></li>
+            <li><a href="cocina.html" class="active"><i class="fas fa-fire-burner"></i> <span>Cocina</span></a></li>
+            <li><a href="cuenta.html"><i class="fas fa-receipt"></i> <span>Cuenta</span></a></li>
+            <li><a href="usuarios.html"><i class="fas fa-users-cog"></i> <span>Usuarios</span></a></li>
+            <li><a href="#" onclick="Auth.cerrarSesion()"><i class="fas fa-sign-out-alt"></i> <span>Salir</span></a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="module-content cocina-layout">
+
+            <!-- Estadísticas -->
+            <div class="cocina-stats">
+                <div class="stat-card-mini pendiente">
+                    <i class="fas fa-hourglass-start"></i>
+                    <div>
+                        <div class="stat-label">Pendientes</div>
+                        <div class="stat-num" id="pendientesCount">0</div>
+                    </div>
+                </div>
+                <div class="stat-card-mini preparacion">
+                    <i class="fas fa-fire"></i>
+                    <div>
+                        <div class="stat-label">En preparación</div>
+                        <div class="stat-num" id="preparacionCount">0</div>
+                    </div>
+                </div>
+                <div class="stat-card-mini listo">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <div class="stat-label">Listos</div>
+                        <div class="stat-num" id="listosCount">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toolbar filtros + orden -->
+            <div class="cocina-toolbar">
+                <div class="filtros-group">
+                    <button class="filter-btn active" data-filter="todos">
+                        <i class="fas fa-list"></i> Todos
+                    </button>
+                    <button class="filter-btn" data-filter="Pendiente">
+                        <i class="fas fa-hourglass-start"></i> Pendientes
+                    </button>
+                    <button class="filter-btn" data-filter="En preparación">
+                        <i class="fas fa-fire"></i> En preparación
+                    </button>
+                    <button class="filter-btn" data-filter="Listo">
+                        <i class="fas fa-check-circle"></i> Listos
+                    </button>
+                    <button class="filter-btn urgente-filter" data-filter="urgente">
+                        <i class="fas fa-exclamation-triangle"></i> Urgentes
+                    </button>
+                </div>
+                <div class="orden-group">
+                    <i class="fas fa-sort"></i>
+                    <label for="sortSelect">Ordenar:</label>
+                    <select id="sortSelect">
+                        <option value="hora">Más antiguo primero</option>
+                        <option value="horaDesc">Más reciente primero</option>
+                        <option value="tiempo">Mayor tiempo estimado</option>
+                        <option value="urgente">Urgentes primero</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Grid de pedidos -->
+            <div id="cocinaPedidos" class="cocina-pedidos"></div>
+
+        </div>
+
+        <footer class="footer">
+            <p>© 2027 MAFFIA Restaurante Oriental — Control de Cocina</p>
+        </footer>
+    </div>
+
+    <div id="toastCocina" class="toast-cocina"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script src="../js/core/supabaseClient.js"></script>
+    <script src="../js/core/auth.js"></script>
+    <script src="../js/service/pedidosService.js"></script>
+    <script src="../js/pages/cocina.page.js"></script>
+</body>
+</html>
