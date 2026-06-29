@@ -389,7 +389,7 @@ Abrir directamente el archivo **index.html** desde cualquier navegador web.
 ## Gestión de platos
 
 <p align="center">
-<img width="1862" height="845" alt="image" src="https://github.com/user-attachments/assets/023431b3-6ae2-42fe-8297-95aeb4b53209" />
+<img width="1847" height="837" alt="image" src="https://github.com/user-attachments/assets/8c656104-0731-4358-b679-0908f9ffc903" />
 </p>
 
 ---
@@ -405,7 +405,8 @@ Abrir directamente el archivo **index.html** desde cualquier navegador web.
 ## Gestión de cocina
 
 <p align="center">
-<img src="URL_COCINA" width="900">
+<img width="1852" height="815" alt="image" src="https://github.com/user-attachments/assets/31e1c6f4-2d0d-4b3d-a24e-85d0d3da7863" />
+
 </p>
 
 ---
@@ -413,9 +414,12 @@ Abrir directamente el archivo **index.html** desde cualquier navegador web.
 ## Facturación
 
 <p align="center">
-<img src="URL_FACTURAS" width="900">
+<img width="1860" height="733" alt="image" src="https://github.com/user-attachments/assets/2ae00bd4-67ca-4471-be95-06736f1e8818" />
 </p>
 
+<p align="center">
+  <img width="492" height="813" alt="image" src="https://github.com/user-attachments/assets/33b99725-b925-4980-9c65-aeedaf55853b" />
+</p>
 ---
 
 
