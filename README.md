@@ -464,6 +464,6 @@ Este proyecto nos demostró que la organización, la comunicación y la colabora
 
 <div align="center">
 
-*Desarrollado con ❤️ por el equipo MAFFIA — UPCH 🥰*
+*Desarrollado con ❤️ por el equipo MAFFIA — UPCH🥰*
 
 </div>
