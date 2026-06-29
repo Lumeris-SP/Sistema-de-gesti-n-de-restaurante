@@ -12,6 +12,8 @@
 
 ## 👨‍👩‍👧‍👦 Integrantes y responsabilidades
 
+
+
 <div align="center">
 
 <img width="315" height="315" alt="Integrantes" src="https://github.com/user-attachments/assets/a6a65649-c80b-4745-b5f6-4ba21d8a2fb6" />
@@ -19,6 +21,8 @@
 </div>
 
 <br>
+
+
 
 <div align="center">
 
@@ -92,6 +96,7 @@ Gracias a la integración con **Supabase**, toda la información permanece sincr
 | 👑 Administrador | Acceso total al sistema |
 | 👨‍🍳 Personal de Cocina | Gestión del área de cocina |
 | 👤 Usuario | Acceso básico al sistema |
+| 👩‍💼 Mozo | Gestion del area de pedidos y de cuenta|
 
 </div>
 
