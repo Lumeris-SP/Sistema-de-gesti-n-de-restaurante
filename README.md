@@ -1,4 +1,5 @@
 # MAFFIA - Restaurante Oriental
+<img width="560" height="200" alt="image" src="https://github.com/user-attachments/assets/20c5e382-dd21-4974-8f32-033a52dab540" />
 
 ## Integrantes
 
