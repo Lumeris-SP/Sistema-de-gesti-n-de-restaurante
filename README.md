@@ -108,6 +108,7 @@ No es solo gestión de pedidos, es el control inteligente de toda la operación 
 ### Usuario
 - Correo:
 - Contraseña:
+- 
 <img width="520" height="866" alt="image" src="https://github.com/user-attachments/assets/b40a49dd-63ac-4ebd-86cf-af2fd7aee58b" />
 ---
 
