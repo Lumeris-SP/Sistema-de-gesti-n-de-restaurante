@@ -358,15 +358,21 @@ Abrir directamente el archivo **index.html** desde cualquier navegador web.
 ## Inicio de sesión
 
 <p align="center">
-<img src="URL_LOGIN" width="900">
+<img width="617" height="782" alt="image" src="https://github.com/user-attachments/assets/6b77cefd-fccf-4299-94fe-8c6f8cfb06fc" />
 </p>
 
+## Si no se inicion sesion (registro de cuenta)
+
+<p align="center">
+<img width="566" height="873" alt="image" src="https://github.com/user-attachments/assets/27fbd04d-0d03-4d9a-87a1-ac49e53203b0" />
+</p>
 ---
 
 ## Panel principal
 
 <p align="center">
-<img src="URL_DASHBOARD" width="900">
+<img width="1863" height="776" alt="image" src="https://github.com/user-attachments/assets/36c34972-5043-4b99-adba-1e7907894964" />
+
 </p>
 
 ---
@@ -374,7 +380,8 @@ Abrir directamente el archivo **index.html** desde cualquier navegador web.
 ## Gestión de usuarios
 
 <p align="center">
-<img src="URL_USUARIOS" width="900">
+<img width="1847" height="842" alt="image" src="https://github.com/user-attachments/assets/ac6024b7-de70-492b-92fd-24dec3151eac" />
+
 </p>
 
 ---
@@ -382,7 +389,7 @@ Abrir directamente el archivo **index.html** desde cualquier navegador web.
 ## Gestión de platos
 
 <p align="center">
-<img src="URL_PLATOS" width="900">
+<img width="1862" height="845" alt="image" src="https://github.com/user-attachments/assets/023431b3-6ae2-42fe-8297-95aeb4b53209" />
 </p>
 
 ---
@@ -390,7 +397,7 @@ Abrir directamente el archivo **index.html** desde cualquier navegador web.
 ## Gestión de pedidos
 
 <p align="center">
-<img src="URL_PEDIDOS" width="900">
+<img width="1860" height="761" alt="image" src="https://github.com/user-attachments/assets/7708f260-8ecf-4daa-928c-4fe0c440d077" />
 </p>
 
 ---
