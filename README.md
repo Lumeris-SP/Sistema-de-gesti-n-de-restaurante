@@ -31,11 +31,17 @@ Sistema de Gestión de Restaurante.
 
 ---
 
-## Descripción del sistema
+## ✨ Descripción del sistema
 
-MAFFIA es un sistema web desarrollado para la gestión de un restaurante oriental. La plataforma permite administrar usuarios, platos, pedidos y procesos de cocina, facilitando la organización de las operaciones del restaurante y mejorando la atención al cliente.
+MAFFIA no es solo un sistema de gestión de restaurante, es el control total de un restaurante oriental en una sola pantalla.
 
-El sistema busca optimizar el control de la información, reducir errores en la gestión de pedidos y brindar una experiencia eficiente para los trabajadores y administradores del restaurante.
+Imagina esto: un pedido entra y en segundos ya está registrado, enviado a cocina y listo para prepararse sin papel, sin confusión y sin errores. Cada plato tiene su estado, cada usuario su rol, y cada acción fluye sin fricción.
+
+Desde el momento en que un cliente ordena hasta que el plato llega a la mesa, todo está conectado en tiempo real. Cocina, administración y atención trabajan sincronizados como un solo sistema.
+
+MAFFIA convierte el caos típico de un restaurante en un flujo ordenado, rápido y preciso, donde cada segundo cuenta y cada error se reduce al mínimo.
+
+No es solo gestión de pedidos, es el control inteligente de toda la operación del restaurante.
 
 ---
 
