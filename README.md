@@ -49,7 +49,7 @@ No es solo gestión de pedidos, es el control inteligente de toda la operación 
 
 ### Frontend
 - HTML5
-- CSS3
+- CSS
 - JavaScript
 
 ### Base de Datos y Servicios
@@ -58,6 +58,7 @@ No es solo gestión de pedidos, es el control inteligente de toda la operación 
 ### Control de Versiones
 - Git
 - GitHub
+- visual Studio
 
 ---
 
