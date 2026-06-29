@@ -114,33 +114,144 @@ No es solo gestión de pedidos, es el control inteligente de toda la operación 
 
 ## Estructura de tablas
 
-### Usuarios
-| Campo | Tipo |
-|------|------|
-| id | UUID |
-| nombre | TEXT |
-| correo | TEXT |
-| rol | TEXT |
+### Adicionales
 
----
-
-### Platos
 | Campo | Tipo |
 |------|------|
 | id | UUID |
 | nombre | TEXT |
 | precio | NUMERIC |
-| descripcion | TEXT |
+
+---
+
+### Alérgenos
+
+| Campo | Tipo |
+|------|------|
+| id | INT |
+| nombre | TEXT |
+
+---
+
+### Factura_Pedidos
+
+| Campo | Tipo |
+|------|------|
+| factura_id | UUID |
+| pedido_id | UUID |
+
+---
+
+### Facturas
+
+| Campo | Tipo |
+|------|------|
+| id | UUID |
+| codigo | TEXT |
+| mesa | INT |
+| subtotal | NUMERIC |
+| descuento | NUMERIC |
+| justificacion_descuento | TEXT |
+| con_igv | BOOLEAN |
+| igv | NUMERIC |
+| total | NUMERIC |
+| metodo_pago | TEXT |
+| monto_recibido | NUMERIC |
+| vuelto | NUMERIC |
+| estado | TEXT |
+| motivo_anulacion | TEXT |
+| created_at | TIMESTAMP |
+
+---
+
+### Pedido_Item_Adicionales
+
+| Campo | Tipo |
+|------|------|
+| id | UUID |
+| pedido_item_id | UUID |
+| texto | TEXT |
+| extra | NUMERIC |
+
+---
+
+### Pedido_Items
+
+| Campo | Tipo |
+|------|------|
+| id | UUID |
+| pedido_id | UUID |
+| plato_id | UUID |
+| nombre_snapshot | TEXT |
+| precio_unitario | NUMERIC |
+| cantidad | INT |
+| subtotal | NUMERIC |
+| estado_plato | TEXT |
+| tiempo_estimado_min | INT |
 
 ---
 
 ### Pedidos
+
 | Campo | Tipo |
 |------|------|
 | id | UUID |
-| fecha | TIMESTAMP |
+| codigo | TEXT |
+| mesa | INT |
+| cliente | TEXT |
+| mesero | TEXT |
 | estado | TEXT |
+| estado_cocina | TEXT |
+| prioridad | TEXT |
+| justificacion_urgente | TEXT |
+| observacion_general | TEXT |
 | total | NUMERIC |
+| created_at | TIMESTAMP |
+
+---
+
+### Plato_Alérgenos
+
+| Campo | Tipo |
+|------|------|
+| plato_id | UUID |
+| alergeno | INT |
+| detalle_otro | TEXT |
+
+---
+
+### Platos
+
+| Campo | Tipo |
+|------|------|
+| id | UUID |
+| codigo | TEXT |
+| nombre | TEXT |
+| descripcion | TEXT |
+| categoria | TEXT |
+| precio | NUMERIC |
+| tiempo_minutos | INT |
+| estado | TEXT |
+| modificable | TEXT |
+| alergias | TEXT |
+| created_at | TIMESTAMP |
+| updated_at | TIMESTAMP |
+
+---
+
+### Usuarios
+
+| Campo | Tipo |
+|------|------|
+| id | UUID |
+| nombre | TEXT |
+| apellidos | TEXT |
+| correo | TEXT |
+| celular | TEXT |
+| auth_user_id | UUID |
+| rol | TEXT |
+| estado | TEXT |
+| fecha_registro | TIMESTAMP |
 
 ---
 
