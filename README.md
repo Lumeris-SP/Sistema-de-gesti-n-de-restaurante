@@ -331,7 +331,7 @@ Gracias a la integración con **Supabase**, toda la información permanece sincr
 
 ---
 
-## 🚀 Instrucciones para ejecutar
+## 📝 Instrucciones para ejecutar
 
 ### 1. Clonar el repositorio
 
