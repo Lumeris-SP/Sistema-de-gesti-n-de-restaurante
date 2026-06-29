@@ -1,7 +1,7 @@
 # MAFFIA - Restaurante Oriental
 
 <p align="center">
-  <img width="560" height="200" alt="MAFFIA" src="https://github.com/user-attachments/assets/20c5e382-dd21-4974-8f32-033a52dab540" />
+<img width="553" height="207" alt="image" src="https://github.com/user-attachments/assets/b02df3c2-8b8a-4710-9766-dbda311f228a" />
 </p>
 
 ---
@@ -16,10 +16,10 @@
 
 | Foto | Nombre | Responsabilidad |
 |------|--------|----------------|
-| <img width="80" src="URL_FOTO_IDANIA"> | Parhuay Meza Idania Chanara | Desarrollo Frontend / UI |
-| <img width="80" src="URL_FOTO_EBER"> | Pauccara Huancara Eber | Base de datos / Supabase |
-| <img width="80" src="URL_FOTO_GABRIELA"> | Santamaria Huaytan Gabriela | Gestión de pedidos / lógica del sistema |
-| <img width="80" src="URL_FOTO_LUMERIS"> | Sihuincha Palacin Lumeris | Coordinación general / documentación / GitHub |
+|<<img width="1600" height="1200" alt="image" src="https://github.com/user-attachments/assets/aaa1ac7b-968f-4ae6-8205-6e53d156920b" />> | Parhuay Meza Idania Chanara | Desarrollo Frontend / UI |
+| <img width="258" height="238" alt="image" src="https://github.com/user-attachments/assets/84836290-fd1c-42cb-beed-52d0d746b3e4" /> | Pauccara Huancara Eber | Base de datos / Supabase |
+|<img width="292" height="505" alt="image" src="https://github.com/user-attachments/assets/ce638641-96d3-4613-89a7-f40e63da9526" /> | Santamaria Huaytan Gabriela | Gestión de pedidos / lógica del sistema |
+| <img width="1200" height="1600" alt="image" src="https://github.com/user-attachments/assets/b5a16ac0-13af-46d9-94c1-1313e5844c38" />| Sihuincha Palacin Lumeris | Coordinación general / documentación / GitHub |
 
 ---
 
