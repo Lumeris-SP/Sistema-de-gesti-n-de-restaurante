@@ -1,182 +1,96 @@
 # MAFFIA - Restaurante Oriental
 
-<p align="center">
-  <img src="assets/logo_maffia.png" alt="MAFFIA Restaurante Oriental" width="700">
-</p>
-
-## 1. Nombre del proyecto
-
-**MAFFIA - Restaurante Oriental**
-
-Sistema de Gestión de Restaurante Oriental.
-
----
-
-## 2. Integrantes
-
-<p align="center">
-  <img src="assets/equipo_maffia.jpeg" alt="Equipo MAFFIA" width="450">
-</p>
+## Integrantes
 
 - Parhuay Meza Idania Chanara
 - Pauccara Huancara Eber
 - Santamaria Huaytan Gabriela
 - Sihuincha Palacin Lumeris
 
----
-
-## 3. Caso elegido
+## Caso elegido
 
 Sistema de Gestión de Restaurante.
 
----
+## Descripción del sistema
 
-## 4. Descripción del sistema
+MAFFIA es un sistema web desarrollado para la gestión de un restaurante oriental. La plataforma permite administrar usuarios, platos, pedidos y procesos de cocina, facilitando la organización de las operaciones del restaurante y mejorando la atención al cliente.
 
-MAFFIA es un sistema web desarrollado para apoyar la gestión de un restaurante oriental. Permite administrar usuarios, platos, pedidos y procesos de cocina de manera organizada.
+El sistema busca optimizar el control de la información, reducir errores en la gestión de pedidos y brindar una experiencia eficiente para los trabajadores y administradores del restaurante.
 
-Su objetivo es facilitar el trabajo del personal, mejorar el control de los pedidos y optimizar la atención a los clientes.
+## Tecnologías usadas
 
----
-
-## 5. Tecnologías usadas
-
-- HTML
-- CSS
+### Frontend
+- HTML5
+- CSS3
 - JavaScript
+
+### Base de Datos y Servicios
 - Supabase
+
+### Control de Versiones
 - Git
 - GitHub
 
----
+## Módulos desarrollados
 
-## 6. Módulos desarrollados
+- Inicio de sesión.
+- Registro de usuarios.
+- Gestión de usuarios.
+- Gestión de platos.
+- Gestión de pedidos.
+- Gestión de cocina.
+- Gestión de facturación.
+- Gestión de cuenta de usuario.
 
-- Inicio de sesión
-- Registro de usuarios
-- Gestión de usuarios
-- Gestión de platos
-- Gestión de pedidos
-- Cocina
-- Facturación
-- Cuenta de usuario
+## Roles implementados
 
----
+- Administrador.
+- Personal de cocina.
+- Usuario.
 
-## 7. Roles implementados
+## Credenciales de prueba
 
-### Administrador
-- Gestiona usuarios.
-- Gestiona platos.
-- Supervisa pedidos.
-
-### Cocina
-- Visualiza pedidos.
-- Actualiza estados de preparación.
-
-### Usuario
-- Accede al sistema según los permisos asignados.
-
----
-
-## 8. Credenciales de prueba
+> Completar con las credenciales utilizadas en Supabase.
 
 ### Administrador
-Correo: __________
-
-Contraseña: __________
+- Correo:
+- Contraseña:
 
 ### Usuario
-Correo: __________
+- Correo:
+- Contraseña:
 
-Contraseña: __________
+## Estructura de tablas
 
----
-
-## 9. Estructura de tablas
+> Completar según las tablas creadas en Supabase.
 
 ### Usuarios
-
 | Campo | Tipo |
 |---------|---------|
 | id | UUID |
-| nombre | Texto |
-| correo | Texto |
-| rol | Texto |
+| nombre | TEXT |
+| correo | TEXT |
+| rol | TEXT |
 
 ### Platos
-
 | Campo | Tipo |
 |---------|---------|
 | id | UUID |
-| nombre | Texto |
-| precio | Numérico |
-| descripcion | Texto |
+| nombre | TEXT |
+| precio | NUMERIC |
+| descripcion | TEXT |
 
 ### Pedidos
-
 | Campo | Tipo |
 |---------|---------|
 | id | UUID |
-| fecha | Fecha |
-| estado | Texto |
-| total | Numérico |
+| fecha | TIMESTAMP |
+| estado | TEXT |
+| total | NUMERIC |
 
----
+## Instrucciones para ejecutar
 
-## 10. Instrucciones para ejecutar
+### 1. Clonar el repositorio
 
-1. Clonar el repositorio.
-2. Abrir el proyecto en Visual Studio Code.
-3. Configurar Supabase.
-4. Ejecutar el sistema.
-5. Abrir el navegador y acceder al sistema.
-
----
-
-## 11. Capturas del sistema
-
-### Inicio de sesión
-(Agregar captura)
-
-### Registro de usuarios
-(Agregar captura)
-
-### Gestión de platos
-(Agregar captura)
-
-### Gestión de pedidos
-(Agregar captura)
-
-### Cocina
-(Agregar captura)
-
----
-
-## 12. División de responsabilidades
-
-| Integrante | Responsabilidad |
-|------------|----------------|
-| Parhuay Meza Idania Chanara | Desarrollo de funcionalidades del sistema |
-| Pauccara Huancara Eber | Desarrollo e integración de módulos |
-| Santamaria Huaytan Gabriela | Diseño de interfaces y pruebas |
-| Sihuincha Palacin Lumeris | Integración general del proyecto, GitHub y documentación |
-
----
-
-## 13. Problemas encontrados y solución aplicada
-
-### Problema 1
-Dificultades en la conexión con Supabase.
-
-**Solución:** Se revisaron las credenciales y la configuración hasta lograr una conexión estable.
-
-### Problema 2
-Conflictos al trabajar en equipo con GitHub.
-
-**Solución:** Se utilizaron commits frecuentes y sincronización constante del repositorio.
-
-### Problema 3
-Errores en la actualización de pedidos.
-
-**Solución:** Se implementaron validaciones para asegurar el correcto cambio de estados.
+```bash
+git clone URL_DEL_REPOSITORIO
