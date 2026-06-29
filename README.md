@@ -24,10 +24,10 @@
 
 | Foto | Nombre | Responsabilidad |
 |:----:|:------:|:---------------:|
-| <img src="https://github.com/user-attachments/assets/aaa1ac7b-968f-4ae6-8205-6e53d156920b" width="100" style="border-radius:50%"> | **Parhuay Meza Idania Chanara** | 🎨 Desarrollo Frontend / Diseño de Interfaces |
-| <img src="https://github.com/user-attachments/assets/84836290-fd1c-42cb-beed-52d0d746b3e4" width="100" style="border-radius:50%"> | **Pauccara Huancara Eber** | 🗄️ Base de datos / Supabase |
-| <img src="https://github.com/user-attachments/assets/ce638641-96d3-4613-89a7-f40e63da9526" width="100" style="border-radius:50%"> | **Santamaria Huaytan Gabriela** | 📋 Gestión de pedidos / Lógica del sistema |
-| <img src="https://github.com/user-attachments/assets/b5a16ac0-13af-46d9-94c1-1313e5844c38" width="100" style="border-radius:50%"> | **Sihuincha Palacin Lumeris** | 🗂️ Coordinación general / Documentación / GitHub |
+| <img src="https://github.com/user-attachments/assets/aaa1ac7b-968f-4ae6-8205-6e53d156920b" width="100" style="border-radius:50%"> | **Parhuay Meza Idania Chanara** | 🎨 Desarrollo Frontend / Diseño de Interfaces/ Lógica del sistema/ Coordinación general/ Diseño de Interfaces  |
+| <img src="https://github.com/user-attachments/assets/84836290-fd1c-42cb-beed-52d0d746b3e4" width="100" style="border-radius:50%"> | **Pauccara Huancara Eber** | 🗄️ Desarrollo Frontend / Coordinación general/ Ideas para el sistema web/Diseño de Interfaces |
+| <img src="https://github.com/user-attachments/assets/ce638641-96d3-4613-89a7-f40e63da9526" width="100" style="border-radius:50%"> | **Santamaria Huaytan Gabriela** | 📋 Desarrollo Frontend /Gestión de platos/ Diseño de Interfaces/Ideas para el sistema web |
+| <img src="https://github.com/user-attachments/assets/b5a16ac0-13af-46d9-94c1-1313e5844c38" width="100" style="border-radius:50%"> | **Sihuincha Palacin Lumeris** | 🗂️ Base de datos /Diseño de Interfaces/ Coordinación general / Documentación / GitHub |
 
 </div>
 
