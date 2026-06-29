@@ -35,7 +35,6 @@
             <li><a href="#" onclick="Auth.cerrarSesion()"><i class="fas fa-sign-out-alt"></i> <span>Salir</span></a></li>
         </ul>
     </nav>
-    <!-- ===== END NAVBAR ===== -->
 
     <main class="main-content">
 
@@ -88,11 +87,6 @@
             </section>
 
             <!-- PASO 2: PEDIDOS DE LA MESA -->
-            <!-- Todos los pedidos facturables de la mesa se cargan y
-                 seleccionan automáticamente al buscar (no hay
-                 checkboxes de selección individual: ese paso
-                 intermedio desapareció al migrar a Supabase, ver
-                 cuenta.page.js / buscarMesa() y renderPedidosMesa()). -->
             <section class="cuenta-card hidden" id="paso-pedidos">
                 <div class="card-header">
                     <span class="step-badge">2</span>
@@ -116,20 +110,63 @@
                     <!-- DETALLE DE CONSUMO -->
                     <div class="resumen-consumo">
                         <h4 class="resumen-title"><i class="fas fa-list-alt"></i> Detalle de Consumo</h4>
-                        <table style="width:100%;border-collapse:collapse;">
+
+                        <!-- Tabla de ítems con columnas: descripción, cant, p.unit, subtotal -->
+                        <table class="tabla-items-resumen" style="width:100%;border-collapse:collapse;">
+                            <thead>
+                                <tr class="tabla-items-header">
+                                    <th style="text-align:left;padding:6px 8px">Descripción</th>
+                                    <th style="text-align:center;padding:6px 8px">Cant.</th>
+                                    <th style="text-align:right;padding:6px 8px">P. Unit.</th>
+                                    <th style="text-align:right;padding:6px 8px">Subtotal</th>
+                                </tr>
+                            </thead>
                             <tbody id="tabla-resumen-items"></tbody>
                         </table>
 
-                        <!-- CÁLCULOS -->
+                        <!-- CÁLCULOS — orden estándar boleta peruana -->
                         <div class="calculos-area">
+
+                            <!-- 1. Importe bruto -->
                             <div class="calculo-row">
-                                <span>Importe de consumo</span>
+                                <span>Importe bruto</span>
                                 <div></div>
                                 <span id="resumen-bruto">S/ 0.00</span>
                             </div>
 
-                            <!-- DESCUENTO -->
-                            <div class="calculo-row descuento-row">
+                            <!-- 2. Descuento (fila oculta si no hay descuento) -->
+                            <div class="calculo-row descuento-valor-row hidden" id="fila-resumen-descuento">
+                                <span class="descuento-label"><i class="fas fa-tag"></i> Descuento</span>
+                                <div></div>
+                                <span id="resumen-descuento" class="descuento-valor">- S/ 0.00</span>
+                            </div>
+
+                            <div class="calculo-divider"></div>
+
+                            <!-- 3. Base imponible -->
+                            <div class="calculo-row">
+                                <span> OP.GRAVADA </span>
+                                <div></div>
+                                <span id="resumen-base">S/ 0.00</span>
+                            </div>
+
+                            <!-- 4. IGV incluido -->
+                            <div class="calculo-row igv-row">
+                                <span>IGV incluido (18%)</span>
+                                <div></div>
+                                <span id="resumen-igv">S/ 0.00</span>
+                            </div>
+
+                            <div class="calculo-divider"></div>
+
+                            <!-- 5. TOTAL -->
+                            <div class="calculo-row total-row">
+                                <span><i class="fas fa-coins"></i> TOTAL FINAL</span>
+                                <span id="resumen-total">S/ 0.00</span>
+                            </div>
+
+                            <!-- 6. Descuento — controles (al final, no interrumpen los totales) -->
+                            <div class="descuento-toggle-area">
                                 <div class="descuento-toggle">
                                     <span>¿Aplicar descuento?</span>
                                     <label class="switch-label">
@@ -139,46 +176,27 @@
                                         <input type="radio" name="aplicar-descuento" value="no" checked> No
                                     </label>
                                 </div>
-                                <span id="resumen-descuento" class="descuento-valor">S/ 0.00</span>
-                            </div>
-                            <div id="bloque-descuento" class="descuento-fields hidden">
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label>Tipo de descuento</label>
-                                        <select id="tipo-descuento">
-                                            <option value="porcentaje">Porcentaje (%)</option>
-                                            <option value="monto">Monto fijo (S/)</option>
-                                        </select>
+                                <div id="bloque-descuento" class="descuento-fields hidden">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label>Tipo de descuento</label>
+                                            <select id="tipo-descuento">
+                                                <option value="porcentaje">Porcentaje (%)</option>
+                                                <option value="monto">Monto fijo (S/)</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Valor del descuento</label>
+                                            <input type="number" id="valor-descuento" placeholder="0.00" min="0" step="0.01">
+                                        </div>
                                     </div>
                                     <div class="form-group">
-                                        <label>Valor del descuento</label>
-                                        <input type="number" id="valor-descuento" placeholder="0.00" min="0" step="0.01">
+                                        <label>Justificación del descuento *</label>
+                                        <textarea id="justificacion-descuento" placeholder="Explique el motivo del descuento (mínimo 10 caracteres)..." maxlength="200"></textarea>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label>Justificación del descuento *</label>
-                                    <textarea id="justificacion-descuento" placeholder="Explique el motivo del descuento (mínimo 10 caracteres)..." maxlength="200"></textarea>
-                                </div>
                             </div>
 
-                            <div class="calculo-row">
-                                <span>Subtotal base imponible</span>
-                                <div></div>
-                                <span id="resumen-subtotal">S/ 0.00</span>
-                            </div>
-
-                            <!-- IGV incluido automáticamente -->
-                            <div class="calculo-row">
-                                <span>IGV incluido (18%)</span>
-                                <div></div>
-                                <span id="resumen-igv">S/ 0.00</span>
-                            </div>
-
-                            <div class="calculo-divider"></div>
-                            <div class="calculo-row total-row">
-                                <span><i class="fas fa-coins"></i> TOTAL FINAL</span>
-                                <span id="resumen-total">S/ 0.00</span>
-                            </div>
                         </div>
                     </div>
 
@@ -389,6 +407,7 @@
         <span id="toast-msg"></span>
     </div>
 
+    <!-- BOLETA MODAL -->
     <div id="boleta-modal" class="boleta-modal hidden">
         <div class="boleta-dialog">
             <div id="boleta-contenido" class="boleta-print"></div>
@@ -407,7 +426,6 @@
         <p>&copy; 2027 MAFFIA Restaurante Oriental – Experiencia Auténtica</p>
     </footer>
 
-    <!-- Cadena de scripts: Supabase SDK -> cliente -> auth -> servicios -> lógica de la página -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     <script src="../js/core/supabaseClient.js"></script>
     <script src="../js/core/auth.js"></script>

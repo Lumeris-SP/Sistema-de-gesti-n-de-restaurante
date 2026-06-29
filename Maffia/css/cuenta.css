@@ -210,6 +210,34 @@
   margin-bottom: 12px;
 }
 
+/* ── Tabla de ítems en el resumen (paso 3) ── */
+.tabla-items-resumen {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 4px;
+}
+
+.tabla-items-header th {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(212,175,55,0.65);
+  padding: 5px 8px;
+  border-bottom: 1px solid rgba(212,175,55,0.15);
+  font-weight: 600;
+}
+
+.item-resumen-row td {
+  padding: 7px 8px;
+  font-size: 13px;
+  color: rgba(242,234,216,0.82);
+  border-bottom: 1px solid rgba(212,175,55,0.06);
+}
+
+.item-resumen-row:last-child td {
+  border-bottom: none;
+}
+
 .calculos-area {
   margin-top: 14px;
   border-top: 1px solid rgba(212,175,55,0.12);
@@ -243,6 +271,13 @@
   font-weight: 700;
 }
 
+/* Descuento toggle al final de los cálculos */
+.descuento-toggle-area {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px dashed rgba(212,175,55,0.16);
+}
+
 .descuento-toggle,
 .switch-label {
   display: flex;
@@ -258,10 +293,30 @@
 
 .descuento-fields {
   padding: 12px;
-  margin: 4px 0 8px;
+  margin: 10px 0 0;
   border: 1px dashed rgba(212,175,55,0.22);
   border-radius: 10px;
   background: rgba(212,175,55,0.04);
+}
+
+/* Fila de descuento en totales */
+.descuento-valor-row .descuento-label {
+  color: #E57373;
+}
+.descuento-valor-row span:last-child,
+.descuento-valor {
+  color: #E57373 !important;
+  font-weight: 700;
+}
+
+/* IGV row — tono más suave */
+.igv-row {
+  color: rgba(242,234,216,0.55);
+  font-size: 12px;
+}
+.igv-row > span:last-child {
+  color: rgba(212,175,55,0.75) !important;
+  font-weight: 600;
 }
 
 /* Pago métodos */
@@ -487,10 +542,14 @@
   align-items: center;
   padding: 24px;
   background: rgba(0,0,0,0.72);
+  overflow-y: auto;
 }
 
 .boleta-dialog {
   width: min(480px, 96vw);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .boleta-print {
@@ -500,6 +559,8 @@
   padding: 28px;
   color: #F2EAD8;
   box-shadow: 0 18px 46px rgba(0,0,0,0.55);
+  overflow-y: auto;
+  max-height: calc(90vh - 64px);
 }
 
 .boleta-logo {
@@ -533,6 +594,55 @@
   margin: 14px 0;
 }
 
+/* ── Ítems de boleta — estructura de restaurante ── */
+.boleta-items-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: rgba(212,175,55,0.55);
+  padding: 0 0 6px;
+  border-bottom: 1px solid rgba(212,175,55,0.15);
+  margin-bottom: 4px;
+}
+
+/* Cada ítem ocupa su propio bloque con nombre arriba
+   y "cant × precio unitario → subtotal" abajo */
+.boleta-item-row {
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(212,175,55,0.06);
+}
+
+.boleta-item-row:last-child {
+  border-bottom: none;
+}
+
+.boleta-item-nombre {
+  font-size: 13px;
+  color: #F2EAD8;
+  font-weight: 500;
+  margin-bottom: 3px;
+}
+
+.boleta-item-detalle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.boleta-item-cant {
+  font-size: 12px;
+  color: rgba(212,175,55,0.65);
+}
+
+.boleta-item-subtotal {
+  font-size: 13px;
+  color: #D4AF37;
+  font-weight: 700;
+}
+
+/* ── Filas normales de boleta ── */
 .boleta-row {
   display: flex;
   justify-content: space-between;
@@ -594,37 +704,35 @@
 }
 
 @media print {
-  body * {
-    visibility: hidden !important;
-  }
+  body * { visibility: hidden !important; }
 
   #boleta-contenido,
-  #boleta-contenido * {
-    visibility: visible !important;
-  }
+  #boleta-contenido * { visibility: visible !important; }
 
   #boleta-contenido {
     position: absolute;
-    left: 0;
-    top: 0;
+    left: 0; top: 0;
     width: 100%;
     background: #fff !important;
     color: #1a0a00 !important;
     box-shadow: none !important;
     border-color: #b59a45 !important;
+    max-height: none !important;
+    overflow: visible !important;
   }
 
+  #boleta-contenido .boleta-item-nombre { color: #1a0a00 !important; }
+  #boleta-contenido .boleta-item-cant   { color: #666 !important; }
+  #boleta-contenido .boleta-item-subtotal { color: #5a3e00 !important; }
   #boleta-contenido .boleta-row strong,
   #boleta-contenido .boleta-row.total,
   #boleta-contenido .boleta-row.total strong,
   #boleta-contenido .boleta-logo h2,
-  #boleta-contenido .boleta-experiencia {
-    color: #8B6F1F !important;
-  }
+  #boleta-contenido .boleta-experiencia { color: #8B6F1F !important; }
+  #boleta-contenido .boleta-row.muted  { color: #555 !important; }
+  #boleta-contenido .boleta-items-header { color: #888 !important; }
 
-  .boleta-actions {
-    display: none !important;
-  }
+  .boleta-actions { display: none !important; }
 }
 
 /* Cuentas guardadas list */
