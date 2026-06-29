@@ -1,94 +1,114 @@
-# MAFFIA - Restaurante Oriental
+<div align="center">
 
-<p align="center">
-  <img width="553" height="207" alt="MAFFIA" src="https://github.com/user-attachments/assets/b02df3c2-8b8a-4710-9766-dbda311f228a" />
-</p>
+# 🍜 MAFFIA — Restaurante Oriental
 
----
+<img width="553" height="207" alt="MAFFIA" src="https://github.com/user-attachments/assets/b02df3c2-8b8a-4710-9766-dbda311f228a" />
 
-# Integrantes
+*Sistema web de gestión integral para restaurante oriental*
 
-<p align="center">
-  <img width="315" height="315" alt="Integrantes" src="https://github.com/user-attachments/assets/a6a65649-c80b-4745-b5f6-4ba21d8a2fb6" />
-</p>
+</div>
 
 ---
 
-# 👥 Tabla de integrantes y responsabilidades
+## 👥 Integrantes y responsabilidades
+
+<div align="center">
+
+<img width="315" height="315" alt="Integrantes" src="https://github.com/user-attachments/assets/a6a65649-c80b-4745-b5f6-4ba21d8a2fb6" />
+
+</div>
+
+<br>
+
+<div align="center">
 
 | Foto | Nombre | Responsabilidad |
-|------|--------|----------------|
-| <img src="https://github.com/user-attachments/assets/aaa1ac7b-968f-4ae6-8205-6e53d156920b" width="120"> | **Parhuay Meza Idania Chanara** | Desarrollo Frontend / Diseño de Interfaces |
-| <img src="https://github.com/user-attachments/assets/84836290-fd1c-42cb-beed-52d0d746b3e4" width="120"> | **Pauccara Huancara Eber** | Base de datos / Supabase |
-| <img src="https://github.com/user-attachments/assets/ce638641-96d3-4613-89a7-f40e63da9526" width="120"> | **Santamaria Huaytan Gabriela** | Gestión de pedidos / Lógica del sistema |
-| <img src="https://github.com/user-attachments/assets/b5a16ac0-13af-46d9-94c1-1313e5844c38" width="120"> | **Sihuincha Palacin Lumeris** | Coordinación general / Documentación / GitHub |
+|:----:|:------:|:---------------:|
+| <img src="https://github.com/user-attachments/assets/aaa1ac7b-968f-4ae6-8205-6e53d156920b" width="100" style="border-radius:50%"> | **Parhuay Meza Idania Chanara** | 🎨 Desarrollo Frontend / Diseño de Interfaces |
+| <img src="https://github.com/user-attachments/assets/84836290-fd1c-42cb-beed-52d0d746b3e4" width="100" style="border-radius:50%"> | **Pauccara Huancara Eber** | 🗄️ Base de datos / Supabase |
+| <img src="https://github.com/user-attachments/assets/ce638641-96d3-4613-89a7-f40e63da9526" width="100" style="border-radius:50%"> | **Santamaria Huaytan Gabriela** | 📋 Gestión de pedidos / Lógica del sistema |
+| <img src="https://github.com/user-attachments/assets/b5a16ac0-13af-46d9-94c1-1313e5844c38" width="100" style="border-radius:50%"> | **Sihuincha Palacin Lumeris** | 🗂️ Coordinación general / Documentación / GitHub |
+
+</div>
 
 ---
 
-# Caso elegido
+## 📌 Caso elegido
 
-**Sistema de Gestión de Restaurante Oriental.**
+> **Sistema de Gestión de Restaurante Oriental**
 
 ---
 
-# ✨ Descripción del sistema
+## ✨ Descripción del sistema
 
-MAFFIA es un sistema web desarrollado para optimizar la administración de un restaurante oriental, permitiendo gestionar pedidos, platos, cocina, usuarios y facturación desde una sola plataforma.
+**MAFFIA** es un sistema web desarrollado para optimizar la administración de un restaurante oriental, permitiendo gestionar pedidos, platos, cocina, usuarios y facturación desde una sola plataforma.
 
 El sistema permite que los pedidos realizados sean registrados automáticamente, enviados al área de cocina y monitoreados en tiempo real mediante diferentes estados de preparación. Asimismo, incorpora un sistema de autenticación con diferentes roles de usuario, garantizando que cada integrante del restaurante acceda únicamente a las funciones correspondientes.
 
-Gracias a la integración con Supabase, toda la información permanece sincronizada en tiempo real, facilitando una administración rápida, segura y eficiente.
+Gracias a la integración con **Supabase**, toda la información permanece sincronizada en tiempo real, facilitando una administración rápida, segura y eficiente.
 
 ---
 
-# Tecnologías usadas
+## 🛠️ Tecnologías usadas
 
-## Frontend
+<div align="center">
 
-- HTML5
-- CSS3
-- JavaScript
+| Categoría | Tecnologías |
+|:---------:|:-----------:|
+| **Frontend** | HTML5 · CSS3 · JavaScript |
+| **Base de datos** | Supabase · PostgreSQL |
+| **Control de versiones** | Git · GitHub |
+| **Editor de código** | Visual Studio Code |
 
-## Base de Datos
-
-- Supabase
-- PostgreSQL
-
-## Control de Versiones
-
-- Git
-- GitHub
-
-## Editor de Código
-
-- Visual Studio Code
+</div>
 
 ---
 
-# Módulos desarrollados
+## 📦 Módulos desarrollados
 
-- Inicio de sesión
-- Registro de usuarios
-- Gestión de usuarios
-- Gestión de platos
-- Gestión de pedidos
-- Gestión de cocina
-- Gestión de facturación
-- Gestión de perfil de usuario
+<div align="center">
 
----
+| # | Módulo |
+|:-:|:------:|
+| 1 | Inicio de sesión |
+| 2 | Registro de usuarios |
+| 3 | Gestión de usuarios |
+| 4 | Gestión de platos |
+| 5 | Gestión de pedidos |
+| 6 | Gestión de cocina |
+| 7 | Gestión de facturación |
+| 8 | Gestión de perfil de usuario |
 
-# Roles implementados
-
-- Administrador
-- Personal de Cocina
-- Usuario
+</div>
 
 ---
 
-# Credenciales de prueba
+## 🔐 Roles implementados
 
-## Usuarios registrados
+<div align="center">
+
+| Rol | Descripción |
+|:---:|:-----------:|
+| 👑 Administrador | Acceso total al sistema |
+| 👨‍🍳 Personal de Cocina | Gestión del área de cocina |
+| 👤 Usuario | Acceso básico al sistema |
+
+</div>
+
+---
+
+## 🔑 Credenciales de prueba
+
+### Usuarios registrados
+
+<div align="center">
+
+<img width="1577" height="373" src="https://github.com/user-attachments/assets/16a49345-513d-4ab4-84c4-5828a150d644">
+
+</div>
+
+<details>
+<summary>Ver lista de correos registrados</summary>
 
 - eber.pauccara@upch.pe
 - gabriela.santamaria@upch.pe
@@ -100,80 +120,76 @@ Gracias a la integración con Supabase, toda la información permanece sincroniz
 - sihuincha.shedira@upch.pe
 - sihuinchalumeris@gmail.com
 
-<img width="1577" height="373" src="https://github.com/user-attachments/assets/16a49345-513d-4ab4-84c4-5828a150d644">
+</details>
 
----
+<br>
 
-## Administrador
+<div align="center">
 
-Correo:
+| Rol | Correo | Contraseña |
+|:---:|:------:|:----------:|
+| **Administrador** | `admin@maffia.com` | `********` |
+| **Usuario** | `usuario@maffia.com` | `********` |
 
-```
-admin@maffia.com
-```
+</div>
 
-Contraseña
-
-```
-********
-```
-
----
-
-## Usuario
-
-Correo
-
-```
-usuario@maffia.com
-```
-
-Contraseña
-
-```
-********
-```
-
----
+<div align="center">
 
 <img width="520" height="866" src="https://github.com/user-attachments/assets/b40a49dd-63ac-4ebd-86cf-af2fd7aee58b">
 
+</div>
+
 ---
 
-# Estructura de tablas
+## 🗃️ Estructura de tablas
 
-## Adicionales
+<details>
+<summary><b>📄 Adicionales</b></summary>
+
+<div align="center">
 
 | Campo | Tipo |
-|------|------|
+|:-----:|:----:|
 | id | UUID |
 | nombre | TEXT |
 | precio | NUMERIC |
 
----
+</div>
+</details>
 
-## Alérgenos
+<details>
+<summary><b>🚫 Alérgenos</b></summary>
+
+<div align="center">
 
 | Campo | Tipo |
-|------|------|
+|:-----:|:----:|
 | id | INT |
 | nombre | TEXT |
 
----
+</div>
+</details>
 
-## Factura_Pedidos
+<details>
+<summary><b>🔗 Factura_Pedidos</b></summary>
+
+<div align="center">
 
 | Campo | Tipo |
-|------|------|
+|:-----:|:----:|
 | factura_id | UUID |
 | pedido_id | UUID |
 
----
+</div>
+</details>
 
-## Facturas
+<details>
+<summary><b>🧾 Facturas</b></summary>
+
+<div align="center">
 
 | Campo | Tipo |
-|------|------|
+|:-----:|:----:|
 | id | UUID |
 | codigo | TEXT |
 | mesa | INT |
@@ -190,23 +206,31 @@ Contraseña
 | motivo_anulacion | TEXT |
 | created_at | TIMESTAMP |
 
----
+</div>
+</details>
 
-## Pedido_Item_Adicionales
+<details>
+<summary><b>➕ Pedido_Item_Adicionales</b></summary>
+
+<div align="center">
 
 | Campo | Tipo |
-|------|------|
+|:-----:|:----:|
 | id | UUID |
 | pedido_item_id | UUID |
 | texto | TEXT |
 | extra | NUMERIC |
 
----
+</div>
+</details>
 
-## Pedido_Items
+<details>
+<summary><b>🍽️ Pedido_Items</b></summary>
+
+<div align="center">
 
 | Campo | Tipo |
-|------|------|
+|:-----:|:----:|
 | id | UUID |
 | pedido_id | UUID |
 | plato_id | UUID |
@@ -217,12 +241,16 @@ Contraseña
 | estado_plato | TEXT |
 | tiempo_estimado_min | INT |
 
----
+</div>
+</details>
 
-## Pedidos
+<details>
+<summary><b>📋 Pedidos</b></summary>
+
+<div align="center">
 
 | Campo | Tipo |
-|------|------|
+|:-----:|:----:|
 | id | UUID |
 | codigo | TEXT |
 | mesa | INT |
@@ -236,22 +264,30 @@ Contraseña
 | total | NUMERIC |
 | created_at | TIMESTAMP |
 
----
+</div>
+</details>
 
-## Plato_Alérgenos
+<details>
+<summary><b>⚠️ Plato_Alérgenos</b></summary>
+
+<div align="center">
 
 | Campo | Tipo |
-|------|------|
+|:-----:|:----:|
 | plato_id | UUID |
 | alergeno | INT |
 | detalle_otro | TEXT |
 
----
+</div>
+</details>
 
-## Platos
+<details>
+<summary><b>🥘 Platos</b></summary>
+
+<div align="center">
 
 | Campo | Tipo |
-|------|------|
+|:-----:|:----:|
 | id | UUID |
 | codigo | TEXT |
 | nombre | TEXT |
@@ -265,12 +301,16 @@ Contraseña
 | created_at | TIMESTAMP |
 | updated_at | TIMESTAMP |
 
----
+</div>
+</details>
 
-## Usuarios
+<details>
+<summary><b>👤 Usuarios</b></summary>
+
+<div align="center">
 
 | Campo | Tipo |
-|------|------|
+|:-----:|:----:|
 | id | UUID |
 | nombre | TEXT |
 | apellidos | TEXT |
@@ -281,160 +321,143 @@ Contraseña
 | estado | TEXT |
 | fecha_registro | TIMESTAMP |
 
+</div>
+</details>
+
 ---
 
-# Instrucciones para ejecutar
+## 🚀 Instrucciones para ejecutar
 
-## 1. Clonar el repositorio
+### 1. Clonar el repositorio
 
 ```bash
 git clone https://github.com/USUARIO/MAFFIA.git
 ```
 
----
-
-## 2. Ingresar al proyecto
+### 2. Ingresar al proyecto
 
 ```bash
 cd MAFFIA
 ```
 
----
+### 3. Abrir el proyecto
 
-## 3. Abrir el proyecto
+Abrir la carpeta con **Visual Studio Code**.
 
-Abrir la carpeta del proyecto utilizando **Visual Studio Code**.
+### 4. Configurar Supabase
 
----
-
-## 4. Configurar Supabase
-
-Crear un archivo `.env` o configurar las credenciales dentro del proyecto.
+Crear un archivo `.env` con las siguientes variables:
 
 ```env
 SUPABASE_URL=TU_SUPABASE_URL
 SUPABASE_ANON_KEY=TU_SUPABASE_ANON_KEY
 ```
 
----
+### 5. Restaurar la base de datos
 
-## 5. Restaurar la base de datos
+1. Abrir **Supabase**
+2. Ingresar al **SQL Editor**
+3. Ejecutar el archivo `database.sql` incluido en el repositorio
+4. Esperar a que todas las tablas sean creadas correctamente
 
-1. Abrir Supabase.
-2. Ingresar al SQL Editor.
-3. Ejecutar el archivo **database.sql** incluido en el repositorio.
-4. Esperar a que todas las tablas sean creadas correctamente.
+### 6. Ejecutar el proyecto
 
----
+> **Opción 1 — Recomendada**
 
-## 6. Ejecutar el proyecto
+Instalar la extensión **Live Server** de Visual Studio Code, abrir `index.html` y seleccionar **Open with Live Server**.
 
-Al ser un proyecto desarrollado con HTML, CSS y JavaScript, existen dos formas de ejecutarlo.
+> **Opción 2**
 
-### Opción 1 (Recomendada)
-
-Instalar la extensión **Live Server** de Visual Studio Code.
-
-Abrir:
-
-```
-index.html
-```
-
-Luego seleccionar:
-
-```
-Open with Live Server
-```
-
-### Opción 2
-
-Abrir directamente el archivo **index.html** desde cualquier navegador web.
+Abrir directamente el archivo `index.html` desde cualquier navegador web.
 
 ---
 
-# Capturas del sistema
+## 📸 Capturas del sistema
 
-## Inicio de sesión
+<details>
+<summary><b>🔐 Inicio de sesión</b></summary>
+<div align="center">
+<img width="617" height="782" alt="Inicio de sesión" src="https://github.com/user-attachments/assets/6b77cefd-fccf-4299-94fe-8c6f8cfb06fc" />
+</div>
+</details>
 
-<p align="center">
-<img width="617" height="782" alt="image" src="https://github.com/user-attachments/assets/6b77cefd-fccf-4299-94fe-8c6f8cfb06fc" />
-</p>
+<details>
+<summary><b>📝 Registro de cuenta</b></summary>
+<div align="center">
+<img width="566" height="873" alt="Registro de cuenta" src="https://github.com/user-attachments/assets/27fbd04d-0d03-4d9a-87a1-ac49e53203b0" />
+</div>
+</details>
 
-## Si no se inicion sesion (registro de cuenta)
+<details>
+<summary><b>🏠 Panel principal</b></summary>
+<div align="center">
+<img width="1863" height="776" alt="Panel principal" src="https://github.com/user-attachments/assets/36c34972-5043-4b99-adba-1e7907894964" />
+</div>
+</details>
 
-<p align="center">
-<img width="566" height="873" alt="image" src="https://github.com/user-attachments/assets/27fbd04d-0d03-4d9a-87a1-ac49e53203b0" />
-</p>
+<details>
+<summary><b>👥 Gestión de usuarios</b></summary>
+<div align="center">
+<img width="1847" height="842" alt="Gestión de usuarios" src="https://github.com/user-attachments/assets/ac6024b7-de70-492b-92fd-24dec3151eac" />
+</div>
+</details>
+
+<details>
+<summary><b>🍽️ Gestión de platos</b></summary>
+<div align="center">
+<img width="1847" height="837" alt="Gestión de platos" src="https://github.com/user-attachments/assets/8c656104-0731-4358-b679-0908f9ffc903" />
+</div>
+</details>
+
+<details>
+<summary><b>📋 Gestión de pedidos</b></summary>
+<div align="center">
+<img width="1860" height="761" alt="Gestión de pedidos" src="https://github.com/user-attachments/assets/7708f260-8ecf-4daa-928c-4fe0c440d077" />
+</div>
+</details>
+
+<details>
+<summary><b>👨‍🍳 Gestión de cocina</b></summary>
+<div align="center">
+<img width="1852" height="815" alt="Gestión de cocina" src="https://github.com/user-attachments/assets/31e1c6f4-2d0d-4b3d-a24e-85d0d3da7863" />
+</div>
+</details>
+
+<details>
+<summary><b>🧾 Facturación</b></summary>
+<div align="center">
+<img width="1860" height="733" alt="Facturación" src="https://github.com/user-attachments/assets/2ae00bd4-67ca-4471-be95-06736f1e8818" />
+<br><br>
+<img width="492" height="813" alt="Detalle de factura" src="https://github.com/user-attachments/assets/33b99725-b925-4980-9c65-aeedaf55853b" />
+</div>
+</details>
+
 ---
 
-## Panel principal
+## ⚠️ Problemas encontrados y soluciones
 
-<p align="center">
-<img width="1863" height="776" alt="image" src="https://github.com/user-attachments/assets/36c34972-5043-4b99-adba-1e7907894964" />
-
-</p>
-
----
-
-## Gestión de usuarios
-
-<p align="center">
-<img width="1847" height="842" alt="image" src="https://github.com/user-attachments/assets/ac6024b7-de70-492b-92fd-24dec3151eac" />
-
-</p>
-
----
-
-## Gestión de platos
-
-<p align="center">
-<img width="1847" height="837" alt="image" src="https://github.com/user-attachments/assets/8c656104-0731-4358-b679-0908f9ffc903" />
-</p>
-
----
-
-## Gestión de pedidos
-
-<p align="center">
-<img width="1860" height="761" alt="image" src="https://github.com/user-attachments/assets/7708f260-8ecf-4daa-928c-4fe0c440d077" />
-</p>
-
----
-
-## Gestión de cocina
-
-<p align="center">
-<img width="1852" height="815" alt="image" src="https://github.com/user-attachments/assets/31e1c6f4-2d0d-4b3d-a24e-85d0d3da7863" />
-
-</p>
-
----
-
-## Facturación
-
-<p align="center">
-<img width="1860" height="733" alt="image" src="https://github.com/user-attachments/assets/2ae00bd4-67ca-4471-be95-06736f1e8818" />
-</p>
-
-<p align="center">
-  <img width="492" height="813" alt="image" src="https://github.com/user-attachments/assets/33b99725-b925-4980-9c65-aeedaf55853b" />
-</p>
----
-
-
-# Problemas encontrados y solución aplicada
+<div align="center">
 
 | Problema encontrado | Solución aplicada |
-|--------------------|-------------------|
-| Conflictos entre cambios realizados por distintos integrantes en GitHub. | Se trabajó mediante ramas independientes y posteriormente se integraron utilizando Git Merge, resolviendo los conflictos manualmente. |
-| Errores en la relación entre tablas de la base de datos. | Se rediseñó el modelo relacional utilizando claves primarias y claves foráneas para asegurar la integridad de los datos. |
-| Problemas de conexión entre la aplicación y Supabase. | Se verificaron las credenciales del proyecto y se corrigió la configuración de la conexión mediante la URL y la clave pública. |
-| Validación incorrecta de algunos formularios. | Se implementaron validaciones en JavaScript antes de enviar la información a la base de datos. |
-| Actualización de estados de los pedidos en cocina. | Se implementó una lógica de actualización dinámica para reflejar el progreso de cada pedido en tiempo real. |
+|:-------------------:|:-----------------:|
+| Conflictos en GitHub entre integrantes | Ramas independientes + Git Merge con resolución manual |
+| Errores en relación entre tablas | Rediseño del modelo relacional con claves primarias y foráneas |
+| Problemas de conexión con Supabase | Verificación de credenciales y corrección de URL y clave pública |
+| Validación incorrecta de formularios | Validaciones en JavaScript antes de enviar a la base de datos |
+| Actualización de estados en cocina | Lógica de actualización dinámica para reflejar progreso en tiempo real |
+
+</div>
 
 ---
 
-# Conclusión
+## 📝 Conclusión
 
-El desarrollo de MAFFIA permitió aplicar conocimientos sobre desarrollo web, bases de datos relacionales, autenticación de usuarios, control de versiones y trabajo colaborativo. El sistema obtenido facilita la administración de un restaurante mediante una plataforma moderna, organizada y eficiente, optimizando el proceso de atención, preparación de pedidos y facturación.
+El desarrollo de **MAFFIA** permitió aplicar conocimientos sobre desarrollo web, bases de datos relacionales, autenticación de usuarios, control de versiones y trabajo colaborativo. El sistema obtenido facilita la administración de un restaurante mediante una plataforma moderna, organizada y eficiente, optimizando el proceso de atención, preparación de pedidos y facturación.
+
+---
+
+<div align="center">
+
+*Desarrollado con ❤️ por el equipo MAFFIA — UPCH*
+
+</div>
