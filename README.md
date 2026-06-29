@@ -59,8 +59,8 @@ Gracias a la integración con **Supabase**, toda la información permanece sincr
 
 | Categoría | Tecnologías |
 |:---------:|:-----------:|
-| **Frontend** | HTML5 · CSS3 · JavaScript |
-| **Base de datos** | Supabase · PostgreSQL |
+| **Frontend** | HTML5 · CSS · JavaScript |
+| **Base de datos** | Supabase · SQL |
 | **Control de versiones** | Git · GitHub |
 | **Editor de código** | Visual Studio Code |
 
