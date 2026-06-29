@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🍜 MAFFIA — Restaurante Oriental
+# 🍜🍡 MAFFIA — Restaurante Oriental
 
 <img width="553" height="207" alt="MAFFIA" src="https://github.com/user-attachments/assets/b02df3c2-8b8a-4710-9766-dbda311f228a" />
 
@@ -10,7 +10,7 @@
 
 ---
 
-## 👥 Integrantes y responsabilidades
+## 👨‍👩‍👧‍👦 Integrantes y responsabilidades
 
 <div align="center">
 
@@ -39,7 +39,7 @@
 
 ---
 
-## ✨ Descripción del sistema
+## ✨ Descripción del sistema 💕
 
 **MAFFIA** es un sistema web desarrollado para optimizar la administración de un restaurante oriental, permitiendo gestionar pedidos, platos, cocina, usuarios y facturación desde una sola plataforma.
 
@@ -452,12 +452,18 @@ Abrir directamente el archivo `index.html` desde cualquier navegador web.
 
 ## 📝 Conclusión
 
-El desarrollo de **MAFFIA** permitió aplicar conocimientos sobre desarrollo web, bases de datos relacionales, autenticación de usuarios, control de versiones y trabajo colaborativo. El sistema obtenido facilita la administración de un restaurante mediante una plataforma moderna, organizada y eficiente, optimizando el proceso de atención, preparación de pedidos y facturación.
+El desarrollo de **MAFFIA** representó una experiencia integral que nos permitió llevar a la práctica conocimientos fundamentales en desarrollo web, diseño de bases de datos relacionales, autenticación de usuarios, control de versiones y trabajo en equipo.
+
+El resultado es una plataforma moderna, segura y eficiente que centraliza toda la operación de un restaurante oriental en un solo sistema: desde la toma de pedidos hasta la facturación final, pasando por la gestión en cocina y la administración de usuarios.
+
+Este proyecto nos demostró que la organización, la comunicación y la colaboración son tan importantes como el código mismo.
+
+> *"Un buen sistema no solo resuelve problemas — los previene."*
 
 ---
 
 <div align="center">
 
-*Desarrollado con ❤️ por el equipo MAFFIA — UPCH*
+*Desarrollado con ❤️ por el equipo MAFFIA — UPCH 🥰*
 
 </div>
