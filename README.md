@@ -411,16 +411,6 @@ Abrir directamente el archivo **index.html** desde cualquier navegador web.
 
 ---
 
-# División de responsabilidades
-
-| Integrante | Responsabilidades |
-|------------|-------------------|
-| **Parhuay Meza Idania Chanara** | Diseño de interfaces, desarrollo Frontend, validaciones de formularios y experiencia de usuario. |
-| **Pauccara Huancara Eber** | Diseño de la base de datos, implementación de Supabase, autenticación y consultas SQL. |
-| **Santamaria Huaytan Gabriela** | Desarrollo de la lógica del sistema, gestión de pedidos, cocina y facturación. |
-| **Sihuincha Palacin Lumeris** | Coordinación del proyecto, integración de módulos, documentación, GitHub y elaboración del README. |
-
----
 
 # Problemas encontrados y solución aplicada
 
