@@ -120,9 +120,7 @@ Gracias a la integración con **Supabase**, toda la información permanece sincr
 - gabriela12santamaria@gmail.com
 - idania.parhuay@upch.pe
 - idania.parhuay@gmail.com
-- jesus.morales@upch.pe
 - shedira.sihuincha@upch.pe
-- sihuincha.shedira@upch.pe
 - sihuinchalumeris@gmail.com
 
 </details>
